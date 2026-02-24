@@ -1,0 +1,23 @@
+src/domain/interfaces/storage-gateway.interface.ts(218,3): error TS2484: Export declaration conflicts with exported declaration of 'FileEntry'.
+src/domain/interfaces/storage-gateway.interface.ts(219,3): error TS2484: Export declaration conflicts with exported declaration of 'FileChangeEvent'.
+src/domain/interfaces/storage-gateway.interface.ts(220,3): error TS2484: Export declaration conflicts with exported declaration of 'FileChangeCallback'.
+src/domain/interfaces/storage-gateway.interface.ts(221,3): error TS2484: Export declaration conflicts with exported declaration of 'WatchHandle'.
+src/domain/interfaces/storage-gateway.interface.ts(222,3): error TS2484: Export declaration conflicts with exported declaration of 'StorageGateway'.
+src/domain/interfaces/storage-gateway.interface.ts(223,3): error TS2484: Export declaration conflicts with exported declaration of 'StorageGatewayFactory'.
+src/infrastructure/filesystem/storage-gateway-factory.ts(22,10): error TS6133: 'getPlatformContract' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(42,32): error TS6138: Property 'directoryHandle' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(44,14): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(49,15): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(49,29): error TS6133: 'data' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(54,16): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(59,14): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(64,16): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(70,5): error TS6133: 'callback' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(91,32): error TS6138: Property 'projectId' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(93,14): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(98,15): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(98,29): error TS6133: 'data' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(103,16): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(108,14): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(113,16): error TS6133: 'path' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(119,5): error TS6133: 'callback' is declared but its value is never read.

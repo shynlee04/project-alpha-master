@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent: IDE - Tree + Chat</title>
+  <style>
+    /* 8-bit Design System */
+    :root {
+      --color-canvas: #09090b;
+      --color-surface: #18181b;
+      --color-depth: #000000;
+      --color-primary: #fafafa;
+      --color-muted: #a1a1aa;
+      --color-action: #f97316;
+      --color-structural: #3f3f46;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-warning: #eab308;
+      
+      --font-ui: 'JetBrains Mono', monospace;
+      --font-prose: 'Geist Sans', sans-serif;
+      
+      --spacing-unit: 4px;
+      --border-width: 2px;
+    }
+
+    * {
+      box-sizing: border-box;
+      border-radius: 0 !important; /* Sharp corners only */
+    }
+
+    body {
+      background-color: #000;
+      color: var(--color-primary);
+      font-family: var(--font-ui);
+      margin: 0;
+      padding: 20px;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wireframe-container {
+      width: 1280px;
+      height: 800px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-structural);
+      box-shadow: 4px 4px 0 0 #000 !important; /* Pixel shadow */
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      height: 40px;
+      border-bottom: var(--border-width) solid var(--color-structural);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      justify-content: space-between;
+      background-color: var(--color-surface);
+      font-size: 13px;
+    }
+    .header-left { display: flex; gap: 12px; align-items: center; font-weight: bold; }
+    .header-right { display: flex; gap: 16px; color: var(--color-muted); }
+
+    /* Layout */
+    .workspace { flex: 1; display: flex; overflow: hidden; }
+    
+    .sidebar {
+      background-color: var(--color-canvas);
+      border-right: var(--border-width) solid var(--color-structural);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header { padding: 8px 16px; color: var(--color-muted); font-size: 12px; border-bottom: 1px solid var(--color-structural); }
+    .tree-content { padding: 8px; font-size: 12px; }
+    .tree-item { padding: 4px 0; color: var(--color-muted); display: flex; align-items: center; gap: 6px; }
+    .tree-item.active { color: var(--color-action); }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-canvas);
+      border-right: var(--border-width) solid var(--color-structural);
+      position: relative;
+    }
+    .panel:last-child { border-right: none; }
+    
+    .panel-header {
+      height: 40px;
+      border-bottom: var(--border-width) solid var(--color-structural);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      background-color: var(--color-surface);
+      font-size: 13px;
+      justify-content: space-between;
+      font-weight: bold;
+    }
+    
+    .content-area { flex: 1; overflow: auto; position: relative; }
+    
+    .chat-view {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--color-surface);
+    }
+    .chat-messages { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+    .chat-msg { padding: 12px 16px; border: 1px solid var(--color-structural); font-size: 14px; max-width: 80%; line-height: 1.5; }
+    .chat-msg.ai { align-self: flex-start; background: var(--color-canvas); border-left: 4px solid var(--color-action); }
+    .chat-msg.user { align-self: flex-end; background: var(--color-structural); color: #fff; border: 1px solid var(--color-muted); }
+    
+    .chat-input { padding: 16px; border-top: 1px solid var(--color-structural); display: flex; gap: 12px; background: var(--color-canvas); }
+    .input-box { flex: 1; background: #000; border: 1px solid var(--color-structural); color: #fff; padding: 12px; font-family: inherit; }
+    .send-btn { background: var(--color-action); color: #fff; border: none; padding: 0 20px; cursor: pointer; font-weight: bold; box-shadow: 2px 2px 0 0 #000; }
+
+    .status-bar {
+      height: 24px;
+      border-top: var(--border-width) solid var(--color-structural);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      background-color: var(--color-surface);
+      font-size: 11px;
+      color: var(--color-muted);
+      justify-content: space-between;
+    }
+    
+    .w-200 { width: 200px; }
+    .flex-1 { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="wireframe-container">
+    <div class="header">
+      <div class="header-left">
+        <span>[Logo]</span> Project-Alpha
+      </div>
+      <div class="header-right">
+        <span>[Sync:✓]</span>
+        <span>[AI:●]</span>
+        <span>[User:○]</span>
+        <span>[Cmd+K]</span>
+      </div>
+    </div>
+    
+    <div class="workspace">
+      <!-- Tree Navigation (200px) -->
+      <div class="sidebar w-200">
+        <div class="sidebar-header">EXPLORER</div>
+        <div class="tree-content">
+          <div class="tree-item">📁 src</div>
+          <div class="tree-item" style="padding-left: 16px">📁 components</div>
+          <div class="tree-item" style="padding-left: 32px">📄 Button.tsx</div>
+          <div class="tree-item" style="padding-left: 32px">📄 Card.tsx</div>
+          <div class="tree-item" style="padding-left: 16px">📁 lib</div>
+          <div class="tree-item" style="padding-left: 32px">📄 utils.ts</div>
+          <div class="tree-item active" style="padding-left: 16px">📄 index.ts</div>
+          <div class="tree-item" style="padding-left: 16px">📄 App.tsx</div>
+        </div>
+      </div>
+      
+      <!-- Chat (flex) -->
+      <div class="panel flex-1">
+        <div class="panel-header">
+          <span>🤖 Gemini 2.5 Pro</span>
+          <div style="display: flex; gap: 8px; color: var(--color-muted);">
+            <span>[⚙]</span>
+            <span>[📊]</span>
+            <span>[+]</span>
+          </div>
+        </div>
+        <div class="chat-view content-area">
+          <div class="chat-messages">
+            <div class="chat-msg ai">
+              👋 Hello! I'm ready to help you with your project. What would you like to build today?
+            </div>
+            <div class="chat-msg user">
+              Can you create a reusable Button component for me?
+            </div>
+            <div class="chat-msg ai">
+              Sure! I can help with that. Here is a simple Button component using our design system.
+              <br><br>
+              <code>&lt;button className="btn"&gt;Click Me&lt;/button&gt;</code>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input type="text" class="input-box" placeholder="Type a message..." value="That looks good, thanks!">
+            <button class="send-btn">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="status-bar">
+      <div>[WC:✓] [Agent: idle] [Sync: synced]</div>
+      <div>[Ln 12, Col 8]</div>
+    </div>
+  </div>
+</body>
+</html>

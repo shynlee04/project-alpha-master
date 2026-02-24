@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Hub - Projects Grid</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Hub-specific layout styles */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--hub-bg);
+        }
+
+        .hub-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-6);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .hub-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            padding: var(--space-6);
+        }
+
+        .hub-tabs {
+            display: flex;
+            gap: var(--space-1);
+            margin-bottom: var(--space-4);
+            flex-shrink: 0;
+        }
+
+        .hub-tab {
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .hub-tab:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+
+        .hub-tab.active {
+            color: var(--action);
+            border-bottom-color: var(--action);
+        }
+
+        .projects-section {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+            flex-shrink: 0;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-1);
+        }
+
+        .filter-tab {
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-tab:hover {
+            background-color: var(--surface-hover);
+        }
+
+        .filter-tab.active {
+            color: var(--action);
+            border-color: var(--action);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-4);
+            overflow-y: auto;
+            min-height: 0;
+            padding-bottom: var(--space-4);
+        }
+
+        .project-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-pixel-lg);
+            border-color: var(--action);
+        }
+
+        .project-card.new-project {
+            border-style: dashed;
+            background-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+        }
+
+        .project-card.new-project:hover {
+            border-style: solid;
+            background-color: var(--surface);
+        }
+
+        .project-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: var(--space-3);
+        }
+
+        .project-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .project-description {
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            margin-bottom: var(--space-3);
+        }
+
+        .project-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .project-tags {
+            display: flex;
+            gap: var(--space-1);
+            flex-wrap: wrap;
+            margin-top: var(--space-2);
+        }
+
+        .project-tag {
+            padding: var(--space-0-5) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--secondary);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        .hub-footer {
+            height: var(--status-bar-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-4);
+            border-top: var(--border-width) solid var(--border-color);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .storage-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .storage-bar {
+            width: 60px;
+            height: 6px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow: hidden;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background-color: var(--action);
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+    Via-Gent Progressive Disclosure Wireframe
+    Workspace: Hub
+    Stack: 2 interfaces (Projects Grid)
+    Device: Desktop
+    Language: en
+    -->
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="hub-header">
+            <div class="flex items-center gap-4">
+                <div class="icon icon-xl text-action">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">Via-Gent</span>
+                <span class="badge">Hub</span>
+            </div>
+            
+            <div class="flex items-center gap-4" style="flex: 1; max-width: 400px; margin: 0 var(--space-6);">
+                <div class="input flex items-center gap-2" style="background-color: var(--canvas);">
+                    <svg class="icon-sm text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <span class="text-muted">Search projects...</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="btn btn-primary">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    New Project
+                </button>
+                <div class="avatar">U</div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="hub-content">
+            <!-- Navigation Tabs -->
+            <div class="hub-tabs">
+                <button class="hub-tab active">Projects</button>
+                <button class="hub-tab">Stats</button>
+                <button class="hub-tab">Activities</button>
+                <button class="hub-tab">Binding</button>
+                <button class="hub-tab">Settings</button>
+            </div>
+
+            <!-- Projects Section -->
+            <section class="projects-section">
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active">All</button>
+                        <button class="filter-tab">Recent</button>
+                        <button class="filter-tab">Favorites</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-muted">6 projects</span>
+                    </div>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="projects-grid">
+                    <!-- Project Card 1 -->
+                    <div class="project-card">
+                        <div class="project-icon">📁</div>
+                        <div class="project-name">my-awesome-app</div>
+                        <div class="project-description">TypeScript + React</div>
+                        <div class="project-meta">
+                            <span>Last opened: 2 hours ago</span>
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">TypeScript</span>
+                            <span class="project-tag">React</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2 -->
+                    <div class="project-card">
+                        <div class="project-icon">🚀</div>
+                        <div class="project-name">via-gent</div>
+                        <div class="project-description">Full-stack AI workspace</div>
+                        <div class="project-meta">
+                            <span>Last opened: Yesterday</span>
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">AI</span>
+                            <span class="project-tag">Full-stack</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 3 -->
+                    <div class="project-card">
+                        <div class="project-icon">📝</div>
+                        <div class="project-name">personal-blog</div>
+                        <div class="project-description">Gatsby + Markdown</div>
+                        <div class="project-meta">
+                            <span>Last opened: 3 days ago</span>
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">Gatsby</span>
+                            <span class="project-tag">Blog</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 4 -->
+                    <div class="project-card">
+                        <div class="project-icon">💼</div>
+                        <div class="project-name">work-project</div>
+                        <div class="project-description">Node.js + PostgreSQL</div>
+                        <div class="project-meta">
+                            <span>Last opened: 1 week ago</span>
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">Node.js</span>
+                            <span class="project-tag">PostgreSQL</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 5 -->
+                    <div class="project-card">
+                        <div class="project-icon">📚</div>
+                        <div class="project-name">learning-ts</div>
+                        <div class="project-description">TypeScript exercises</div>
+                        <div class="project-meta">
+                            <span>Last opened: 2 weeks ago</span>
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">TypeScript</span>
+                            <span class="project-tag">Learning</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 6 -->
+                    <div class="project-card">
+                        <div class="project-icon">🎮</div>
+                        <div class="project-name">game-engine</div>
+                        <div class="project-description">Unity C# Game</div>
+                        <div class="project-meta">
+                            <span>Last opened: 1 month ago</span>
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">Unity</span>
+                            <span class="project-tag">C#</span>
+                        </div>
+                    </div>
+
+                    <!-- New Project Card -->
+                    <div class="project-card new-project">
+                        <div class="project-icon">➕</div>
+                        <div class="project-name" style="color: var(--action);">New Project</div>
+                        <div class="project-description">Create new project</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="hub-footer">
+            <div class="footer-left">
+                <div class="footer-item">
+                    <span>v2.1.0</span>
+                </div>
+                <div class="footer-item">
+                    <span class="text-success">●</span>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="storage-indicator">
+                    <span>Storage:</span>
+                    <div class="storage-bar">
+                        <div class="storage-fill" style="width: 24%;"></div>
+                    </div>
+                    <span>2.4 GB / 10 GB</span>
+                </div>
+                <button class="btn btn-ghost text-sm" style="padding: var(--space-1) var(--space-2);">
+                    Settings
+                </button>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

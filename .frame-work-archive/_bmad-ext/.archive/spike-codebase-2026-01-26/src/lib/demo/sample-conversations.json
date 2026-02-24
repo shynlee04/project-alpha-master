@@ -1,0 +1,46 @@
+{
+    "conversations": [
+        {
+            "id": "demo-chemistry",
+            "title": "Hóa học: Phản ứng Oxi hóa-Khử",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Giải thích cho tôi về phản ứng oxi hóa khử bằng ví dụ đơn giản dễ hiểu."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Chào bạn! Để giải thích phản ứng oxi hóa - khử (redox), hãy tưởng tượng một câu chuyện về việc **cho và nhận electron**.\n\n### Ví dụ: Sự rỉ sét của sắt\n\nKhi bạn để một cái đinh sắt ngoài mưa, nó bị rỉ. Đó là phản ứng oxi hóa - khử!\n\n1.  **Sắt (Fe) là người hào phóng**: Nó 'cho đi' electron. Khi cho đi, nó bị **oxi hóa**.\n2.  **Oxi (O2) trong không khí là người tham lam**: Nó 'nhận lấy' electron đó. Khi nhận vào, nó bị **khử**.\n\n> **Mẹo nhớ:** \"Khử cho, O nhận\" (Chất khử cho e, Chất oxi hóa nhận e).\n\nBạn có muốn tôi viết phương trình hóa học cân bằng cho ví dụ này không?"
+                }
+            ]
+        },
+        {
+            "id": "demo-literature",
+            "title": "Văn học: Phân tích Truyện Kiều",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Phân tích tâm trạng của Thúy Kiều trong đoạn trích 'Kiều ở lầu Ngưng Bích'."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Đoạn trích **'Kiều ở lầu Ngưng Bích'** là một bức tranh tâm tình đầy xúc động. Nguyễn Du đã sử dụng bút pháp 'tả cảnh ngụ tình' điêu luyện.\n\n1.  **Nỗi nhớ Kim Trọng**: Kiều nhớ người yêu trước, vì nàng cảm thấy có lỗi khi đã phụ lời thề.\n2.  **Nỗi nhớ Cha Mẹ**: Sau đó mới nhớ đến cha mẹ, vì nàng đã bán mình cứu cha, phần nào trả được hiếu, nhưng vẫn xót xa vì không thể chăm sóc họ lúc tuổi già.\n\n**Điệp ngữ 'Buồn trông'**: Được lặp lại 4 lần ở cuối đoạn trích, tạo nên âm hưởng trầm buồn, như những con sóng lòng lớp lớp vỗ vào tâm hồn cô đơn của Kiều.\n\nBạn muốn tôi đi sâu vào phân tích 8 câu thơ cuối không?"
+                }
+            ]
+        },
+        {
+            "id": "demo-math",
+            "title": "Toán học: Định lý Pythagoras",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Viết code Python để tính cạnh huyền của tam giác vuông."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Chắc chắn rồi! Đây là hàm Python sử dụng định lý Pythagoras ($a^2 + b^2 = c^2$):\n\n```python\nimport math\n\ndef tinh_canh_huyen(a, b):\n    \"\"\"\n    Tính cạnh huyền c khi biết 2 cạnh góc vuông a và b\n    \"\"\"\n    c_binh_phuong = a**2 + b**2\n    c = math.sqrt(c_binh_phuong)\n    return c\n\n# Ví dụ sử dụng\ncanh_a = 3\ncanh_b = 4\nket_qua = tinh_canh_huyen(canh_a, canh_b)\n\nprint(f\"Cạnh huyền của tam giác vuông có cạnh {canh_a} và {canh_b} là: {ket_qua}\")\n```\n\nKết quả sẽ là `5.0` (vì bộ số 3-4-5 là bộ số Pythagoras nổi tiếng)."
+                }
+            ]
+        }
+    ]
+}

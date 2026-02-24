@@ -1,0 +1,253 @@
+---
+title: "Deep Analysis BYOK-01"
+type: "stale-analysis"
+archived_by: "MASTERCORDINATION-SESSION-2026-01-26"
+archived_date: "2026-01-26"
+original_path: "/bmad-output/analysis/deep-analysis-byok-01-2026-01-14.yaml"
+archive_path: "/bmad-ext/.archive/planning/analysis/"
+duplicate_of: "None"
+superseded_by: "EPIC-PH1B-BYOK-NOTES (planned)"
+reason: "Analysis report from 2026-01-14 (>30 days old). BYOK investigation superseded by Phase 1B epic planning."
+status: "STALE"
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# DEEP ANALYSIS EVIDENCE - BYOK-01
+# ═══════════════════════════════════════════════════════════════════════════
+
+artifact_id: "deep-analysis-byok-01-2026-01-14"
+story_id: "BYOK-01"
+analysis_date: "2026-01-14T20:00:00+07:00"
+analyst: "EXCALIBUR"
+team: "Team A"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CRITICAL FINDING: EPIC DESCRIPTION VS REALITY
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Discrepancy Summary
+
+| Aspect | Epic Description | Actual Reality | Status |
+|--------|------------------|----------------|--------|
+| Target File Size | 396 lines (god slice) | 397 lines, focused slice | ⚠️ MISLEADING |
+| Concerns Mixed | CRUD + Migration + Vault | Vault operations ONLY | ⚠️ INCORRECT |
+| Needs Split Into | crud-slice + vault-slice | Already split separately | ⚠️ ALREADY DONE |
+| CRUD Slice | Need to create (~100 lines) | Already exists: provider-crud-slice.ts (233 lines) | ✅ EXISTS |
+| Vault Slice | Need to create (~80 lines) | Already exists: provider-credentials-slice.ts (397 lines) | ✅ EXISTS |
+
+## Evidence File Locations
+
+### Target File Analysis
+**File**: `src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts`
+**Lines**: 397 (397 actual vs 396 claimed)
+**Purpose**: Vault integration ONLY (store/retrieve/has/delete/validate/sync)
+**Mixed Concerns**: NO - purely vault operations
+
+**Code Evidence**:
+```typescript
+// Lines 89-96: Actions - Vault Operations ONLY
+storeProviderKey: (providerId: string, apiKey: string) => Promise<void>;
+retrieveProviderKey: (providerId: string) => Promise<string | null>;
+hasProviderKey: (providerId: string) => Promise<boolean>;
+deleteProviderKey: (providerId: string) => Promise<void>;
+validateProviderKey: (providerId: string) => Promise<KeyValidationResult>;
+syncKeyFlags: () => Promise<void>;
+```
+
+### Already-Existing CRUD Slice
+**File**: `src/infrastructure/persistence/stores/providers/provider-crud-slice.ts`
+**Lines**: 233
+**Purpose**: Provider CRUD operations (add/update/remove/setActive/reset)
+
+**Code Evidence**:
+```typescript
+// Lines 99-105: Actions - CRUD Operations
+addProvider: (config: ProviderConfig) => void;
+updateProvider: (id: string, config: Partial<ProviderConfig>) => void;
+removeProvider: (id: string, agents?: any[]) => Promise<void>;
+setActiveProvider: (id: string) => void;
+reset: () => void;
+```
+
+### Migration Code (BYOK-03 Target)
+**File**: `src/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts`
+**Lines**: 389
+**Purpose**: Legacy migration from old storage to vault
+**Status**: Production code, should be archived
+
+### Provider Store Index
+**File**: `src/infrastructure/persistence/stores/providers/index.ts`
+**Structure**: Already exports 4 separate slices
+
+```typescript
+export { createProviderCrudSlice } from './provider-crud-slice';
+export { createProviderModelsSlice } from './provider-models-slice';
+export { createProviderUtilsSlice } from './provider-utils-slice';
+export { createProviderCredentialsSlice } from './provider-credentials-slice';
+```
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CROSS-IMPACT ANALYSIS
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Files That Import Provider Credentials
+
+| File | Line | Usage | Impact |
+|------|------|-------|--------|
+| `src/infrastructure/persistence/stores/providers/index.ts` | 25, 32 | Type export, slice export | Direct |
+| `src/infrastructure/persistence/stores/index.ts` | ? | Re-exports | Indirect |
+| `src/presentation/components/agent/useAgentConfigProvider.ts` | ? | Hook usage | Consumer |
+| `src/infrastructure/persistence/stores/use-app-store.ts` | ? | Store composition | Consumer |
+
+## Components Using Provider Credentials
+
+**Test Files**:
+- `src/presentation/components/agent/__tests__/ProviderConfigDialog.test.tsx`
+- `src/presentation/components/agent/__tests__/ProviderSettings.test.tsx`
+- `src/presentation/components/agent/__tests__/AgentConfigDialog.test.tsx`
+- `src/presentation/components/agent/__tests__/AgentConfigDialogIntegration.test.tsx`
+
+**Production Files**:
+- `src/presentation/components/agent/useAgentConfigProvider.ts`
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEAD CODE & OVERLAPS DETECTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Potential Dead Code
+1. **Migration Code** (`migrate-api-keys-to-vault.ts`): 389 lines
+   - Legacy code from vault migration
+   - Should be archived after verifying migration complete
+   - Covered by BYOK-03
+
+## No Code Overlaps Detected
+- Each slice has clear single responsibility
+- No duplicate functionality across slices
+- Cross-slice communication via `get()` pattern (proper Zustand pattern)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ARCHITECTURAL ASSESSMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Current Architecture Quality: ✅ GOOD
+
+### What's Already Correct
+1. **Clean Separation**: Provider store split into 4 focused slices
+2. **Single Responsibility**: Each slice handles one concern
+3. **Proper Zustand Patterns**: Cross-slice communication via `get()`
+4. **Type Safety**: Proper TypeScript interfaces
+
+### Lines Per Slice (Actual)
+| Slice | Lines | Purpose | Status |
+|-------|-------|---------|--------|
+| provider-crud-slice.ts | 233 | CRUD operations | ✅ Focused |
+| provider-credentials-slice.ts | 397 | Vault operations | ⚠️ Long but focused |
+| provider-models-slice.ts | ? | Model management | ? Need to check |
+| provider-utils-slice.ts | ? | Utility functions | ? Need to check |
+
+### provider-credentials-slice.ts Analysis
+**397 lines breaks down as**:
+- ~100 lines: Comments and documentation
+- ~50 lines: Type definitions
+- ~200 lines: Actual code (6 methods)
+- ~47 lines: AppState interface
+
+**Not a god slice** - just well-documented with comprehensive JSDoc.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RECOMMENDATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Critical Question for User
+
+**The Epic description appears to be based on outdated or incorrect information.**
+
+The provider-credentials-slice.ts:
+1. ✅ Is ALREADY focused only on vault operations
+2. ✅ Has CRUD ALREADY separated into provider-crud-slice.ts
+3. ✅ Follows proper Zustand patterns
+4. ⚠️ IS long (397 lines) but due to documentation, not mixed concerns
+
+### Options:
+
+**A) Skip BYOK-01** - Architecture already correct, mark story as N/A
+**B) Refine provider-credentials-slice.ts** - Reduce documentation, maybe extract types
+**C) Re-analyze** - Investigate if there's a different file that needs splitting
+**D) Proceed as planned** - Create new slices under `credentials/` subdirectory (rename/refactor)
+
+**What would you like to do?**
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GREP/GLOB EVIDENCE
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Glob Results
+```bash
+# Provider credential files found:
+src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts
+
+# Vault files found:
+src/lib/knowledge/vault-analyzer.ts
+
+# Provider store index found:
+src/infrastructure/persistence/stores/providers/index.ts
+```
+
+## Grep Results
+```bash
+# Import patterns:
+from './provider-credentials-slice' (2 matches)
+  - src/infrastructure/persistence/stores/providers/index.ts:25, 32
+
+# Store usage patterns:
+useProviderCredentials (7 files)
+  - Test files: 4
+  - Production: 3
+```
+
+## Store Slice Count
+```bash
+Total slice creators found: 88 occurrences across 86 files
+```
+
+# ═══════════════════════════════════════════════════════════════════════════
+# QUALITY GATE STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Deep Analysis Gate: ✅ PASSED
+- Context loaded via grep/glob
+- Evidence collected with file:line references
+- Cross-impact mapped
+- Dead code and overlaps detected
+
+## Detected Issues
+1. **Epic Description Mismatch**: Story description doesn't match actual code
+2. **Migration Code Still Present**: 389-line legacy file in production (BYOK-03 target)
+3. **provider-credentials-slice.ts Length**: 397 lines but due to documentation, not mixed concerns
+
+## Recommendations
+1. **Clarify**: Confirm with user if BYOK-01 should proceed as described
+2. **Archive**: BYOK-03 should definitely proceed (archive migration code)
+3. **Optional**: Consider reducing documentation verbosity in credentials slice
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEXT STEPS (Awaiting User Decision)
+# ═══════════════════════════════════════════════════════════════════════════
+
+### Option A: Skip BYOK-01
+- Mark as N/A (already correctly architected)
+- Proceed to BYOK-04 (projectId addition)
+
+### Option B: Refine provider-credentials-slice.ts
+- Extract types to separate file
+- Reduce inline documentation
+- Create `credentials/` subdirectory for organization
+
+### Option C: Re-investigate
+- Check if different file was intended
+- Verify architectural scan accuracy
+
+### Option D: Proceed as Planned
+- Execute BYOK-01 as written despite findings
+- Create new files even if redundant
+
+**Awaiting user decision before proceeding.**

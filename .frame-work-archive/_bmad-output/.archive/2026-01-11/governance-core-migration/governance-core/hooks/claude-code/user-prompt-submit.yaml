@@ -1,0 +1,243 @@
+# User Prompt Submit Hook
+# governance-core module
+# Triggered when user submits a prompt for work
+
+---
+name: "user-prompt-submit"
+module: "governance-core"
+version: "1.0.0"
+trigger: "user_prompt_submit"
+platform: "claude-code"
+created: "2026-01-10"
+
+description: |
+  Pre-work governance enforcement. This is the PRIMARY hook that triggers
+  the three enforcement checks before any work proceeds.
+
+  Trigger sequence:
+  1. User submits prompt
+  2. This hook captures the prompt
+  3. Triggers correct-course workflow (if needed)
+  4. Workflow returns ALLOW/WARN/BLOCK
+  5. If BLOCK: display report, wait for override
+  6. If ALLOW: proceed with original request
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HOOK EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution:
+  mode: "blocking"  # Block prompt processing until governance completes
+  timeout_seconds: 30
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TRIGGER CONDITIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+trigger_conditions:
+  # Always run for all prompts (governance is universal)
+  - condition: "true"
+    description: "All prompts require governance check"
+
+  # Skip for internal/system commands
+  - skip_if: "prompt starts with '/'"
+    description: "Slash commands are pre-validated"
+
+  # Skip for pure conversation
+  - skip_if: "prompt is_question_only"
+    description: "Questions don't need governance"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROMPT ANALYSIS
+# ═══════════════════════════════════════════════════════════════════════════
+
+prompt_analysis:
+  # Extract task type from prompt
+  task_type_detection:
+    patterns:
+      - pattern: /\b(create|add|new|build|implement)\b/i
+        type: "feature_development"
+      - pattern: /\b(fix|bug|error|issue|broken)\b/i
+        type: "bug_fix"
+      - pattern: /\b(refactor|restructure|reorganize)\b/i
+        type: "refactoring"
+      - pattern: /\b(test|spec)\b/i
+        type: "testing"
+      - pattern: /\b(doc|document|readme)\b/i
+        type: "documentation"
+
+  # Detect if prompt requires governance check
+  requires_governance:
+    indicators:
+      - "file modification"
+      - "code changes"
+      - "new implementation"
+      - "architectural changes"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STEPS
+# ═══════════════════════════════════════════════════════════════════════════
+
+steps:
+  - step_id: "validate-prompt"
+    name: "Validate Prompt"
+    action: "analyze"
+    checks:
+      - name: "is_question_only"
+        condition: "prompt ends with '?'"
+        skip_governance: true
+      - name: "is_slash_command"
+        condition: "prompt starts with '/'"
+        skip_governance: true
+      - name: "is_conversation"
+        condition: "prompt length < 50 and no action verbs"
+        skip_governance: true
+    on_skip: "return_immediately"
+
+  - step_id: "detect-task-type"
+    name: "Detect Task Type"
+    action: "classify"
+    input: "{{user_prompt}}"
+    classifier: "task_type_detection"
+    output_var: "task_type"
+
+  - step_id: "update-loop-state"
+    name: "Update LOOP_STATE Anchor"
+    action: "update"
+    path: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+    updates:
+      anchor:
+        human_intent_timestamp: "{{now}}"
+        human_intent_summary: "{{user_prompt | truncate(100)}}"
+        session_id: "{{session.id}}"
+    on_failure: "log_warning"
+
+  - step_id: "trigger-correct-course"
+    name: "Trigger Correct-Course Workflow"
+    action: "execute_workflow"
+    workflow: "{project-root}/.agent/workflows/bmad/bmad-bmb-workflows-correct-course.md"
+    input:
+      user_prompt: "{{user_prompt}}"
+      task_type: "{{task_type}}"
+      session_context: "{{session_context}}"
+    output_var: "governance_report"
+    timeout_seconds: 30
+
+  - step_id: "process-governance-report"
+    name: "Process Governance Report"
+    action: "route"
+    input: "{{governance_report}}"
+    routes:
+      - condition: "report.status == 'ALLOW'"
+        action: "proceed_with_prompt"
+      - condition: "report.status == 'WARN'"
+        action: "request_acknowledgment"
+      - condition: "report.status == 'BLOCK'"
+        action: "display_block_and_wait"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE RESPONSE HANDLING
+# ═══════════════════════════════════════════════════════════════════════════
+
+response_handling:
+
+  allow:
+    action: "proceed"
+    message: |
+      ✅ Governance Check Passed
+      ─────────────────────────────────────────────────────────
+      Proceeding with your request.
+      ─────────────────────────────────────────────────────────
+
+  warn:
+    action: "await_acknowledgment"
+    message_template: |
+      ⚠️ GOVERNANCE WARNING
+      ─────────────────────────────────────────────────────────
+      {{report.recommendation.message}}
+
+      To proceed, type: "I acknowledge" or "I accept"
+      ─────────────────────────────────────────────────────────
+    acknowledgment_patterns:
+      - "I acknowledge"
+      - "I accept"
+      - "I understand"
+    on_acknowledgment: "proceed_with_prompt"
+
+  block:
+    action: "await_override"
+    message_template: |
+      🔒 GOVERNANCE BLOCK
+      ─────────────────────────────────────────────────────────
+      {{report.recommendation.message}}
+
+      {{report.recommendation.details}}
+
+      To override, type: "I am aware but [reason]"
+      To cancel, type: "Cancel"
+      ─────────────────────────────────────────────────────────
+    override_patterns:
+      - "I am aware but*"
+      - "I acknowledge but*"
+    on_override: "log_debt_and_proceed"
+    on_cancel: "cancel_prompt"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEBT LOGGING
+# ═══════════════════════════════════════════════════════════════════════════
+
+debt_logging:
+  enabled: true
+  path: "{project-root}/_bmad-ext/state/technical-debt.yaml"
+
+  entry_template: |
+    - id: "DEBT-{{uuid}}"
+      timestamp: "{{now}}"
+      session_id: "{{session.id}}"
+      original_decision: "{{governance_report.status}}"
+      override_reason: "{{user_override_reason}}"
+      risk_multiplier: "{{governance_report.risk_multiplier}}"
+      skipped_stages: "{{governance_report.skipped_stages}}"
+      estimated_remediation: "{{governance_report.estimated_remediation}}"
+      prompt: "{{user_prompt}}"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════
+
+output:
+  format: "markdown"
+  display: true
+  destination: "user"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+integrates_with:
+  - workflow: "correct-course"
+    trigger: "on_prompt_submit"
+  - state_file: "LOOP_STATE.yaml"
+    purpose: "anchor_update"
+  - state_file: "technical-debt.yaml"
+    purpose: "override_logging"
+  - state_file: "stage-progress.yaml"
+    purpose: "stage_verification"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ERROR HANDLING
+# ═══════════════════════════════════════════════════════════════════════════
+
+error_handling:
+  on_workflow_timeout:
+    action: "fail_open"
+    message: "Governance check timed out. Proceeding with caution logged."
+
+  on_workflow_failure:
+    action: "fail_open"
+    message: "Governance check failed. Proceeding with caution logged."
+    log_to_debt: true
+
+  on_invalid_override:
+    action: "request_valid_override"
+    message: "Please use 'I am aware but [reason]' format to override."

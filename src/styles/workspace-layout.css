@@ -1,0 +1,272 @@
+/**
+ * Workspace Layout CSS - 6-Column Grid System
+ * ===========================================
+ *
+ * Layout structure:
+ * ┌────────┬────────┬──────────┬────────────────┬──────────┬────────┐
+ * │Global  │Activity│Plugin    │Main Content    │Plugin    │Activity│
+ * │Sidebar │Bar LEFT│LEFT      │(Notes/Monaco)  │RIGHT     │Bar     │
+ * │ 48px   │ 48px   │200-320px │   400px+       │250-400px │ 48px   │
+ * └────────┴────────┴──────────┴────────────────┴──────────┴────────┘
+ * + StatusBar at bottom (24px)
+ *
+ * Grid Template:
+ * - Columns: 48px 48px minmax(200px, 320px) 1fr minmax(250px, 400px) 48px
+ * - Rows: 1fr 24px
+ *
+ * 8-Bit Design Compliance:
+ * - border-radius: 0 (sharp corners)
+ * - border: 2px solid var(--border)
+ * - box-shadow: 4px 4px 0 0 var(--shadow) if needed
+ */
+
+/* ==========================================================================
+   BASE WORKSPACE LAYOUT CONTAINER
+   ========================================================================== */
+
+.workspace-layout {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  /* 6-column grid with named areas */
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    minmax(200px, 320px)    /* plugin-left */
+    1fr                     /* main-content */
+    minmax(250px, 400px)    /* plugin-right */
+    48px;                   /* activity-bar-right */
+
+  /* 2-row grid: main content + status bar */
+  grid-template-rows: 1fr 24px;
+
+  /* Named grid areas for semantic placement */
+  grid-template-areas:
+    "global-sidebar activity-bar-left plugin-left main-content plugin-right activity-bar-right"
+    "global-sidebar status-bar        status-bar  status-bar   status-bar   status-bar";
+
+  /* 8-bit aesthetic - sharp corners */
+  border-radius: 0;
+
+  /* Background using design tokens */
+  background-color: hsl(var(--background));
+}
+
+/* ==========================================================================
+   GRID AREA ASSIGNMENTS
+   ========================================================================== */
+
+.workspace-layout__global-sidebar {
+  grid-area: global-sidebar;
+  width: 48px;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0;
+  border-right: 2px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+.workspace-layout__activity-bar-left {
+  grid-area: activity-bar-left;
+  width: 48px;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0;
+  border-right: 2px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+.workspace-layout__plugin-left {
+  grid-area: plugin-left;
+  min-width: 200px;
+  max-width: 320px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* FIX: Prevent unwanted scrollbar */
+  border-radius: 0;
+  border-right: 2px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+.workspace-layout__main-content {
+  grid-area: main-content;
+  min-width: 400px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* FIX: Prevent unwanted scrollbar */
+  border-radius: 0;
+  background-color: hsl(var(--background));
+}
+
+.workspace-layout__plugin-right {
+  grid-area: plugin-right;
+  min-width: 250px;
+  max-width: 400px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* FIX: Prevent unwanted scrollbar */
+  border-radius: 0;
+  border-left: 2px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+.workspace-layout__activity-bar-right {
+  grid-area: activity-bar-right;
+  width: 48px;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0;
+  border-left: 2px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+.workspace-layout__status-bar {
+  grid-area: status-bar;
+  height: 24px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0;
+  border-top: 2px solid hsl(var(--border));
+  background-color: hsl(var(--muted));
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* Tablet breakpoint: 640px - 1023px */
+@media (max-width: 1023px) {
+  .workspace-layout {
+    /* Simplified 4-column layout for tablet */
+    grid-template-columns:
+      48px                    /* activity-bar-left */
+      minmax(200px, 280px)    /* plugin-left */
+      1fr                     /* main-content */
+      48px;                   /* activity-bar-right */
+
+    grid-template-rows: 1fr 24px;
+
+    grid-template-areas:
+      "activity-bar-left plugin-left main-content activity-bar-right"
+      "status-bar        status-bar  status-bar   status-bar";
+  }
+
+  /* Hide global sidebar and right plugin on tablet */
+  .workspace-layout__global-sidebar {
+    display: none;
+  }
+
+  .workspace-layout__plugin-right {
+    display: none;
+  }
+
+  /* Adjust plugin-left for tablet */
+  .workspace-layout__plugin-left {
+    max-width: 280px;
+  }
+}
+
+/* Mobile breakpoint: < 640px */
+@media (max-width: 639px) {
+  .workspace-layout {
+    /* Single column layout for mobile */
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 48px 24px;
+
+    grid-template-areas:
+      "main-content"
+      "activity-bar-left"
+      "status-bar";
+  }
+
+  /* Hide all sidebars except main content and bottom activity bar */
+  .workspace-layout__global-sidebar,
+  .workspace-layout__plugin-left,
+  .workspace-layout__plugin-right,
+  .workspace-layout__activity-bar-right {
+    display: none;
+  }
+
+  /* Activity bar becomes bottom navigation on mobile */
+  .workspace-layout__activity-bar-left {
+    grid-area: activity-bar-left;
+    width: 100%;
+    height: 48px;
+    border-right: none;
+    border-top: 2px solid hsl(var(--border));
+  }
+
+  /* Main content takes full width */
+  .workspace-layout__main-content {
+    min-width: auto;
+  }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+/* ==========================================================================
+   GRID COLLAPSE UTILITIES (Dynamic column collapse)
+   
+   FIX: Use display: none with grid-template-columns to collapse empty panels.
+   This removes empty space and allows main content to expand.
+   ========================================================================== */
+
+/* Collapse left plugin panel - column width becomes 0 */
+.workspace-layout--no-plugin-left {
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    0                       /* plugin-left (collapsed) */
+    1fr                     /* main-content (expands) */
+    minmax(250px, 400px)    /* plugin-right */
+    48px;                   /* activity-bar-right */
+}
+
+.workspace-layout--no-plugin-left .workspace-layout__plugin-left {
+  display: none;
+}
+
+/* Collapse right plugin panel - column width becomes 0 */
+.workspace-layout--no-plugin-right {
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    minmax(200px, 320px)    /* plugin-left */
+    1fr                     /* main-content (expands) */
+    0                       /* plugin-right (collapsed) */
+    48px;                   /* activity-bar-right */
+}
+
+.workspace-layout--no-plugin-right .workspace-layout__plugin-right {
+  display: none;
+}
+
+/* Collapse both plugin panels - both columns become 0 */
+.workspace-layout--no-plugin-left.workspace-layout--no-plugin-right {
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    0                       /* plugin-left (collapsed) */
+    1fr                     /* main-content (expands fully) */
+    0                       /* plugin-right (collapsed) */
+    48px;                   /* activity-bar-right */
+}
+
+/* Hide global sidebar but keep column width (fixed UI element) */
+.workspace-layout--no-global-sidebar .workspace-layout__global-sidebar {
+  visibility: hidden;
+}
+
+/* Hide status bar completely (no grid impact) */
+.workspace-layout--no-status-bar .workspace-layout__status-bar {
+  display: none;
+}
+
+/* ==========================================================================
+   NOTE: Scrollbar styles removed - overflow: hidden prevents scrollbars
+   If individual child components need scrolling, they manage their own overflow.
+   ========================================================================== */

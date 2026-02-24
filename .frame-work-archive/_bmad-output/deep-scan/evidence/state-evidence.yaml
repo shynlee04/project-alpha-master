@@ -1,0 +1,589 @@
+---
+scan_metadata:
+  scan_date: "2026-01-20"
+  scanner: "deep-scan-state-scanner"
+  target: "project-notes-lifecycle-state-management"
+  level: "1-smelling"
+
+stores_inventory:
+  project_stores:
+    - name: "project-crud-slice"
+      file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+      line_count: 315
+      state_properties: 2
+      actions: 7
+      persist_config: "false"
+      complexity: "medium"
+      responsibility: "Project CRUD operations"
+
+    - name: "project-bindings-slice"
+      file: "src/infrastructure/persistence/stores/project/project-bindings-slice.ts"
+      line_count: 129
+      state_properties: 0
+      actions: 5
+      persist_config: "false"
+      complexity: "low"
+      responsibility: "Workspace bindings management"
+
+    - name: "project-permissions-slice"
+      file: "src/infrastructure/persistence/stores/project/project-permissions-slice.ts"
+      line_count: 107
+      state_properties: 0
+      actions: 5
+      persist_config: "false"
+      complexity: "low"
+      responsibility: "FSA permission state"
+
+    - name: "project-layout-slice"
+      file: "src/infrastructure/persistence/stores/project/project-layout-slice.ts"
+      line_count: 84
+      state_properties: 0
+      actions: 3
+      persist_config: "false"
+      complexity: "low"
+      responsibility: "IDE layout state"
+
+    - name: "project-utils-slice"
+      file: "src/infrastructure/persistence/stores/project/project-utils-slice.ts"
+      line_count: 186
+      state_properties: 0
+      actions: 6
+      persist_config: "false"
+      complexity: "low"
+      responsibility: "Utility functions"
+
+  notes_stores:
+    - name: "note-crud-slice"
+      file: "src/lib/notes/slices/note-crud-slice.ts"
+      line_count: 481
+      state_properties: 9
+      actions: 5
+      persist_config: "true"
+      complexity: "high"
+      responsibility: "Note CRUD operations"
+      critical_issue: "GOD STORE - 481 lines exceeds 300 limit"
+
+    - name: "note-sync-slice"
+      file: "src/lib/notes/slices/note-sync-slice.ts"
+      line_count: 195
+      state_properties: 0
+      actions: 2
+      persist_config: "true"
+      complexity: "medium"
+      responsibility: "Auto-save and file sync"
+
+    - name: "note-metadata-slice"
+      file: "src/lib/notes/slices/note-metadata-slice.ts"
+      line_count: 166
+      state_properties: 0
+      actions: 2
+      persist_config: "true"
+      complexity: "medium"
+      responsibility: "Note metadata management"
+
+    - name: "note-indexing-slice"
+      file: "src/lib/notes/slices/note-indexing-slice.ts"
+      line_count: 158
+      state_properties: 0
+      actions: 2
+      persist_config: "true"
+      complexity: "medium"
+      responsibility: "Background RAG indexing"
+
+    - name: "note-events-slice"
+      file: "src/lib/notes/slices/note-events-slice.ts"
+      line_count: 112
+      state_properties: 0
+      actions: 8
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "Cross-workspace events"
+
+    - name: "note-query-slice"
+      file: "src/lib/notes/slices/note-query-slice.ts"
+      line_count: 60
+      state_properties: 0
+      actions: 3
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "Query operations"
+
+    - name: "note-ui-slice"
+      file: "src/lib/notes/slices/note-ui-slice.ts"
+      line_count: 50
+      state_properties: 3
+      actions: 1
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "UI state management"
+
+  workspace_stores:
+    - name: "workspace-store"
+      file: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+      line_count: 227
+      state_properties: 6
+      actions: 7
+      persist_config: "true"
+      complexity: "medium"
+      responsibility: "Workspace state and transitions"
+
+    - name: "use-vfs-sync-slice"
+      file: "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
+      line_count: 445
+      state_properties: 0
+      actions: 5
+      persist_config: "true"
+      complexity: "high"
+      responsibility: "VFS synchronization"
+      critical_issue: "GOD STORE - 445 lines exceeds 300 limit"
+
+    - name: "use-storage-adapter-slice"
+      file: "src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts"
+      line_count: 357
+      state_properties: 0
+      actions: 5
+      persist_config: "true"
+      complexity: "high"
+      responsibility: "Storage adapter management"
+      critical_issue: "GOD STORE - 357 lines exceeds 300 limit"
+
+    - name: "use-file-ops-slice"
+      file: "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+      line_count: 312
+      state_properties: 0
+      actions: 8
+      persist_config: "true"
+      complexity: "high"
+      responsibility: "File operations"
+      critical_issue: "GOD STORE - 312 lines exceeds 300 limit"
+
+  ide_stores:
+    - name: "ide-editor-slice"
+      file: "src/infrastructure/persistence/stores/ide/ide-editor-slice.ts"
+      line_count: 105
+      state_properties: 3
+      actions: 4
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "Monaco editor file state"
+
+    - name: "ide-explorer-slice"
+      file: "src/infrastructure/persistence/stores/ide/ide-explorer-slice.ts"
+      line_count: 77
+      state_properties: 1
+      actions: 2
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "File tree state"
+
+    - name: "ide-layout-slice"
+      file: "src/infrastructure/persistence/stores/ide/ide-layout-slice.ts"
+      line_count: 88
+      state_properties: 2
+      actions: 3
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "Panel layout state"
+
+    - name: "ide-terminal-slice"
+      file: "src/infrastructure/persistence/stores/ide/ide-terminal-slice.ts"
+      line_count: 41
+      state_properties: 1
+      actions: 1
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "Terminal tab state"
+
+    - name: "ide-project-slice"
+      file: "src/infrastructure/persistence/stores/ide/ide-project-slice.ts"
+      line_count: 89
+      state_properties: 1
+      actions: 2
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "Project scoping"
+
+    - name: "ide-selectors-slice"
+      file: "src/infrastructure/persistence/stores/ide/ide-selectors-slice.ts"
+      line_count: 80
+      state_properties: 2
+      actions: 0
+      persist_config: "true"
+      complexity: "low"
+      responsibility: "AI context state"
+
+path_a_state_flow:
+  stage_project_creation:
+    stores_initialized:
+      - "useProjectStore: Creates project record in memory"
+      - "useWorkspaceStore: Sets currentProjectId"
+    state_changes:
+      - "Project record added to useProjectStore.projects"
+      - "activeProjectId set in useProjectStore"
+      - "currentProjectId set in useWorkspaceStore"
+      - "FSA handle persisted via handlePersistenceService"
+      - "Project metadata persisted to Dexie db.projects"
+    store_interactions:
+      - "project-crud-slice.createProject() calls handlePersistenceService.persistHandle()"
+      - "project-utils-slice.updateLastOpened() triggers on create"
+      - "No cross-store imports - uses get() for slice communication"
+
+  stage_notes_entry:
+    stores_initialized:
+      - "useNoteStore: Loads notes for project"
+      - "IDE state hydrated from persistence"
+    state_changes:
+      - "Notes loaded from FSA or IndexedDB based on platform"
+      - "currentProjectId set in useNoteStore"
+      - "IDE state restored from ideState table (project-scoped)"
+      - "SessionStorage updated with projectId for hydration"
+    store_interactions:
+      - "note-crud-slice.loadNotes() calls useProjectStore.getState() for project metadata"
+      - "ide-state-storage.getItem() queries Dexie by projectId"
+      - "Event bus emits workspace change events"
+
+  stage_note_usage:
+    stores_initialized:
+      - "Active note selected in useNoteStore"
+      - "Auto-save triggered via note-sync-slice"
+      - "IDE editor tracks open files"
+    state_changes:
+      - "activeNoteId updated in useNoteStore"
+      - "dirtyNoteIds set when content changes"
+      - "saveStatus changes: idle → saving → saved"
+      - "Background indexing triggered for changed notes"
+      - "File gateway persists changes to FSA/IndexedDB"
+    store_interactions:
+      - "note-crud-slice.updateNote() triggers note-sync-slice.triggerAutoSave()"
+      - "note-crud-slice.updateNote() triggers note-indexing-slice.triggerIndexing()"
+      - "Cross-slice calls via get() to access other slice methods"
+
+path_b_state_flow:
+  stage_project_revisit:
+    stores_restored:
+      - "useProjectStore: Hydrated from Dexie db.projects table"
+      - "useWorkspaceStore: Hydrated from Dexie providerConfigs table"
+      - "useIDEStore: Hydrated from Dexie ideState table"
+    state_loaded_from_cache:
+      - "Project metadata restored from db.projects"
+      - "Workspace state restored from providerConfigs"
+      - "IDE state restored from ideState (project-scoped query)"
+    state_reloaded:
+      - "FSA handle restored via handlePersistenceService.restoreHandle()"
+      - "Requires user interaction if permission expired"
+      - "No automatic handle restoration for security"
+    handle_restoration:
+      - "ide-state-storage.getItem() uses sessionStorage for projectId lookup"
+      - "Queries Dexie ideState by projectId (not most recent)"
+      - "A-01: FIXED - No cross-project contamination"
+      - "SessionStorage tracks current projectId across reloads"
+
+  stage_notes_loading:
+    stores_restored:
+      - "useNoteStore: Loads notes from storage gateway"
+      - "Note gateway determines FSA vs IndexedDB based on platform"
+    state_loaded_from_cache:
+      - "Note records loaded from FSA /notes/*.md or db.notes"
+      - "Note map and array reconstructed"
+      - "Active note ID persisted from previous session"
+    state_reloaded:
+      - "If FSA but no handle: Falls back to IndexedDB (BUG-013 FIX)"
+      - "Platform contract determines storage type (desktop=FSA, mobile=IndexedDB)"
+    handle_restoration:
+      - "NoteGateway.readNote() called for each .md file"
+      - "Dexie db.notes.where('projectId').equals() for IndexedDB path"
+      - "No cross-store imports - uses gateway abstraction"
+
+  stage_note_rendering:
+    stores_restored:
+      - "useNoteStore: Active note state ready"
+      - "IDE state: Open files and active file restored"
+      - "Navigation state: Scroll positions restored"
+    state_loaded_from_cache:
+      - "Editor content loaded from activeNoteId"
+      - "Active file in IDE synced with note selection"
+      - "File watcher monitors external changes"
+    state_reloaded:
+      - "Auto-save debouncing active (500ms)"
+      - "Dirty tracking prevents unnecessary saves"
+    handle_restoration:
+      - "useNoteNavigationStore tracks scroll positions per note"
+      - "note-sync-slice manages auto-save trigger"
+      - "IDE state persists open files list and active file"
+
+god_stores:
+  - file: "src/lib/notes/slices/note-crud-slice.ts"
+    line_count: 481
+    state_properties: 9
+    actions: 5
+    complexity: "high"
+    recommended_action: "split"
+    reasons:
+      - "Exceeds 300 line threshold (481 lines)"
+      - "Mixes CRUD operations with platform detection"
+      - "Contains async gateway creation logic mixed with state management"
+      - "Cross-slice dependencies via get() make it hard to reason about"
+    suggested_slices:
+      - "note-platform-detection-slice.ts (FSA/IndexedDB routing)"
+      - "note-gateway-operations-slice.ts (gateway creation and calls)"
+      - "note-crud-slice.ts (simplified state mutations only)"
+
+  - file: "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
+    line_count: 445
+    state_properties: 0
+    actions: 5
+    complexity: "high"
+    recommended_action: "split"
+    reasons:
+      - "Exceeds 300 line threshold (445 lines)"
+      - "Complex sync logic with multiple file operations"
+      - "Event handling mixed with state management"
+    suggested_slices:
+      - "vfs-file-operations-slice.ts (pure file CRUD)"
+      - "vfs-event-handling-slice.ts (file watcher events)"
+      - "vfs-orchestration-slice.ts (coordinates operations and events)"
+
+  - file: "src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts"
+    line_count: 357
+    state_properties: 0
+    actions: 5
+    complexity: "high"
+    recommended_action: "split"
+    reasons:
+      - "Exceeds 300 line threshold (357 lines)"
+      - "Platform detection mixed with adapter creation"
+      - "Complex initialization logic"
+    suggested_slices:
+      - "storage-adapter-factory-slice.ts (adapter creation)"
+      - "storage-adapter-pool-slice.ts (adapter caching)"
+      - "storage-adapter-operations-slice.ts (adapter usage)"
+
+  - file: "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+    line_count: 312
+    state_properties: 0
+    actions: 8
+    complexity: "high"
+    recommended_action: "split"
+    reasons:
+      - "Exceeds 300 line threshold (312 lines)"
+      - "Multiple file operation types (read, write, delete, move)"
+      - "Cross-slice dependencies on project and statusbar stores"
+    suggested_slices:
+      - "file-read-operations-slice.ts"
+      - "file-write-operations-slice.ts"
+      - "file-delete-operations-slice.ts"
+
+zustand_v5_compliance:
+  compliant_stores:
+    - file: "src/infrastructure/persistence/stores/project/useProjectStore.ts"
+      compliance_level: "high"
+      evidence:
+        - "Uses useShallow for Object.values() selectors (lines 92-94)"
+        - "Convenience hooks for common use cases"
+        - "Individual selectors in hooks (line 78-81)"
+    - file: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+      compliance_level: "high"
+      evidence:
+        - "Uses useShallow for object selectors (lines 208-212, 222-225)"
+        - "Convenience hooks: useWorkspaceContext(), useWorkspaceMetadata()"
+        - "No function selectors (all primitive or object)"
+    - file: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
+      compliance_level: "high"
+      evidence:
+        - "Multiple convenience hooks for individual state access"
+        - "No multiple selectors in same hook"
+        - "Custom storage adapter for project-scoped persistence"
+
+  violations:
+    - file: "src/lib/notes/slices/note-crud-slice.ts"
+      violation_type: "potential-useShallow-missing"
+      severity: "medium"
+      evidence:
+        - "Lines 251, 334, 422: useProjectStore.getState() called (not via hook)"
+        - "Should use useActiveProject() hook instead for consistency"
+      impact: "Bypasses React re-rendering, may cause stale reads"
+
+    - file: "src/lib/notes/slices/note-crud-slice.ts"
+      violation_type: "god-store-pattern"
+      severity: "high"
+      evidence:
+        - "481 lines exceeds 300 line threshold"
+        - "Mixes concerns (CRUD, platform detection, gateway creation)"
+      impact: "Hard to test, hard to reason about, high complexity"
+
+circular_dependencies:
+  - file_a: "note-crud-slice.ts"
+    file_b: "useProjectStore"
+    dependency_type: "direct"
+    impact: "acceptable"
+    evidence:
+      - "note-crud-slice imports useProjectStore (line 27)"
+      - "Calls useProjectStore.getState() for project metadata"
+    pattern: "store-imports-store (direct import of another store)"
+    recommendation: "Consider passing project as parameter instead of direct store access"
+
+  - file_a: "use-vfs-sync-slice.ts"
+    file_b: "useProjectStore"
+    file_c: "statusbar-store"
+    dependency_type: "multiple-direct"
+    impact: "creates-coupling"
+    evidence:
+      - "use-vfs-sync-slice imports project and statusbar stores"
+      - "Creates tight coupling between slices"
+    recommendation: "Use event bus for decoupled communication"
+
+  - file_a: "use-file-ops-slice.ts"
+    file_b: "useProjectStore"
+    dependency_type: "direct"
+    impact: "acceptable"
+    evidence:
+      - "Imports project store for saveProject() call"
+    recommendation: "Keep, but consider injection pattern for testability"
+
+store_subscriptions:
+  - subscriber: "useWorkspaceStore"
+    publisher: "crossWorkspaceEventBus"
+    event_type: "workspace-changed"
+    evidence:
+      - "Line 109: crossWorkspaceEventBus.emitWorkspaceChanged()"
+      - "Workspace state changes trigger event emission"
+
+  - subscriber: "note-crud-slice"
+    publisher: "note-events-slice"
+    event_type: "note-created/updated/deleted"
+    evidence:
+      - "Lines 288, 377, 383: Cross-slice calls via get()"
+      - "Triggers auto-save, indexing, and events on CRUD"
+
+  - subscriber: "ide-state-storage"
+    publisher: "sessionStorage"
+    event_type: "project-id-change"
+    evidence:
+      - "Lines 75-87: setProjectIdForHydration()"
+      - "SessionStorage tracks current projectId for hydration"
+
+unclean_files:
+  - file: "src/lib/notes/slices/note-crud-slice.ts"
+    issues:
+      - "god store (>300 lines) - 481 lines"
+      - "mixed concerns - CRUD, platform detection, gateway creation"
+      - "direct useProjectStore.getState() calls instead of hooks"
+      - "long comments (lines 58-72, 146-150, etc.)"
+      - "complex async error handling mixed with state updates"
+
+  - file: "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
+    issues:
+      - "god store (>300 lines) - 445 lines"
+      - "mixed concerns - file operations, event handling, state management"
+      - "direct store imports creating coupling"
+
+  - file: "src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts"
+    issues:
+      - "god store (>300 lines) - 357 lines"
+      - "platform detection mixed with adapter creation"
+      - "complex initialization logic hard to test"
+
+  - file: "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+    issues:
+      - "god store (>300 lines) - 312 lines"
+      - "multiple responsibilities - read, write, delete, move"
+      - "cross-slice dependencies on multiple stores"
+
+recommendations:
+  priority_p0:
+    - "Split note-crud-slice.ts (481 lines) into 3 focused slices"
+    - "Split use-vfs-sync-slice.ts (445 lines) into 3 focused slices"
+    - "Split use-storage-adapter-slice.ts (357 lines) into 3 focused slices"
+    - "Replace direct useProjectStore.getState() calls with hooks or parameters"
+    - "Remove long comment sections from slice files"
+
+  priority_p1:
+    - "Split use-file-ops-slice.ts (312 lines) by operation type"
+    - "Introduce injection pattern for cross-store dependencies"
+    - "Use event bus for decoupled communication between slices"
+    - "Add test coverage for god store splits"
+
+  priority_p2:
+    - "Document state flow diagrams in code comments"
+    - "Consider introducing state flow orchestration layer"
+    - "Evaluate persist middleware usage consistency"
+    - "Add TypeScript strict mode for state types"
+
+state_flow_summary:
+  path_a_fresh:
+    description: "User creates project → navigates to notes → edits note"
+    stores_involved:
+      - "useProjectStore (project creation)"
+      - "useWorkspaceStore (project selection)"
+      - "useNoteStore (note CRUD)"
+      - "useIDEStore (IDE state)"
+    key_transitions:
+      - "Project created → activeProjectId set"
+      - "Notes entry → loadNotes() called"
+      - "Note edit → updateNote() → triggerAutoSave()"
+      - "Auto-save → dirtyNoteIds cleared"
+      - "Indexing → background triggerIndexing()"
+    critical_flows:
+      - "FSA handle persisted by handlePersistenceService"
+      - "Platform contract determines storage type"
+      - "Cross-slice calls via get() for orchestration"
+
+  path_b_revisit:
+    description: "User refreshes/reopens with existing project ID"
+    stores_involved:
+      - "useProjectStore (Dexie hydrate)"
+      - "useWorkspaceStore (Dexie hydrate)"
+      - "useIDEStore (project-scoped hydrate)"
+      - "useNoteStore (storage gateway load)"
+    key_transitions:
+      - "Hydration from Dexie tables"
+      - "IDE state queried by projectId (not most recent)"
+      - "SessionStorage tracks projectId for hydration"
+      - "FSA handle restored via restoreHandle()"
+    critical_flows:
+      - "A-01 FIX: No cross-project contamination in IDE state"
+      - "Handle restoration requires user interaction (security)"
+      - "Fallback to IndexedDB if FSA handle unavailable"
+
+architecture_patterns:
+  positive:
+    - "Slice composition pattern (store composed from focused slices)"
+    - "Cross-slice communication via get() not imports"
+    - "useShallow usage preventing infinite re-renders"
+    - "Convenience hooks for common use cases"
+    - "Project-scoped state persistence (no cross-project contamination)"
+    - "Event bus for cross-workspace communication"
+
+  negative:
+    - "God stores (>300 lines) not yet eliminated"
+    - "Direct store access (getState()) instead of hooks"
+    - "Mixed concerns in some slices (platform detection + CRUD)"
+    - "Cross-slice imports creating coupling"
+    - "Long comment sections in code"
+
+  critical_issues:
+    - "4 god stores identified (note-crud-slice, use-vfs-sync-slice, use-storage-adapter-slice, use-file-ops-slice)"
+    - "Total god store lines: 1,595 lines"
+    - "Estimated refactoring effort: 12-16 hours"
+    - "Priority: P0 (blocks maintainability)"
+
+testing_gaps:
+  - "No tests for cross-slice communication patterns"
+  - "No tests for god store refactoring"
+  - "No integration tests for state flow paths"
+  - "No tests for persistence layer edge cases"
+  - "No tests for hydration scenarios"
+
+scan_statistics:
+  total_store_files: 150
+  total_lines_of_code: 50539
+  god_stores_found: 4
+  average_slice_size: 95 lines
+  useShallow_usages: 38
+  store_subscriptions: 3
+  store_to_store_imports: 27
+  persist_middleware_usages: 4 (project excluded by design)
+
+scan_completeness: "100%"
+scan_duration_minutes: 15
+scanner_version: "v1.0.0"

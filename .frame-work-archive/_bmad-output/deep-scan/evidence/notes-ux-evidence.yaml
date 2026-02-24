@@ -1,0 +1,592 @@
+# Notes UX Analysis Evidence
+# Generated: 2026-01-20
+# Scanner: deep-scan-ux-scanner
+# Scope: Notes Workspace (routes/notes.*.tsx + components/notes/)
+
+notes_ux_analysis:
+  route_flow:
+    entry_point: "/projects hub → /notes/$projectId"
+
+    navigation_steps:
+      - step: 1
+        route: "/hub → /notes/$projectId"
+        loader: "TanStack Router loader (async)"
+        loading_state: "No explicit skeleton - page waits on loader"
+        blocking: "YES - loader blocks route rendering"
+        hydration_time: "Estimated 100-300ms (Dexie query + hydration wait)"
+
+      - step: 2
+        route: "/notes/$projectId (component rendering)"
+        components_loaded: ["ProjectProvider", "NotesPage", "NoteSidebar"]
+        initial_note_open: "No automatic note open - user must select from sidebar or create new"
+        editor_ready: "NoteEditor renders after note selected - BlockNote initializes with sanitized blocks"
+
+      - step: 3
+        action: "user selects or creates note"
+        operation_flow: "NoteSidebar.onNoteSelect → setActiveNote → NoteEditor renders BlockNote"
+        loading_state: "BlockNote sanitizes blocks before rendering (can add 50-200ms)"
+        feedback: "No explicit loading indicator - BlockNote renders immediately with sanitized blocks"
+
+      - step: 4
+        action: "user edits note"
+        operation_flow: "BlockNote onChange → debouncedSave(500ms) → updateNote → store.saveNoteToFile (2s debounce)"
+        loading_state: "saveStatus: 'saving' → 'saved' (shown in status bar)"
+        feedback: "Status bar shows 'Saving...' → 'Saved' (color change yellow → green)"
+
+  loading_states:
+    all_loading_states:
+      - component: "Route loader"
+        state: "loading"
+        visual_indicator: "None - browser default loading or previous page until data loads"
+        blocking: "true"
+        timeout: "No timeout (browser-managed)"
+        fallback: "Redirect to /hub if project not found"
+
+      - component: "Project context loading"
+        state: "loading"
+        visual_indicator: "Spinner (8x8px border-4 border-primary with animate-spin)"
+        location: "NotesPage.tsx:92-99"
+        blocking: "false - renders centered spinner while waiting"
+        timeout: "None - waits indefinitely for project context"
+
+      - component: "Auto-import files"
+        state: "loading"
+        visual_indicator: "Full-screen overlay with spinner, progress bar, file counter"
+        location: "NotesPage.tsx:648-676 (mobile), 777-804 (desktop)"
+        blocking: "true - covers entire UI with backdrop"
+        timeout: "30 seconds (Promise.race timeout)"
+        fallback: "Shows error toast on timeout, imports partial results"
+
+      - component: "BlockNote editor initialization"
+        state: "loading (implicit)"
+        visual_indicator: "None - renders empty paragraph immediately"
+        location: "NoteEditor.tsx:689-692"
+        blocking: "true - sanitizes blocks before rendering"
+        timeout: "None - but block corruption detection forces remount on errors"
+
+      - component: "AI block generation"
+        state: "loading"
+        visual_indicator: "BlockLoadingOverlay - spinner, command name, typing indicator, token counter, elapsed time"
+        location: "BlockLoadingOverlay.tsx:27-35, 150-211"
+        blocking: "true - covers individual block with backdrop"
+        timeout: "None - but shows elapsed time after 3 seconds"
+
+      - component: "Save status"
+        state: "saving / saved / error"
+        visual_indicator: "Status bar text with color-coded states (yellow=saving, green=saved, red=error)"
+        location: "NoteEditor.tsx:873-919, NoteEditor.css:61-93"
+        blocking: "false - non-blocking indicator in toolbar"
+        timeout: "None - persists until next save"
+
+      - component: "Indexing notes for RAG"
+        state: "loading"
+        visual_indicator: "NotesIndexingButton shows spinner"
+        location: "NotesIndexingButton.tsx:137"
+        blocking: "false"
+        timeout: "None"
+
+    blocking_operations:
+      - operation: "Route loader"
+        blocks: "Page rendering - no content shown until Dexie query completes"
+        duration: "Estimated 100-300ms"
+        visual_feedback: "None (browser default loading)"
+        optimization: "Could add skeleton loader during route transition"
+
+      - operation: "Auto-import project files"
+        blocks: "Full UI - covers entire workspace with overlay"
+        duration: "Varies by file count (1-30s, 30s timeout)"
+        visual_feedback: "Spinner + progress bar + file name + percentage"
+        optimization: "Already optimized - runs in background after notes loaded"
+
+      - operation: "BlockNote initialization"
+        blocks: "Editor content - sanitizes blocks before rendering"
+        duration: "Estimated 50-200ms for large notes"
+        visual_feedback: "None"
+        optimization: "Could show skeleton during sanitization"
+
+      - operation: "AI block generation"
+        blocks: "Individual block - overlay covers single block"
+        duration: "Varies (2-30s depending on AI response)"
+        visual_feedback: "Comprehensive (spinner + typing indicator + token counter + elapsed time)"
+        optimization: "Good - non-blocking for other blocks"
+
+  lazy_loading:
+    lazy_loaded_components:
+      - component: "Notes route"
+        loading_strategy: "lazy-loaded via TanStack Router (notes.lazy.tsx)"
+        loading_time: "Estimated 50-150ms (chunk download + parse)"
+        fallback: "None (uses route loader for data)"
+        cache: "Yes - chunk cached after first load"
+        location: "src/routes/notes.lazy.tsx"
+
+      - component: "BlockNote editor"
+        loading_strategy: "NOT lazy-loaded - synchronous import"
+        loading_time: "Estimated 20-50ms (already loaded)"
+        fallback: "None"
+        cache: "N/A - not lazy-loaded"
+        location: "NoteEditor.tsx:19-23 (direct imports)"
+
+      - component: "UnifiedChatPanel"
+        loading_strategy: "NOT lazy-loaded - synchronous import"
+        loading_time: "Estimated 20-50ms"
+        fallback: "None"
+        cache: "N/A"
+        location: "NotesPage.tsx:33"
+
+      - component: "AI dialogs (AIPromptDialog, AITransformMenu, etc)"
+        loading_strategy: "Code-split but NOT React.lazy - loaded with main chunk"
+        loading_time: "Minimal (already loaded with NotesPage)"
+        fallback: "None"
+        cache: "N/A"
+        location: "NotesPage.tsx imports"
+
+    lazy_loading_issues:
+      - issue: "BlockNote editor not lazy-loaded"
+        impact: "Increases initial bundle size"
+        severity: "P2"
+        suggested_fix: "Could lazy-load BlockNote if editor rarely used"
+
+      - issue: "No skeleton screen for route transition"
+        impact: "Perceived latency - blank screen while loader runs"
+        severity: "P1"
+        suggested_fix: "Add skeleton loader in route loader or component"
+
+  hydration_patterns:
+    synchronous_hydration:
+      - component: "Project context"
+        hydrates_immediately: true
+        hydration_content: "ProjectProvider wraps NotesPage with project data from loader"
+        blocking: "Blocks NotesPage rendering until project loads"
+        priority: "P0"
+        location: "notes.$projectId.tsx:95-98"
+
+      - component: "BlockNote editor"
+        hydrates_immediately: true
+        hydration_content: "Sanitized blocks from note (or empty paragraph)"
+        blocking: "Blocks editor content rendering until sanitization complete"
+        priority: "P0"
+        location: "NoteEditor.tsx:465-685 (initialContent useMemo + sanitizeBlocks)"
+
+      - component: "NoteSidebar"
+        hydrates_immediately: true
+        hydration_content: "Notes list from noteStore (already hydrated from Dexie)"
+        blocking: "None - sidebar renders immediately"
+        priority: "P1"
+        location: "NotesPage.tsx:829-858"
+
+    background_hydration:
+      - component: "Auto-import files"
+        hydrates_in_background: true
+        hydration_content: "Project .md files imported into IndexedDB"
+        non_blocking: "Shows progress overlay, but allows reading notes"
+        priority: "P1"
+        location: "NotesPage.tsx:275-350 (useEffect with isNotesSyncReady check)"
+
+      - component: "File sync service initialization"
+        hydrates_in_background: true
+        hydration_content: "FSA handle storage, file watcher setup"
+        non_blocking: "Auto-init in background after route loaded"
+        priority: "P1"
+        location: "NotesPage.tsx:255-271 (useEffect with autoInitAttemptedRef)"
+
+      - component: "Debounced auto-save to file"
+        hydrates_in_background: true
+        hydration_content: "Note blocks synced to .md file on disk"
+        non_blocking: "2s debounce - non-blocking save to IndexedDB first"
+        priority: "P0"
+        location: "note-sync-slice.ts:97-143 (2000ms debounce)"
+
+  error_handling:
+    error_states:
+      - error: "Project not found"
+        trigger: "Dexie query returns null for projectId"
+        user_feedback: "Redirect to /hub (no error message shown)"
+        recovery: "User navigates to hub and selects valid project"
+        logging: "Console.error in route loader (line 56-58)"
+        location: "notes.$projectId.tsx:55-58"
+
+      - error: "Note not found / no note selected"
+        trigger: "NoteEditor receives empty noteId or note not in store"
+        user_feedback: "Empty state with 'No note selected' message + Create Note button"
+        recovery: "User clicks Create Note or selects from sidebar"
+        logging: "None (intentional empty state, not error)"
+        location: "NoteEditor.tsx:921-929, NoteEditorEmpty.tsx:1059-1086"
+
+      - error: "Block corruption (ProseMirror node position errors)"
+        trigger: "Malformed blocks in note.blocks array (missing id, type, props, or content structure)"
+        user_feedback: "Toast error: 'Note corruption detected: X damaged block(s) removed. Note may display incompletely.'"
+        recovery: "Auto-removes invalid blocks, forces editor remount with corruptionDetected counter"
+        logging: "Console.error with block details and stack trace"
+        location: "NoteEditor.tsx:655-675, 978-1008 (ErrorBoundary)"
+
+      - error: "BlockNote render error (ProseMirror crashes)"
+        trigger: "ProseMirror errors in BlockNoteView"
+        user_feedback: "ErrorBoundary catches error, forces editor remount, shows console error"
+        recovery: "Auto-remounts editor with corruptionDetected counter increment"
+        logging: "Console.error with ProseMirror error message and stack"
+        location: "NoteEditor.tsx:978-1008 (ErrorBoundary)"
+
+      - error: "Markdown sync conflict"
+        trigger: "External .md file modified while local editor has unsaved changes"
+        user_feedback: "MarkdownSyncConflictDialog with resolution options (Keep Local / Keep External / Defer / Ignore)"
+        recovery: "User chooses resolution: Keep Local (overwrite file), Keep External (reload from file), Defer (ask later), Ignore (skip)"
+        logging: "Console.log in dialog resolution handlers"
+        location: "MarkdownSyncConflictDialog.tsx:91-328"
+
+      - error: "Auto-import timeout"
+        trigger: "File import takes >30 seconds"
+        user_feedback: "Toast error: 'Failed to auto-import files' with description 'Import took too long. The folder may be too large or access was denied.'"
+        recovery: "User retries import manually via Import button"
+        logging: "Console.error with timeout message"
+        location: "NotesPage.tsx:322-334"
+
+      - error: "Auto-import failure"
+        trigger: "FileSyncService.importDirectory throws error (permission denied, I/O error)"
+        user_feedback: "Toast error: 'Failed to auto-import files' with error message"
+        recovery: "User retries import manually or checks file permissions"
+        logging: "Console.error with full error details"
+        location: "NotesPage.tsx:322-334"
+
+      - error: "File sync service initialization error"
+        trigger: "NotesFileSyncService initialization fails"
+        user_feedback: "SyncStatusPanel shows error state with details"
+        recovery: "User retries via File Sync button in sidebar"
+        logging: "Console.error in useFileSyncService hook"
+        location: "NotesFilePicker.tsx:156-178, 240 (error display)"
+
+      - error: "AI generation failure"
+        trigger: "AI API returns error, times out, or returns empty content"
+        user_feedback: "Toast error: 'AI generation failed. Please try again.' or specific error message (no API key, no agent selected)"
+        recovery: "User retries AI command or configures API key / agent"
+        logging: "Console.error with error details and stack"
+        location: "AISlashCommand.tsx:201-223"
+
+      - error: "Manual save to file failure"
+        trigger: "saveNoteToFile throws error (file locked, permission denied, I/O error)"
+        user_feedback: "Toast error: 'Failed to save to file' with error description"
+        recovery: "User retries save or checks file permissions"
+        logging: "Console.error with error details"
+        location: "NoteEditor.tsx:833-846"
+
+    error_recovery_patterns:
+      - pattern: "Auto-retry"
+        errors: ["Block corruption", "ProseMirror render errors"]
+        recovery: "Forces editor remount with corruptionDetected counter"
+
+      - pattern: "User choice"
+        errors: ["Sync conflict"]
+        recovery: "Shows dialog with resolution options, requires user decision"
+
+      - pattern: "Manual retry"
+        errors: ["Import failure", "Save failure", "AI generation failure"]
+        recovery: "Shows toast error, user must manually retry action"
+
+      - pattern: "Auto-redirect"
+        errors: ["Project not found"]
+        recovery: "Redirects to /hub automatically"
+
+  responsive_design:
+    desktop_layout: "3-column resizable layout (Sidebar 20% + Editor 50% + Chat 30%) with ResizablePanelGroup"
+
+    tablet_layout: "Same as desktop layout (responsive via ResizablePanel minPixelSize: 220px sidebar, 400px editor, 280px chat)"
+
+    mobile_layout: "Single-column layout with NotesMobileLayout component:
+      - Bottom navigation bar (Notes, Search, AI, Threads tabs)
+      - Content tabs (All, Favorites, Tags)
+      - Toggle between list view and editor view (not side-by-side)
+      - Back button in editor header to return to list
+      - Chat panel replaced by bottom nav 'AI' tab
+      - Sidebar hidden (integrated into mobile layout)
+      - Formatting toolbar docked at bottom (NoteEditor.css:234-245)"
+
+    mobile_compatibility:
+      blocknote_editor: "WORKS - BlockNote editor fully functional on mobile with:
+        - Touch-friendly targets (min 44px per NoteEditor.css:227-233)
+        - Bottom-docked formatting toolbar (NoteEditor.css:234-245)
+        - Responsive padding (12px on mobile vs 16px desktop)
+        - Reduced motion support (NoteEditor.css:251-254)"
+
+      sidebar: "MODIFIED - Not visible as separate panel on mobile:
+        - Integrated into NotesMobileLayout as bottom navigation
+        - Content tabs (All/Favorites/Tags) replace sidebar filters
+        - Note list rendered in main content area
+        - Back button in editor header replaces sidebar navigation"
+
+      chat: "MODIFIED - UnifiedChatPanel rendered in bottom nav 'AI' tab:
+        - Full-screen chat interface on mobile
+        - Bottom navigation switches between Notes/Search/AI/Threads
+        - Thread management via 'Threads' tab
+        - Not side-by-side with editor (unlike desktop)"
+
+      mobile_fallback: "No fallback - Notes workspace fully functional on mobile:
+        - All features available (create/edit notes, AI commands, file sync)
+        - File sync shows warning for desktop-only features (FSA requires desktop)
+        - IndexedDB mode works fully on mobile"
+
+    responsive_breakpoints:
+      - breakpoint: "Mobile (<768px)"
+        layout: "NotesMobileLayout (single-column, bottom nav)"
+        touch_targets: "min 44px (enforced via CSS)"
+
+      - breakpoint: "Tablet (768px - 1023px)"
+        layout: "Desktop 3-column layout (resizable)"
+        touch_targets: "Standard"
+
+      - breakpoint: "Desktop (>=1024px)"
+        layout: "Desktop 3-column layout (resizable)"
+        touch_targets: "Standard"
+
+  accessibility:
+    keyboard_shortcuts:
+      - shortcut: "Cmd/Ctrl + ["
+        action: "Toggle sidebar collapse/expand"
+        documented: false (not in UI, only code comment)
+        location: "NotesPage.tsx:163-175 (effect hook)"
+
+      - shortcut: "None documented for note creation/save"
+        action: "N/A"
+        documented: false
+        issue: "P2 - User must click buttons (no Cmd+N, Cmd+S)"
+
+    screen_reader_support:
+      - component: "NoteSidebar"
+        a11y_support: "GOOD - Comprehensive ARIA attributes"
+        features:
+          - "aria-pressed on view tabs (notes/files/rag)"
+          - "aria-label on all buttons"
+          - "role='tree' on note tree container"
+          - "role='treeitem' on note items"
+          - "aria-expanded on collapsible notes"
+          - "aria-selected on active note"
+        location: "NoteSidebar.tsx:155-373, NoteTreeItem.tsx:87-147"
+
+      - component: "NotesMobileLayout"
+        a11y_support: "GOOD - Tab navigation ARIA"
+        features:
+          - "role='tab' on navigation tabs"
+          - "role='tabpanel' on content areas"
+          - "aria-selected on active tabs"
+          - "aria-label on all buttons"
+        location: "NotesMobileLayout.tsx:108-148"
+
+      - component: "BlockNote editor"
+        a11y_support: "UNKNOWN - Depends on BlockNote library defaults"
+        features:
+          - "BlockNote provides basic ARIA out of box"
+          - "No custom ARIA enhancements visible"
+        location: "NoteEditor.tsx (BlockNoteView render)"
+
+      - component: "MarkdownSyncConflictDialog"
+        a11y_support: "GOOD - Dialog ARIA"
+        features:
+          - "Radix UI Dialog provides ARIA automatically"
+          - "aria-label on resolution buttons"
+          - "Keyboard navigation (Esc to close)"
+        location: "MarkdownSyncConflictDialog.tsx:254-326 (DialogFooter)"
+
+    focus_management:
+      - component: "NoteSidebar buttons"
+        focus_behavior: "focus:outline-none focus:ring-2 focus:ring-primary on all buttons"
+        location: "NoteSidebar.tsx:144-199"
+
+      - component: "NoteTreeItem"
+        focus_behavior: "focus:outline-none focus:ring-1 focus:ring-primary"
+        location: "NoteTreeItem.tsx:94"
+
+      - component: "Inputs and dialogs"
+        focus_behavior: "focus:ring-primary on all interactive elements"
+        location: "Multiple components (InBlockAIPopup, PromptShareDialog, etc)"
+
+      - issue: "No focus restoration after closing dialogs"
+        severity: "P2"
+        impact: "Focus lost, screen reader users may lose context"
+        location: "All dialogs (no explicit focus restoration)"
+
+    i18n_compliance:
+      - component: "All UI text"
+        i18n_support: "EXCELLENT - All strings use t() function"
+        location: "All components use useTranslation() hook"
+        examples:
+          - "NoteSidebar.tsx:89 (useTranslation hook)"
+          - "NoteEditor.tsx:446 (useTranslation hook)"
+          - "NotesPage.tsx:75 (useTranslation hook)"
+
+  ux_issues:
+    friction_points:
+      - issue: "No skeleton screen during route loader"
+        location: "notes.$projectId.tsx:44-64 (route loader)"
+        severity: "P1"
+        user_impact: "Perceived latency - blank screen for 100-300ms while project loads"
+        suggested_improvement: "Add skeleton loader in NotesPage or route loader to show placeholder content immediately"
+
+      - issue: "No automatic note selection"
+        location: "NotesPage.tsx:871-886 (empty editor state)"
+        severity: "P1"
+        user_impact: "User must click 'Create New Note' button to start writing - extra step on first visit"
+        suggested_improvement: "Auto-create and select a default note (Welcome Note) on first visit, or auto-select most recent note"
+
+      - issue: "No visible loading state for BlockNote initialization"
+        location: "NoteEditor.tsx:689-692 (useCreateBlockNote)"
+        severity: "P2"
+        user_impact: "Editor feels laggy for 50-200ms on note switch while sanitization runs"
+        suggested_improvement: "Show spinner or skeleton during block sanitization for large notes"
+
+      - issue: "Keyboard shortcuts not documented in UI"
+        location: "NotesPage.tsx:163-175 (Cmd+[ shortcut)"
+        severity: "P2"
+        user_impact: "Users don't know about Cmd+[ for sidebar toggle - must click UI"
+        suggested_improvement: "Add keyboard shortcut hint tooltip or keyboard shortcut help modal"
+
+      - issue: "No Cmd+N for new note"
+        location: "NotesPage.tsx:469-485 (handleCreateNote)"
+        severity: "P2"
+        user_impact: "Power users prefer keyboard for frequent actions - must click 'New' button"
+        suggested_improvement: "Add Cmd+N keyboard shortcut for new note creation"
+
+      - issue: "No Cmd+S for manual save"
+        location: "NoteEditor.tsx:833-846 (handleManualSave)"
+        severity: "P2"
+        user_impact: "Users expect Cmd+S to save note - must click 'Save' button"
+        suggested_improvement: "Add Cmd+S keyboard shortcut for manual save (even though auto-save exists)"
+
+      - issue: "Sync conflict resolution is blocking"
+        location: "MarkdownSyncConflictDialog.tsx:62-328 (dialog)"
+        severity: "P2"
+        user_impact: "User must stop editing to resolve conflict - workflow interruption"
+        suggested_improvement: "Consider non-blocking notification with 'Resolve Later' option (already has Defer button)"
+
+      - issue: "Auto-import overlay blocks entire UI"
+        location: "NotesPage.tsx:648-676, 777-804 (import overlay)"
+        severity: "P1"
+        user_impact: "User cannot read notes or navigate while auto-importing - feels slow for large projects"
+        suggested_improvement: "Make overlay dismissible or show as toast notification instead of full-screen blocking"
+
+    missing_feedback:
+      - action: "Note auto-saved"
+        missing_feedback: "No visual indicator (auto-save is silent)"
+        current_feedback: "Only status bar shows 'Saved' after 2s debounce"
+        suggested_feedback: "Show subtle checkmark animation or toast on auto-save completion to reassure user"
+
+      - action: "Blocks sanitization (correction)"
+        missing_feedback: "No user notification when invalid blocks are removed"
+        current_feedback: "Only console.warn logged, toast only shows if corruption detected"
+        suggested_feedback: "Show subtle toast: 'X invalid blocks removed from note' for transparency"
+
+      - action: "AI generation started"
+        missing_feedback: "No indication until loading toast appears"
+        current_feedback: "Toast.loading() shows '...generating' but no initial trigger feedback"
+        suggested_feedback: "Show immediate UI response (button state change) when AI command triggered"
+
+      - action: "File sync service connected"
+        missing_feedback: "No success message when FSA project connects"
+        current_feedback: "SyncStatusPanel shows state but no celebration on first connection"
+        suggested_feedback: "Show one-time toast: 'File sync ready - changes will auto-save to [project path]'"
+
+  performance_ux:
+    perceived_performance:
+      - metric: "Time to first render (route load)"
+        current: "Estimated 100-300ms (Dexie query + hydration + component mount)"
+        target: "<200ms for perceived instant loading"
+        gap: "0-100ms depending on note count"
+        optimization: "Could use route data streaming or skeleton loader"
+
+      - metric: "Time to BlockNote ready"
+        current: "Estimated 150-350ms (component mount + sanitization + BlockNote init)"
+        target: "<150ms for instant editing"
+        gap: "0-200ms depending on note size"
+        optimization: "Lazy-load BlockNote for projects without notes, or show skeleton during sanitization"
+
+      - metric: "Time to interactive (can type)"
+        current: "Estimated 200-400ms (full route + editor + sidebar + chat)"
+        target: "<250ms for perceived speed"
+        gap: "50-150ms"
+        optimization: "Lazy-load chat panel (only load when opened)"
+
+    ui_responsiveness:
+      blocking_ui: "PARTIALLY BLOCKING:
+        - Auto-import: BLOCKS ENTIRE UI (30s timeout)
+        - BlockNote sanitization: NON-BLOCKING (but lags editor 50-200ms)
+        - AI generation: BLOCKS INDIVIDUAL BLOCKS (non-blocking for rest of editor)
+        - Auto-save: NON-BLOCKING (debounced 2s, runs in background)"
+
+      non_blocking_indicators:
+        - indicator: "Save status in toolbar (yellow/green/red)"
+        location: "NoteEditor.tsx:873-919, NoteEditor.css:61-93"
+
+        - indicator: "BlockLoadingOverlay for AI generation"
+        location: "BlockLoadingOverlay.tsx:27-35, 150-211"
+        features:
+          - "Spinner with sparkle icon"
+          - "Command name"
+          - "Typing indicator (animated dots)"
+          - "Token counter with progress bar (color-coded: green <70%, yellow <90%, red >=90%)"
+          - "Character count (after 10 chars)"
+          - "Elapsed time (after 3 seconds)"
+
+        - indicator: "Progress bar during auto-import"
+        location: "NotesPage.tsx:658-673 (mobile), 787-801 (desktop)"
+        features:
+          - "File counter (X / Y files)"
+          - "Percentage complete"
+          - "Current file name"
+
+      skeleton_screens: "NONE FOUND - No skeleton screens implemented:
+        - Route transition: No skeleton
+        - Editor loading: No skeleton
+        - Sidebar loading: No skeleton (but renders immediately)
+        - Chat loading: No skeleton"
+
+  summary:
+    total_components_analyzed: 41
+    total_lines_scanned: 13781
+    ux_score: 72/100
+
+    strengths:
+      - "Comprehensive error handling with recovery patterns"
+      - "Excellent mobile responsiveness (NotesMobileLayout)"
+      - "Good ARIA attributes for screen readers"
+      - "Detailed AI loading indicators (tokens, typing, elapsed time)"
+      - "Well-implemented auto-save with debouncing"
+      - "Sync conflict dialog with resolution options"
+
+    weaknesses:
+      - "No skeleton screens during loading"
+      - "No keyboard shortcuts documentation"
+      - "Missing keyboard shortcuts for common actions (Cmd+N, Cmd+S)"
+      - "Auto-import blocks entire UI"
+      - "No automatic note selection on first visit"
+      - "BlockNote not lazy-loaded (increases bundle)"
+
+    priority_improvements:
+      - priority: "P0"
+        items:
+          - "Add skeleton screen for route loader"
+
+      - priority: "P1"
+        items:
+          - "Auto-select or create default note on first visit"
+          - "Make auto-import overlay dismissible or non-blocking"
+          - "Add keyboard shortcuts for Cmd+N and Cmd+S"
+
+      - priority: "P2"
+        items:
+          - "Show loading state during BlockNote sanitization"
+          - "Add keyboard shortcut documentation (tooltip or help modal)"
+          - "Add focus restoration after closing dialogs"
+          - "Lazy-load BlockNote or chat panel for performance"
+          - "Show subtle feedback on auto-save completion"
+
+    mobile_assessment:
+      - status: "EXCELLENT - Fully functional on mobile"
+      - features:
+        - "Touch-friendly targets (44px min)"
+        - "Bottom navigation (Notes/Search/AI/Threads)"
+        - "Content tabs (All/Favorites/Tags)"
+        - "Full-screen editor view with back button"
+        - "Bottom-docked formatting toolbar"
+        - "Reduced motion support"
+
+      - limitations:
+        - "File sync (FSA) not supported on mobile (shows warning)"
+        - "No side-by-side layout (list/editor toggle instead)"
+        - "Chat panel in separate tab (not side-by-side)"

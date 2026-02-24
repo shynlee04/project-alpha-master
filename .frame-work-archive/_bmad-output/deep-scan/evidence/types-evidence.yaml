@@ -1,0 +1,202 @@
+---
+date: 2026-01-15
+scanner: deep-scan-types-scanner
+scope: TypeScript Type Safety Deep Scan
+files_scanned:
+  - src/infrastructure/filesystem/handle-persistence.ts
+  - src/infrastructure/persistence/stores/hydration-manager.ts
+  - src/infrastructure/persistence/stores/project/project-crud-slice.ts
+  - src/infrastructure/filesystem/handle-types.ts
+  - src/infrastructure/persistence/stores/project/project-types.ts
+---
+
+typescript_scan:
+  files_scanned:
+    - path: src/infrastructure/filesystem/handle-persistence.ts
+      lines: 575
+      issues_count: 3
+    - path: src/infrastructure/persistence/stores/hydration-manager.ts
+      lines: 322
+      issues_count: 2
+    - path: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      lines: 297
+      issues_count: 4
+    - path: src/infrastructure/filesystem/handle-types.ts
+      lines: 99
+      issues_count: 0
+    - path: src/infrastructure/persistence/stores/project/project-types.ts
+      lines: 226
+      issues_count: 0
+
+  type_issues:
+    # handle-persistence.ts
+    - file: src/infrastructure/filesystem/handle-persistence.ts
+      line: 567
+      severity: high
+      issue: Convenience export uses unsafe 'any' cast
+      code: |
+        export const persistHandle = (projectId: string, handle: FileSystemDirectoryHandle, workspaceId?: string) =>
+          handlePersistenceService.persistHandle(projectId, handle, workspaceId as any);
+      recommendation: Type workspaceId properly as 'ide' | 'knowledge' | 'study' | 'notes'
+
+    - file: src/infrastructure/filesystem/handle-persistence.ts
+      line: 352
+      severity: medium
+      issue: Type assertion without proper guard
+      code: |
+        } catch (error: unknown) {
+          const err = error as { name?: string; message?: string };
+      recommendation: Use instanceof check or type guard instead of 'as' assertion
+
+    - file: src/infrastructure/filesystem/handle-persistence.ts
+      line: 475
+      severity: medium
+      issue: Type assertion without proper guard
+      code: |
+        } catch (error: unknown) {
+          const err = error as { name?: string; message?: string };
+      recommendation: Use instanceof check or type guard instead of 'as' assertion
+
+    # hydration-manager.ts
+    - file: src/infrastructure/persistence/stores/hydration-manager.ts
+      line: 33
+      severity: low
+      issue: Optional callback missing explicit undefined type
+      code: |
+        reset?: () => void;
+      recommendation: Add explicit undefined type: reset?: (() => void) | undefined
+
+    - file: src/infrastructure/persistence/stores/hydration-manager.ts
+      line: 57
+      severity: low
+      issue: Browser-only API (window.location) without SSR guard in class method
+      code: |
+        private getProjectIdFromURL(): string | null {
+          const pathname = window.location.pathname;
+      recommendation: Add SSR guard: if (typeof window === 'undefined') return null;
+
+    # project-crud-slice.ts
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 83
+      severity: high
+      issue: 'any' type for Dexie record parameter
+      code: |
+        export function fromRecord(record: any): Project {
+      recommendation: Define and use ProjectRecord type from Dexie schema
+
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 239
+      severity: high
+      issue: Unsafe 'any' cast for cross-slice state access
+      code: |
+        (get() as any).updateLastOpened(projectId);
+      recommendation: Define shared interface or import updateLastOpened from utils slice
+
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 65
+      severity: low
+      issue: Missing explicit return type on toRecord function
+      code: |
+        export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide') {
+      recommendation: Add explicit return type annotation
+
+  any_usages:
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 83
+      context: Dexie record parameter
+      justification: false
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 239
+      context: Cross-slice state access
+      justification: false
+    - file: src/infrastructure/filesystem/handle-persistence.ts
+      line: 568
+      context: workspaceId parameter cast
+      justification: false
+
+  missing_types:
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 65
+      element: toRecord function return type
+      recommendation: Define ProjectRecord type for Dexie persistence
+
+  interface_duplication:
+    - description: StorageHandleMetadata interface documentation exists in handle-persistence.ts
+      file: src/infrastructure/filesystem/handle-persistence.ts
+      lines: 157-168
+      status: documentation_only
+      note: The actual interface is correctly defined and exported in handle-types.ts
+      resolution: No action needed - JSDoc comments match the canonical type
+
+  null_safety_issues:
+    - file: src/infrastructure/persistence/stores/hydration-manager.ts
+      line: 71-74
+      issue: Early return without null check in hydration logic
+      code: |
+        if (!projectId) {
+          console.warn('[HydrationManager] No projectId found, skipping ideStore hydration');
+          return;
+        }
+      note: This is actually acceptable - early return is valid pattern
+
+    - file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 244-246
+      issue: Implicit undefined return from getProject
+      code: |
+        getProject: (projectId: string) => {
+          return get().projects[projectId];
+        },
+      note: This is correct - returns Project | undefined
+
+  score: 7.5
+
+  critical_issues:
+    - severity: high
+      file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 83
+      issue: 'any' type in fromRecord function
+      impact: Dexie record type safety bypass
+      fix_priority: P1
+    - severity: high
+      file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      line: 239
+      issue: Unsafe 'any' cast for cross-slice call
+      impact: Runtime type error if method doesn't exist
+      fix_priority: P1
+    - severity: high
+      file: src/infrastructure/filesystem/handle-persistence.ts
+      line: 568
+      issue: 'any' cast in convenience export
+      impact: Type safety bypass
+      fix_priority: P2
+
+  recommendations:
+    - Create ProjectRecord type in project-types.ts matching Dexie schema
+      and use it in fromRecord/toRecord functions
+    - Extract updateLastOpened to a shared interface or move to utils slice
+    - Add proper type guards for error handling instead of 'as' assertions
+    - Add explicit return types to all exported functions
+    - Consider creating a Dexie schema type file for record types
+
+  standards_compliance:
+    reference: agent-os/standards/global/coding-style.md
+    results:
+      - rule: No 'any' type without justification
+        status: VIOLATED
+        violations: 3
+      - rule: Interfaces for objects, types for unions
+        status: COMPLIANT
+      - rule: Proper error handling with instanceof checks
+        status: PARTIAL
+        note: Some error handling uses 'as' assertions instead of guards
+      - rule: Explicit return types on exported functions
+        status: PARTIAL
+        note: toRecord missing explicit return type
+
+  summary: |
+    The scanned files show generally good TypeScript practices with proper type imports
+    from domain and infrastructure layers. However, 3 instances of 'any' type usage were
+    found that bypass type safety without justification. The code correctly uses 'unknown'
+    for catch block parameters and uses 'instanceof Error' checks in some places, though
+    some error handling uses 'as' type assertions. No interface duplication was found -
+    StorageHandleMetadata is correctly defined once in handle-types.ts.

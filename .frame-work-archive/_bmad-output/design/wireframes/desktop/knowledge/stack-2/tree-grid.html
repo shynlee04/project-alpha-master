@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge - Tree + Grid View</title>
+  <style>
+    :root {
+      --background: #0f0f11;
+      --foreground: #f2f2f5;
+      --card: #18181b;
+      --card-foreground: #f2f2f5;
+      --border: #27272a;
+      --primary: #f97316;
+      --primary-foreground: #fff;
+      --muted: #27272a;
+      --muted-foreground: #a1a1aa;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --radius: 0px;
+      --shadow-pixel: 4px 4px 0 0 #000;
+      --sidebar-width: 200px;
+      --header-height: 48px;
+      --footer-height: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      background: var(--background);
+      color: var(--foreground);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    /* Main App Container */
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      height: var(--header-height);
+      background: var(--card);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .project-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .project-name svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      height: 32px;
+      padding: 0 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--foreground);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      background: #ea580c;
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--background);
+      border: 2px solid var(--border);
+      padding: 0 12px;
+      height: 32px;
+      width: 240px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--foreground);
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: var(--muted-foreground);
+    }
+
+    .search-box svg {
+      width: 14px;
+      height: 14px;
+      color: var(--muted-foreground);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 0px;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      cursor: pointer;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Collections Tree Panel */
+    .collections-tree {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: var(--card);
+      border-right: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tree-header {
+      padding: 12px 12px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tree-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .tree-item:hover {
+      background: var(--muted);
+    }
+
+    .tree-item.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .tree-item.selected .tree-item-meta {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .tree-item-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .tree-item-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+    }
+
+    .tree-item-meta {
+      font-size: 10px;
+      color: var(--muted-foreground);
+    }
+
+    .tree-folder {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tree-folder-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .tree-folder-header:hover {
+      background: var(--muted);
+    }
+
+    .folder-chevron {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.15s;
+    }
+
+    .tree-folder.collapsed .folder-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .tree-folder.collapsed .tree-folder-items {
+      display: none;
+    }
+
+    .tree-folder-items {
+      padding-left: 16px;
+    }
+
+    .source-count {
+      font-size: 10px;
+      color: var(--muted-foreground);
+      background: var(--background);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* Source Grid Panel */
+    .source-grid {
+      flex: 1;
+      min-width: 400px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .grid-header {
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+    }
+
+    .grid-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .grid-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .grid-tab {
+      padding: 6px 12px;
+      font-size: 12px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .grid-tab:hover {
+      background: var(--muted);
+    }
+
+    .grid-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .grid-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: var(--background);
+    }
+
+    .source-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .source-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-pixel);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.1s;
+      cursor: pointer;
+    }
+
+    .source-card:hover {
+      border-color: var(--primary);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 0 #000;
+    }
+
+    .source-card.selected {
+      border-color: var(--primary);
+      box-shadow: 4px 4px 0 0 var(--primary);
+    }
+
+    .source-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .source-card-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background);
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .source-card-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .source-card-icon.pdf { color: #ef4444; }
+    .source-card-icon.url { color: #3b82f6; }
+    .source-card-icon.github { color: #f2f2f5; }
+    .source-card-icon.markdown { color: #22c55e; }
+
+    .source-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .source-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-card-type {
+      font-size: 10px;
+      color: var(--muted-foreground);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .source-card-meta {
+      display: flex;
+      gap: 8px;
+      font-size: 10px;
+      color: var(--muted-foreground);
+    }
+
+    .source-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: auto;
+    }
+
+    .tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      background: var(--background);
+      border: 1px solid var(--border);
+      color: var(--muted-foreground);
+    }
+
+    .tag.ai {
+      background: rgba(249, 115, 22, 0.2);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Footer */
+    .footer {
+      height: var(--footer-height);
+      background: var(--card);
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--success);
+    }
+
+    .sync-status svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .storage-info {
+      color: var(--muted-foreground);
+    }
+
+    .storage-info span {
+      color: var(--foreground);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="project-name">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          AI Research Project
+        </div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search sources...">
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17,8 12,3 7,8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Import
+        </button>
+        <button class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Config
+        </button>
+        <div class="user-avatar">JD</div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Collections Tree -->
+      <aside class="collections-tree">
+        <div class="tree-header">Collections</div>
+        <div class="tree-content">
+          <div class="tree-item selected">
+            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+              <path d="M9 21V9"/>
+            </svg>
+            <span class="tree-item-text">All Sources</span>
+            <span class="source-count">12</span>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #ef4444;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+              </svg>
+              <span class="tree-item-text">PDF Documents</span>
+              <span class="source-count">3</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">research-paper.pdf</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">documentation.pdf</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">whitepaper-2024.pdf</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #3b82f6;">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              <span class="tree-item-text">URLs</span>
+              <span class="source-count">4</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">ai-agents-guide.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">llm-comparison.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">rag-best-practices.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">architecture-patterns.md</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #f2f2f5;">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+              </svg>
+              <span class="tree-item-text">GitHub Repos</span>
+              <span class="source-count">3</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">via-gent.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">react-router.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">tanstack-query.md</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #22c55e;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+              </svg>
+              <span class="tree-item-text">Markdown Files</span>
+              <span class="source-count">2</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">meeting-notes.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">project-specs.md</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Source Grid -->
+      <main class="source-grid">
+        <div class="grid-header">
+          <span class="grid-title">All Sources (12)</span>
+          <div class="grid-tabs">
+            <span class="grid-tab active">Grid</span>
+            <span class="grid-tab">List</span>
+          </div>
+        </div>
+        <div class="grid-content">
+          <div class="source-cards">
+            <!-- Card 1 - PDF -->
+            <div class="source-card selected">
+              <div class="source-card-header">
+                <div class="source-card-icon pdf">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">Research Paper: AI Agents</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    </svg>
+                    PDF Document
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>2.3 MB</span>
+                <span>45 pages</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">AI</span>
+                <span class="tag">Research</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 2 - PDF -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon pdf">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">System Documentation</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    </svg>
+                    PDF Document
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>1.1 MB</span>
+                <span>28 pages</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Documentation</span>
+                <span class="tag">System</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 3 - URL -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon url">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">AI Agents Architecture Guide</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    </svg>
+                    Web Page
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>15 KB</span>
+                <span>Updated 2d ago</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Architecture</span>
+                <span class="tag">AI</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 4 - GitHub -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon github">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">via-gent/README.md</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77"/>
+                    </svg>
+                    GitHub
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>8 KB</span>
+                <span>Repo: via-gent</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Project</span>
+                <span class="tag">Documentation</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 5 - Markdown -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon markdown">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">Meeting Notes - Q1 Planning</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    </svg>
+                    Markdown
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>12 KB</span>
+                <span>Jan 15, 2024</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Meeting</span>
+                <span class="tag">Planning</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 6 - PDF -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon pdf">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">2024 Technology Whitepaper</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    </svg>
+                    PDF Document
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>3.5 MB</span>
+                <span>62 pages</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Whitepaper</span>
+                <span class="tag">Tech</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 7 - URL -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon url">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">LLM Model Comparison 2024</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    </svg>
+                    Web Page
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>22 KB</span>
+                <span>Updated 1w ago</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">LLM</span>
+                <span class="tag">Comparison</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 8 - GitHub -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon github">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">react-router/API.md</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77"/>
+                    </svg>
+                    GitHub
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>45 KB</span>
+                <span>Repo: TanStack</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Router</span>
+                <span class="tag">API</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 9 - Markdown -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon markdown">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">Project Specifications v2.0</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    </svg>
+                    Markdown
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>28 KB</span>
+                <span>Jan 10, 2024</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Spec</span>
+                <span class="tag">Project</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 10 - URL -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon url">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">RAG Best Practices Guide</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    </svg>
+                    Web Page
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>18 KB</span>
+                <span>Updated 3d ago</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">RAG</span>
+                <span class="tag">Best Practices</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 11 - GitHub -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon github">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">tanstack-query/docs.md</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77"/>
+                    </svg>
+                    GitHub
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>62 KB</span>
+                <span>Repo: TanStack</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Query</span>
+                <span class="tag">Documentation</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+
+            <!-- Card 12 - URL -->
+            <div class="source-card">
+              <div class="source-card-header">
+                <div class="source-card-icon url">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </div>
+                <div class="source-card-info">
+                  <div class="source-card-title">Software Architecture Patterns</div>
+                  <div class="source-card-type">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    </svg>
+                    Web Page
+                  </div>
+                </div>
+              </div>
+              <div class="source-card-meta">
+                <span>35 KB</span>
+                <span>Updated 5d ago</span>
+                <span>Indexed</span>
+              </div>
+              <div class="source-card-tags">
+                <span class="tag">Architecture</span>
+                <span class="tag">Patterns</span>
+                <span class="tag ai">RAG Ready</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="sync-status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+          All sources synced
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="sources-indexed">12 sources indexed</div>
+        <div class="storage-info">Storage: <span>847 MB</span> / 5 GB</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

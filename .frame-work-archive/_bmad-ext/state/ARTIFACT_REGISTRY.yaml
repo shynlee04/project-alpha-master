@@ -1,0 +1,836 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# BMAD ARTIFACT REGISTRY
+# Single Source of Truth for All Generated Artifacts
+# ═══════════════════════════════════════════════════════════════════════════
+
+schema_version: "2.0.0"
+created_at: "2026-01-18T11:30:00+07:00"
+
+# ============================================================================
+# TTL SYSTEM (4-Tier Lifecycle Management)
+# ============================================================================
+
+ttl_system:
+  tier_1_permanent:
+    name: "Tier 1: Permanent (Constitution)"
+    ttl: "forever"
+    description: "Core governance documents that define the project"
+    validation: "Read-only check on every load"
+    examples:
+      - "new-fundamental-truths.md"
+      - "ADR-039 (Primary Architecture Authority)"
+      - "BMAD Constitution v2.0.0"
+
+  tier_2_controlled:
+    name: "Tier 2: Controlled & Iterative"
+    ttl: "permanent"
+    description: "Living documents updated with governance approval"
+    validation: "Full consumption required on load"
+    examples:
+      - "architecture.md (v3.0.0)"
+      - "prd.md (v2.0.0)"
+      - "epics.md (v3.0.0)"
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "LOOP_STATE.yaml"
+
+  tier_3_archival:
+    name: "Tier 3: Archival"
+    ttl: "90 days"
+    description: "Historical artifacts for reference"
+    validation: "Archive if stale, compress if >5MB"
+    examples:
+      - "Completed epic artifacts"
+      - "Superseded ADRs"
+      - "Analysis reports"
+      - "Handoff artifacts"
+
+  tier_4_ephemeral:
+    name: "Tier 4: Ephemeral"
+    ttl: "24 hours"
+    description: "Temporary artifacts, research notes"
+    validation: "Ignore if stale, create fresh"
+    examples:
+      - "Investigation working documents"
+      - "Draft ADRs"
+      - "Meeting notes"
+
+# ============================================================================
+# CORE DOCUMENTS (Tier 2 - Controlled)
+# ============================================================================
+
+core_documents:
+  - id: "core-doc-001"
+    type: "architecture"
+    name: "architecture.md"
+    path: "_bmad-output/planning-artifacts/architecture.md"
+    version: "3.0.0"
+    created_at: "2026-01-26T00:00:00+07:00"
+    updated_at: "2026-01-26T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    alignment: "100% with new-fundamental-truths.md v2.0.0"
+    lines: 905
+    adrs_referenced:
+      - "ADR-034: Project-Centric Architecture"
+    referenced_by:
+      - "epics.md"
+      - "prd.md"
+      - "all implementation stories"
+    author: "architect-ext"
+    reviewers: []
+    approval_status: "approved"
+
+  - id: "core-doc-002"
+    type: "prd"
+    name: "prd.md"
+    path: "_bmad-output/planning-artifacts/prd.md"
+    version: "2.0.0"
+    created_at: "2026-01-26T00:00:00+07:00"
+    updated_at: "2026-01-26T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    alignment: "100% with new-fundamental-truths.md v2.0.0"
+    lines: 1302
+    adrs_referenced:
+      - "ADR-039: Unified Architecture Fundamentals (Primary)"
+      - "ADR-034: Project-Centric Architecture (Partial)"
+      - "ADR-035: Architecture Standardization v2"
+    referenced_by:
+      - "epics.md"
+      - "architecture.md"
+    author: "architect-ext"
+    reviewers: []
+    approval_status: "draft"
+
+  - id: "core-doc-003"
+    type: "epics"
+    name: "epics.md"
+    path: "_bmad-output/planning-artifacts/epics.md"
+    version: "3.0.0"
+    created_at: "2026-01-26T00:00:00+07:00"
+    updated_at: "2026-01-26T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    alignment: "100% with new-fundamental-truths.md v2.0.0"
+    lines: 594
+    adrs_referenced:
+      - "ADR-034: Project-Centric Architecture"
+      - "ADR-033: Correct Course Architectural Remediation"
+    referenced_by:
+      - "sprint-status.yaml"
+      - "all story files"
+    author: "bmad-bmm-pm"
+    reviewers: []
+    approval_status: "approved"
+
+  - id: "core-doc-004"
+    type: "ux_specification"
+    name: "ux-specification.md"
+    path: "_bmad-output/planning-artifacts/ux-specification.md"
+    version: "2.0.0"
+    created_at: "2026-01-07T00:00:00+07:00"
+    updated_at: "2026-01-07T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    lines: 2118
+    adrs_referenced: []
+    referenced_by:
+      - "epics.md"
+      - "all UX stories"
+    author: "bmad-bmm-ux-designer"
+    reviewers: []
+    approval_status: "approved"
+
+# ============================================================================
+# FUNDAMENTAL TRUTHS (Tier 1 - Permanent)
+# ============================================================================
+
+fundamental_truths:
+  - id: "fund-truth-001"
+    type: "strategic"
+    name: "new-fundamental-truths.md"
+    path: "docs/new-fundamental-truths.md"
+    version: "2.0.0"
+    created_at: "2026-01-25T00:00:00+07:00"
+    updated_at: "2026-01-25T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 1
+    lines: 500
+    description: "Primary strategic document defining project fundamentals"
+    aligned_documents:
+      - "architecture.md (v3.0.0)"
+      - "prd.md (v2.0.0)"
+      - "epics.md (v3.0.0)"
+    author: "bmad-master"
+    reviewers: []
+    approval_status: "approved"
+
+# ============================================================================
+# GOVERNANCE DOCUMENTS (Tier 2 - Controlled)
+# ============================================================================
+
+governance_documents:
+  - id: "gov-doc-001"
+    type: "governance"
+    name: "AGENTS.md"
+    path: "AGENTS.md"
+    version: "2.7.0"
+    created_at: "2026-01-18T11:30:00+07:00"
+    updated_at: "2026-01-26T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    lines: 1302
+    description: "Master governance document for agent coordination"
+    updated_by: "GOV-007"
+    author: "bmad-master"
+    reviewers: []
+    approval_status: "approved"
+
+  - id: "gov-doc-002"
+    type: "governance"
+    name: "CLAUDE.md"
+    path: ".claude/CLAUDE.md"
+    version: "2.0.0"
+    created_at: "2026-01-18T11:30:00+07:00"
+    updated_at: "2026-01-26T00:00:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    lines: 1500
+    description: "Platform-specific governance for Claude Code"
+    updated_by: "GOV-007"
+    author: "bmad-master"
+    reviewers: []
+    approval_status: "approved"
+
+  - id: "gov-doc-003"
+    type: "state"
+    name: "LOOP_STATE.yaml"
+    path: "_bmad-ext/state/LOOP_STATE.yaml"
+    version: "2.0.0"
+    created_at: "2026-01-18T11:30:00+07:00"
+    updated_at: "2026-01-26T15:53:00+07:00"
+    status: "active"
+    ttl_tier: 2
+    lines: 703
+    description: "Unified session state tracking"
+    author: "bmad-master"
+    reviewers: []
+    approval_status: "active"
+
+# ============================================================================
+# ADR TRACKING (Mixed TTL)
+# ============================================================================
+
+adrs:
+  - id: "adr-033"
+    type: "adr"
+    name: "ADR-033: Correct-Course Architectural Remediation"
+    path: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+    created_at: "2026-01-16T00:00:00+07:00"
+    updated_at: "2026-01-16T00:00:00+07:00"
+    status: "approved"
+    ttl_tier: 3
+    superseded_by: "ADR-034"
+    superseded_at: "2026-01-25"
+    key_decisions:
+      - "Platform detection"
+      - "FSA persistence"
+      - "Notes storage in FSA"
+    referenced_in:
+      - "architecture.md"
+      - "prd.md"
+      - "AGENTS.md"
+    consolidation_action: "Superseded by ADR-034, documented in GOV-003"
+
+  - id: "adr-034"
+    type: "adr"
+    name: "ADR-034: Project-Centric Architecture with Feature Plugins"
+    path: "_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md"
+    created_at: "2026-01-20T00:00:00+07:00"
+    updated_at: "2026-01-20T00:00:00+07:00"
+    status: "approved"
+    ttl_tier: 2
+    amendments:
+      - "ADR-034-AMENDMENT-001: Platform-First Plugin Selection (2026-01-21)"
+    key_decisions:
+      - "Plugin system architecture"
+      - "Single route /$projectId"
+      - "Feature plugins vs workspaces"
+    referenced_in:
+      - "architecture.md"
+      - "prd.md"
+      - "epics.md"
+    consolidation_action: "Active, being consolidated into ADR-039"
+
+  - id: "adr-034-amendment-001"
+    type: "adr_amendment"
+    name: "ADR-034 Amendment 001: Platform-First Plugin Selection"
+    path: "_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md"
+    parent_id: "adr-034"
+    created_at: "2026-01-21T00:00:00+07:00"
+    updated_at: "2026-01-21T00:00:00+07:00"
+    status: "approved"
+    ttl_tier: 2
+    key_decisions:
+      - "Replace 'IDE mode' vs 'Notes mode' concept"
+      - "Platform determines available plugins"
+    referenced_in:
+      - "architecture.md"
+      - "prd.md"
+    consolidation_action: "Integrated into ADR-039"
+
+  - id: "adr-035"
+    type: "adr"
+    name: "ADR-035: Architecture Standardization v2"
+    path: "_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md"
+    created_at: "2026-01-20T00:00:00+07:00"
+    updated_at: "2026-01-20T00:00:00+07:00"
+    status: "approved"
+    ttl_tier: 3
+    superseded_by: "ADR-039"
+    key_decisions:
+      - "Entity model standardization"
+      - "P0 bug fixes"
+      - "Chrome 129+ requirements"
+    referenced_in:
+      - "prd.md"
+    consolidation_action: "Superseded by ADR-039, documented in GOV-003"
+
+  - id: "adr-036"
+    type: "adr"
+    name: "ADR-036: Foundation Cleanup & Infrastructure Consolidation"
+    path: "_bmad-output/planning-artifacts/adr/ADR-036-foundation-cleanup-architecture-2026-01-21.md"
+    created_at: "2026-01-21T00:00:00+07:00"
+    updated_at: "2026-01-21T00:00:00+07:00"
+    status: "proposed"
+    ttl_tier: 3
+    key_decisions:
+      - "Infrastructure cleanup stories"
+    consolidation_action: "Consolidated into ADR-039"
+
+  - id: "adr-037"
+    type: "adr"
+    name: "ADR-037: Platform Contract Consolidation"
+    path: "_bmad-output/planning-artifacts/adr/ADR-037-platform-contract-consolidation-2026-01-18.md"
+    created_at: "2026-01-18T00:00:00+07:00"
+    updated_at: "2026-01-18T00:00:00+07:00"
+    status: "proposed"
+    ttl_tier: 3
+    key_decisions:
+      - "Consolidate platform contracts"
+    consolidation_action: "Integrated into ADR-039"
+
+  - id: "adr-037-xss"
+    type: "adr"
+    name: "ADR-037: XSS Sanitization Strategy"
+    path: "_bmad-output/planning-artifacts/adr/ADR-037-xss-sanitization-2026-01-18.md"
+    created_at: "2026-01-18T00:00:00+07:00"
+    updated_at: "2026-01-18T00:00:00+07:00"
+    status: "proposed"
+    ttl_tier: 3
+    key_decisions:
+      - "Install DOMPurify"
+      - "Create sanitization utilities"
+    consolidation_action: "Integrated into ADR-039 security section"
+
+  - id: "adr-038"
+    type: "adr"
+    name: "ADR-038: Event Listener Isolation"
+    path: "_bmad-output/planning-artifacts/adr/ADR-038-event-listener-isolation-2026-01-18.md"
+    created_at: "2026-01-18T00:00:00+07:00"
+    updated_at: "2026-01-18T00:00:00+07:00"
+    status: "proposed"
+    ttl_tier: 3
+    key_decisions:
+      - "Create IsolatedEventBus wrapper"
+      - "Wrap all listeners with try-catch"
+    consolidation_action: "Integrated into ADR-039"
+
+  - id: "adr-039"
+    type: "adr"
+    name: "ADR-039: Unified Architecture Fundamentals (v2.0.0 Alignment)"
+    path: "_bmad-output/planning-artifacts/adr/ADR-039-unified-architecture-fundamentals-2026-01-26.md"
+    created_at: "2026-01-26T00:00:00+07:00"
+    updated_at: "2026-01-26T00:00:00+07:00"
+    status: "pending_approval"
+    ttl_tier: 1
+    description: "Primary Architecture Authority - Consolidates ADR-033, ADR-034, ADR-035 cascade"
+    key_decisions:
+      - "Project-centric architecture"
+      - "Plugin system specification"
+      - "Orchestrator pattern"
+      - "TanStack AI SDK integration"
+      - "BYOK vault architecture"
+      - "Chat cascade & thread management"
+    referenced_in:
+      - "architecture.md"
+      - "prd.md"
+      - "epics.md"
+    consolidates:
+      - "ADR-033 (Correct Course Architectural Remediation)"
+      - "ADR-034 (Project-Centric Architecture)"
+      - "ADR-034-AMENDMENT-001 (Platform-First Plugin Selection)"
+      - "ADR-035 (Architecture Standardization v2)"
+      - "ADR-036 (Foundation Cleanup)"
+      - "ADR-037 (Platform Contract Consolidation)"
+      - "ADR-038 (Event Listener Isolation)"
+
+# ============================================================================
+# CONSOLIDATION SPRINT (GOV-001 through GOV-008)
+# ============================================================================
+
+consolidation_sprint:
+  - id: "gov-001"
+    type: "governance"
+    name: "GOV-001: Core Documents Validation"
+    status: "completed"
+    completed_at: "2026-01-26T12:00:00+07:00"
+    ttl_tier: 3
+    description: "Validate core documents against new-fundamental-truths.md v2.0.0"
+    effort_hours: 2
+    output: "All core documents 100% aligned"
+    evidence: "_bmad-output/governance-coordination/GOVERNANCE-COORDINATION-REPORT-2026-01-26.md"
+    assigned_to: "analyst-ext"
+    artifacts_created: []
+    next: "GOV-002"
+
+  - id: "gov-002"
+    type: "governance"
+    name: "GOV-002: ADR Ecosystem Analysis"
+    status: "completed"
+    completed_at: "2026-01-26T13:00:00+07:00"
+    ttl_tier: 3
+    description: "Analyze ADR-034 ecosystem for consolidation opportunities"
+    effort_hours: 3
+    output: "ADR consolidation strategy"
+    evidence: "_bmad-output/governance-coordination/GOVERNANCE-COORDINATION-REPORT-2026-01-26.md"
+    assigned_to: "analyst-ext"
+    artifacts_created:
+      - "ADR-039 draft (consolidated architecture fundamentals)"
+    next: "GOV-003"
+
+  - id: "gov-003"
+    type: "governance"
+    name: "GOV-003: Document Archival Completion"
+    status: "completed"
+    completed_at: "2026-01-26T14:00:00+07:00"
+    ttl_tier: 3
+    description: "Archive 100+ poisoned/orphaned documents"
+    effort_hours: 1
+    output: "Clean planning-artifacts folder"
+    evidence: "_bmad-output/governance-coordination/GOV-003-ARCHIVAL-COMPLETION-REPORT-2026-01-26.md"
+    assigned_to: "tech-writer-ext"
+    artifacts_created:
+      - "Archived: 103 documents to _bmad-output/.archive/2026-01-26/"
+      - "Archived: 27 ADR variants"
+      - "Archived: 50+ investigation documents"
+    next: "GOV-004"
+
+  - id: "gov-004"
+    type: "governance"
+    name: "GOV-004: Story Index Creation"
+    status: "pending"
+    ttl_tier: 2
+    description: "Create STORY-INDEX.md for all completed stories"
+    effort_hours: 2
+    output: "Single source of truth for story artifacts"
+    assigned_to: "tech-writer-ext"
+    artifacts_created: []
+    next: "GOV-005"
+
+  - id: "gov-005"
+    type: "governance"
+    name: "GOV-005: Core Documents Update with ADR-034-AMENDMENT-001"
+    status: "completed"
+    completed_at: "2026-01-26T15:00:00+07:00"
+    ttl_tier: 3
+    description: "Update architecture.md, prd.md, epics.md with platform-first changes"
+    effort_hours: 2
+    output: "Core documents reference ADR-034-AMENDMENT-001"
+    evidence: "_bmad-output/governance-coordination/GOV-005-CORE-DOCS-UPDATE-REPORT-2026-01-26.md"
+    assigned_to: "tech-writer-ext"
+    artifacts_created:
+      - "architecture.md updated"
+      - "prd.md updated"
+      - "epics.md updated"
+    next: "GOV-006"
+
+  - id: "gov-006"
+    type: "governance"
+    name: "GOV-006: Phase 2 Architecture EPICs"
+    status: "pending"
+    ttl_tier: 2
+    description: "Create Phase 2 architecture epics based on ADR-039"
+    effort_hours: 6
+    output: "Phase 2 epic definitions"
+    assigned_to: "architect-ext"
+    artifacts_created: []
+    next: "GOV-007"
+
+  - id: "gov-007"
+    type: "governance"
+    name: "GOV-007: AGENTS and CLAUDE.md Update"
+    status: "completed"
+    completed_at: "2026-01-26T15:00:00+07:00"
+    ttl_tier: 3
+    description: "Update governance documents with health metrics and coordination procedures"
+    effort_hours: 2
+    output: "AGENTS.md v2.7.0, CLAUDE.md v2.0.0 updated"
+    evidence: "_bmad-output/governance-coordination/GOV-007-AGENTS-UPDATE-REPORT-2026-01-26.md"
+    assigned_to: "tech-writer-ext"
+    artifacts_created:
+      - "AGENTS.md updated with governance health metrics"
+      - "CLAUDE.md updated with coordination procedures"
+    next: "GOV-008"
+
+  - id: "gov-008"
+    type: "governance"
+    name: "GOV-008: ARTIFACT_REGISTRY.yaml Creation"
+    status: "in_progress"
+    started_at: "2026-01-26T15:00:00+07:00"
+    ttl_tier: 2
+    description: "Create comprehensive artifact tracking with TTL system"
+    effort_hours: 1
+    output: "Unified document tracking system"
+    assigned_to: "architect-ext"
+    artifacts_created:
+      - "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+
+# ============================================================================
+# CANONICAL EPICS PER PHASE (Single Authoritative Epic Per Phase)
+# ============================================================================
+
+canonical_epics:
+  phase_1a:
+    epic_id: "EPIC-CC-AR02AR03"
+    name: "Plugin System Complete Rework for Phase 1A"
+    type: "correct-course"
+    status: "approved"
+    created_at: "2026-01-26T00:00:00+07:00"
+    remediates:
+      - "EPIC-ARCH-02 (Feature Plugins) - TRUE COMPLETION: 70%"
+      - "EPIC-ARCH-03 (Layout System & UX) - TRUE COMPLETION: 45%"
+    priority: "P0"
+    blocks: "Phase 1A"
+    estimated_effort: "16-24 hours (2-3 days)"
+    target_completion: "2026-01-28"
+    path: "_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md"
+    team: "Both (Team A + Team B parallel)"
+    stories: 8
+    superseded_epics:
+      - "EPIC-ARCH-02 (Superseded - incorrect completion claim)"
+      - "EPIC-ARCH-03 (Superseded - incorrect completion claim)"
+
+  phase_1b:
+    epic_id: "TO_BE_DEFINED"
+    name: "BYOK + Notes Infrastructure"
+    type: "new"
+    status: "pending"
+    created_at: null
+    remediates: []
+    priority: "P0"
+    blocks: "Phase 1B"
+    estimated_effort: "TBD"
+    path: null
+    team: "TBD"
+
+  phase_2:
+    epic_id: "TO_BE_DEFINED"
+    name: "AI Agents & Chat Cascade"
+    type: "new"
+    status: "pending"
+    created_at: null
+    remediates: []
+    priority: "P0"
+    blocks: "Phase 2"
+    estimated_effort: "TBD"
+    path: null
+    team: "TBD"
+
+  phase_3:
+    epic_id: "TO_BE_DEFINED"
+    name: "Advanced Agent Workflows"
+    type: "new"
+    status: "pending"
+    created_at: null
+    remediates: []
+    priority: "P1"
+    blocks: "Phase 3"
+    estimated_effort: "TBD"
+    path: null
+    team: "TBD"
+
+# ============================================================================
+# ANALYSIS REPORTS (Tier 3 - Archival)
+# ============================================================================
+
+analysis_reports:
+  - id: "analysis-001"
+    type: "architectural_review"
+    name: "Architectural Review: new-fundamental-truths.md vs ADR-034"
+    path: "_bmad-output/sprint-artifacts/fundamental-truths-architectural-review-2026-01-25.yaml"
+    created_at: "2026-01-25T18:00:00+07:00"
+    status: "completed"
+    ttl_tier: 3
+    ttl_expires_at: "2026-04-25T18:00:00+07:00"
+    source_agent: "architect-ext"
+    target_agent: "bmad-sprint-manager"
+    findings:
+      aligned_claims: 5
+      partial_alignments: 4
+      contradictions: 2
+      p0_items: 3
+      p1_items: 4
+      p2_items: 3
+    adrs_required:
+      - "ADR-034-AMENDMENT-002"
+      - "ADR-034-AMENDMENT-003"
+      - "ADR-034-AMENDMENT-004"
+      - "ADR-034-AMENDMENT-005"
+
+  - id: "analysis-002"
+    type: "fundamental_truths_analysis"
+    name: "Fundamental Truths Analysis Report"
+    path: "_bmad-output/sprint-artifacts/fundamental-truths-analysis-2026-01-25.json"
+    created_at: "2026-01-25T17:00:00+07:00"
+    status: "completed"
+    ttl_tier: 3
+    ttl_expires_at: "2026-04-25T17:00:00+07:00"
+    source_agent: "analyst-ext"
+    findings:
+      gaps_identified: 6
+      contradictions: 2
+      missing_topics: 5
+      llm_corrections: 0
+      critical_items: 4
+
+  - id: "analysis-003"
+    type: "governance_coordination"
+    name: "Governance Coordination Report"
+    path: "_bmad-output/governance-coordination/GOVERNANCE-COORDINATION-REPORT-2026-01-26.md"
+    created_at: "2026-01-26T13:00:00+07:00"
+    status: "completed"
+    ttl_tier: 3
+    ttl_expires_at: "2026-04-26T13:00:00+07:00"
+    source_agent: "bmad-master"
+    findings:
+      poisoned_documents: "100+"
+      governance_crisis: "true"
+      team_a_blocked: "true"
+
+# ============================================================================
+# ARCHIVED DOCUMENTS (Tier 3 - Archival)
+# ============================================================================
+
+archived_documents:
+  category_1_superseded_adrs:
+    - id: "arch-adr-033"
+      original_path: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+      archive_path: "_bmad-output/.archive/2026-01-26/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+      archived_at: "2026-01-26T14:00:00+07:00"
+      reason: "Superseded by ADR-039"
+      consolidated_into: "ADR-039"
+
+    - id: "arch-adr-035"
+      original_path: "_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md"
+      archive_path: "_bmad-output/.archive/2026-01-26/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md"
+      archived_at: "2026-01-26T14:00:00+07:00"
+      reason: "Superseded by ADR-039"
+      consolidated_into: "ADR-039"
+
+  category_2_adr_variants:
+    - id: "arch-adr-034-variant-notes"
+      original_path: "_bmad-output/planning-artifacts/adr/ADR-034-notes-routing-persistence-crisis-2026-01-19.md"
+      archive_path: "_bmad-output/.archive/2026-01-26/adr/ADR-034-notes-routing-persistence-crisis-2026-01-19.md"
+      archived_at: "2026-01-26T14:00:00+07:00"
+      reason: "Variant ADR, crisis doc not linked to main ADR-034"
+      consolidated_into: "ADR-039"
+
+    - id: "arch-adr-037-duplicate"
+      original_path: "_bmad-output/planning-artifacts/adr/ADR-037-platform-contract-consolidation-2026-01-18.md"
+      archive_path: "_bmad-output/.archive/2026-01-26/adr/ADR-037-platform-contract-consolidation-2026-01-18.md"
+      archived_at: "2026-01-26T14:00:00+07:00"
+      reason: "Duplicate ID with XSS ADR, caused confusion"
+      consolidated_into: "ADR-039"
+
+  category_3_proposed_adrs:
+    - id: "arch-adr-036"
+      original_path: "_bmad-output/planning-artifacts/adr/ADR-036-foundation-cleanup-architecture-2026-01-21.md"
+      archive_path: "_bmad-output/.archive/2026-01-26/adr/ADR-036-foundation-cleanup-architecture-2026-01-21.md"
+      archived_at: "2026-01-26T14:00:00+07:00"
+      reason: "Proposed ADR, not approved, consolidated into ADR-039"
+      consolidated_into: "ADR-039"
+
+    - id: "arch-adr-038"
+      original_path: "_bmad-output/planning-artifacts/adr/ADR-038-event-listener-isolation-2026-01-18.md"
+      archive_path: "_bmad-output/.archive/2026-01-26/adr/ADR-038-event-listener-isolation-2026-01-18.md"
+      archived_at: "2026-01-26T14:00:00+07:00"
+      reason: "Proposed ADR, not approved, consolidated into ADR-039"
+      consolidated_into: "ADR-039"
+
+  category_4_investigation_documents:
+    count: 50
+    archive_path: "_bmad-output/.archive/2026-01-26/investigations/"
+    archived_at: "2026-01-26T14:00:00+07:00"
+    reason: "Orphaned investigation documents not consumed or referenced"
+    examples:
+      - "spike-architecture-analysis-2026-01-17.yaml"
+      - "spike-core-manifest-2026-01-16.yaml"
+      - "deep-scan-status-2026-01-17.yaml"
+
+  category_5_architecture_docs:
+    count: 20
+    archive_path: "_bmad-output/.archive/2026-01-26/architecture/"
+    archived_at: "2026-01-26T14:00:00+07:00"
+    reason: "Old architecture versions superseded by architecture.md v3.0.0"
+    examples:
+      - "architecture-core-principles-vi-2026-01-25.md"
+      - "architecture-social-media-vi-2026-01-25.md"
+
+# ============================================================================
+# HANDOFF ARTIFACTS (Tier 3 - Archival)
+# ============================================================================
+
+handoff_artifacts:
+  - id: "handoff-arch-04"
+    type: "handoff"
+    name: "ARCH-04 Tech Writer Handoff"
+    path: "_bmad-output/handoffs/2026-01-25/ARCH-04-tech-writer-handoff.md"
+    parent_id: "arch-04-correct-course-2026-01-25"
+    created_at: "2026-01-25T23:48:00+07:00"
+    status: "pending"
+    ttl_tier: 3
+    ttl_expires_at: "2026-04-25T23:48:00+07:00"
+    source_agent: "tech-writer-ext"
+    target_agent: "bmad-sprint-manager"
+
+  - id: "handoff-e2e-journeys"
+    type: "handoff"
+    name: "E2E Journeys Final Callback"
+    path: "_bmad-output/handoffs/2026-01-25/e2e-journeys-final-callback.md"
+    parent_id: "inv-c-e2e-journeys"
+    created_at: "2026-01-25T12:10:00+07:00"
+    status: "complete"
+    ttl_tier: 3
+    ttl_expires_at: "2026-04-25T12:10:00+07:00"
+    source_agent: "real-world-validator"
+    target_agent: "bmad-master"
+
+# ============================================================================
+# IMPLEMENTATION ARTIFACTS (Tier 3 - Archival)
+# ============================================================================
+
+implementation_artifacts:
+  - id: "impl-arc-b11"
+    type: "implementation"
+    name: "ARC-B11: MarkdownSyncService"
+    story_id: "ARC-B11"
+    path: "src/infrastructure/filesystem/markdown-sync-service.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T00:00:00+07:00"
+    status: "complete"
+    ttl_tier: 3
+    lines: 184
+
+  - id: "impl-arc-b12"
+    type: "implementation"
+    name: "ARC-B12: MarkdownSyncConflictDialog"
+    story_id: "ARC-B12"
+    path: "src/presentation/components/notes/MarkdownSyncConflictDialog.tsx"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T00:00:00+07:00"
+    status: "complete"
+    ttl_tier: 3
+
+# ============================================================================
+# METRICS & STATISTICS
+# ============================================================================
+
+metrics:
+  total_documents_tracked: 150
+  ttl_tier_1_permanent: 5
+  ttl_tier_2_controlled: 10
+  ttl_tier_3_archival: 120
+  ttl_tier_4_ephemeral: 15
+
+  adrs:
+    total: 10
+    active: 3
+    proposed: 4
+    superseded: 3
+    consolidated_into_adr039: 6
+
+  core_documents:
+    total: 4
+    aligned_with_fundamental_truths: 4
+    alignment_percent: 100
+
+  governance_documents:
+    total: 3
+    updated_last_7_days: 3
+
+  consolidation_sprint:
+    total_tasks: 8
+    completed: 5
+    in_progress: 1
+    pending: 2
+    completion_percent: 62.5
+
+  archived_documents:
+    total_archived: 103
+    superseded_adrs: 2
+    proposed_adrs: 2
+    adr_variants: 2
+    investigation_docs: 50
+    architecture_docs: 20
+    other: 27
+
+# ============================================================================
+# REFERENCE CHAINS
+# ============================================================================
+
+reference_chains:
+  - id: "chain-1"
+    name: "Fundamental Truths to Core Documents"
+    root: "new-fundamental-truths.md"
+    documents:
+      - "architecture.md (v3.0.0)"
+      - "prd.md (v2.0.0)"
+      - "epics.md (v3.0.0)"
+      - "All implementation stories"
+
+  - id: "chain-2"
+    name: "ADR-039 to All ADRs"
+    root: "ADR-039 (Primary Architecture Authority)"
+    consolidation_targets:
+      - "Consolidates: ADR-033, ADR-034, ADR-035"
+      - "Integrates: ADR-034-AMENDMENT-001, ADR-036, ADR-037, ADR-038"
+      - "References: new-fundamental-truths.md v2.0.0"
+
+  - id: "chain-3"
+    name: "EPIC-CC-AR02AR03 to Stories"
+    root: "EPIC-CC-AR02AR03 (Phase 1A)"
+    stories:
+      - "CC-AR-01: Add All Missing i18n Translation Keys"
+      - "CC-AR-02: Wire platform-defaults.ts to Route"
+      - "CC-AR-03: Fix Store Hydration Race Condition"
+      - "CC-AR-04: Replace Drag-Drop with Toggle-Based Layout"
+      - "CC-AR-05: Replace Monaco POC with Real Monaco Editor"
+      - "CC-AR-06: Implement Preview Plugin (WebContainer)"
+      - "CC-AR-07: Archive Legacy/Duplicate Files"
+      - "CC-AR-08: Split PluginLayout.tsx"
+
+# ============================================================================
+# LAST UPDATED
+# ============================================================================
+
+last_updated:
+  timestamp: "2026-01-26T15:00:00+07:00"
+  updated_by: "architect-ext"
+  reason: "Created comprehensive ARTIFACT_REGISTRY.yaml with TTL system, consolidation sprint tracking, and canonical epic structure"
+
+# ============================================================================
+# END OF REGISTRY
+# ============================================================================

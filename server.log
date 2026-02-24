@@ -1,0 +1,749 @@
+
+> project-alpha@ dev /Users/apple/Documents/coding-projects/project-alpha-master
+> DEPLOY_TARGET=node vite dev --port 3000
+
+
+  VITE v7.3.0  ready in 1486 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: use --host to expose
+[vite] connected.
+[WorkspaceStore] Hydration starting...
+[WorkspaceStore] Hydration complete
+[UnifiedChatStore] Hydrated from IndexedDB {
+  conversations: 0,
+  threads: 0,
+  messages: 0,
+  activeConversationId: null
+}
+[RAGStore] Rehydrated from IndexedDB
+[AppStore] Rehydrated from IndexedDB
+[AppStore] Current schema version: v2
+[AppStore] Schema version is current, no migration needed
+[AppStore] Hydration complete: { agentsCount: 1, providersCount: 7, activeProviderId: 'openrouter' }
+[AppStore] No API key migration needed
+[NoteStore] Rehydrated from storage
+[spikeDB] Running in SSR environment, skipping DB initialization
+[spike-project-store] SSR detected, using dummy storage
+6:57:52 PM [vite] (ssr) page reload src/router.tsx
+[vite] program reload
+[WorkspaceStore] Hydration starting...
+[WorkspaceStore] Hydration complete
+[UnifiedChatStore] Hydrated from IndexedDB {
+  conversations: 0,
+  threads: 0,
+  messages: 0,
+  activeConversationId: null
+}
+[RAGStore] Rehydrated from IndexedDB
+[AppStore] Rehydrated from IndexedDB
+[AppStore] Current schema version: v2
+[AppStore] Schema version is current, no migration needed
+[AppStore] Hydration complete: { agentsCount: 1, providersCount: 7, activeProviderId: 'openrouter' }
+[AppStore] No API key migration needed
+[NoteStore] Rehydrated from storage
+[spikeDB] Running in SSR environment, skipping DB initialization
+[spike-project-store] SSR detected, using dummy storage
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+6:59:12 PM [vite] (client) hmr update /src/styles.css?direct
+6:59:19 PM [vite] (client) hmr update /src/styles.css?direct
+6:59:22 PM [vite] (client) hmr update /src/styles.css?direct
+6:59:26 PM [vite] (client) hmr update /src/styles.css?direct
+6:59:38 PM [vite] (client) hmr update /src/styles.css?direct
+6:59:41 PM [vite] (client) hmr update /src/styles.css?direct
+7:00:03 PM [vite] (client) hmr update /src/styles.css?direct
+7:00:13 PM [vite] (client) hmr update /src/styles.css?direct
+7:00:41 PM [vite] (client) hmr update /src/styles.css?direct
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+Sourcemap for "/Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.vite/deps/chunk-VZ5RLATN.js" points to missing source files
+7:01:52 PM [vite] (ssr) page reload src/router.tsx
+[vite] program reload
+7:01:52 PM [vite] (client) page reload src/router.tsx
+[WorkspaceStore] Hydration starting...
+[WorkspaceStore] Hydration complete
+[UnifiedChatStore] Hydrated from IndexedDB {
+  conversations: 0,
+  threads: 0,
+  messages: 0,
+  activeConversationId: null
+}
+[RAGStore] Rehydrated from IndexedDB
+[AppStore] Rehydrated from IndexedDB
+[AppStore] Current schema version: v2
+[AppStore] Schema version is current, no migration needed
+[AppStore] Hydration complete: { agentsCount: 1, providersCount: 7, activeProviderId: 'openrouter' }
+[AppStore] No API key migration needed
+[NoteStore] Rehydrated from storage
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+[SSR-ALIAS] Excluding exact match: recharts
+7:05:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:06:07 PM [vite] (client) hmr update /src/styles.css?direct
+7:06:19 PM [vite] (client) hmr update /src/styles.css?direct
+7:06:24 PM [vite] (client) hmr update /src/styles.css?direct
+7:06:30 PM [vite] (client) hmr update /src/styles.css?direct
+7:06:43 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:00 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:06 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:16 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:16 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:34 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:40 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:07:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:10:11 PM [vite] (ssr) page reload src/router.tsx
+[vite] program reload
+7:10:11 PM [vite] (client) page reload src/router.tsx
+7:14:06 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:14:06 PM [vite] (client) page reload src/routeTree.gen.ts
+7:14:07 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:14:07 PM [vite] (client) page reload src/routeTree.gen.ts
+7:14:08 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:08 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:08 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:14:08 PM [vite] (client) page reload src/routeTree.gen.ts
+7:14:09 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:14:09 PM [vite] (client) page reload src/routeTree.gen.ts
+7:14:14 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:14 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:32 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:38 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:14:53 PM [vite] (client) hmr update /src/styles.css?direct
+7:15:00 PM [vite] (client) hmr update /src/styles.css?direct
+7:15:04 PM [vite] (client) hmr update /src/styles.css?direct
+7:15:04 PM [vite] (client) hmr update /src/styles.css?direct
+7:15:32 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:15:32 PM [vite] (client) page reload src/routeTree.gen.ts
+7:15:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:02 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:03 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:07 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:14 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:16 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:16 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:23 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:26 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:16:26 PM [vite] (client) page reload src/routeTree.gen.ts
+7:16:26 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:26 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:27 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:16:27 PM [vite] (client) page reload src/routeTree.gen.ts
+7:16:27 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:16:27 PM [vite] (client) page reload src/routeTree.gen.ts
+7:16:27 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:16:27 PM [vite] (client) page reload src/routeTree.gen.ts
+7:16:31 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:33 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:35 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:35 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:39 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:43 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:44 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:45 PM [vite] (client) hmr update /src/styles.css?direct
+7:16:45 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:01 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:06 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:06 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:08 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:21 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:24 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:28 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:28 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:31 PM [vite] (ssr) page reload src/router.tsx
+7:17:31 PM [vite] (client) page reload src/router.tsx
+7:17:34 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:34 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:36 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:36 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/__root.tsx
+7:17:47 PM [vite] (client) page reload src/routes/-spike/__root.tsx
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/notes.tsx
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/-spike/notes.tsx
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/stores/project-store.ts
+7:17:47 PM [vite] (client) page reload src/routes/-spike/stores/project-store.ts
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/utils/state-debugger.ts
+7:17:47 PM [vite] (client) page reload src/routes/-spike/utils/state-debugger.ts
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/utils/logger.ts
+7:17:47 PM [vite] (client) page reload src/routes/-spike/utils/logger.ts
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/project-creation.tsx
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/-spike/project-creation.tsx
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/lib/hydration-waiter.ts
+7:17:47 PM [vite] (client) page reload src/routes/-spike/lib/hydration-waiter.ts
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/lib/dexie-db.ts
+7:17:47 PM [vite] (client) page reload src/routes/-spike/lib/dexie-db.ts
+7:17:47 PM [vite] (ssr) page reload src/routes/-spike/ide.tsx
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/-spike/ide.tsx
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:47 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:50 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:54 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:17:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:00 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:00 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:02 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:07 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:07 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:09 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:15 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:19 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:19 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:20 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:26 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:31 PM [vite] (client) hmr update /src/styles.css?direct
+7:18:36 PM [vite] (client) hmr update /src/styles.css?direct
+[WorkspaceStore] Hydration starting...
+[WorkspaceStore] Hydration complete
+[UnifiedChatStore] Hydrated from IndexedDB {
+  conversations: 0,
+  threads: 0,
+  messages: 0,
+  activeConversationId: null
+}
+[RAGStore] Rehydrated from IndexedDB
+[AppStore] Rehydrated from IndexedDB
+[AppStore] Current schema version: v2
+[AppStore] Schema version is current, no migration needed
+[AppStore] Hydration complete: { agentsCount: 1, providersCount: 7, activeProviderId: 'openrouter' }
+[AppStore] No API key migration needed
+[NoteStore] Rehydrated from storage
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+7:22:29 PM [vite] Internal server error: Failed to resolve import "../routes/-spike/stores/project-store" from "src/routes/spike/create.tsx?tsr-split=component". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx?tsr-split=component:9:37
+  2  |  var _s = $RefreshSig$();
+  3  |  import { useState } from "react";
+  4  |  import { useSpikeProjectStore } from "../routes/-spike/stores/project-store";
+     |                                        ^
+  5  |  import { logError } from "../routes/-spike/utils/logger";
+  6  |  function ProjectCreationSpike() {
+      at TransformPluginContext._formatLog (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28998:43)
+      at TransformPluginContext.error (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28995:14)
+      at normalizeUrl (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27118:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27176:32
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27144:4)
+      at async EnvironmentPluginContainer.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28796:14)
+      at async loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22669:26)
+Error: Failed to load url ../routes/-spike/stores/project-store (resolved id: ../routes/-spike/stores/project-store) in /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx. Does the file exist?
+    at loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22662:33) {
+  code: 'ERR_LOAD_URL',
+  runnerError: Error: RunnerError
+      at reviveInvokeError (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:476:64)
+      at Object.invoke (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:549:11)
+      at async ModuleRunner.getModuleInformation (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1086:7)
+      at async request (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1103:83)
+      at async eval (/Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx:9:1)
+      at async ESModulesEvaluator.runInlinedModule (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:913:3)
+      at async ModuleRunner.directRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1146:59)
+      at async ModuleRunner.cachedRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1053:73)
+      at async Promise.all (index 0)
+}
+Error: Failed to load url ../routes/-spike/stores/project-store (resolved id: ../routes/-spike/stores/project-store) in /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx. Does the file exist?
+    at loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22662:33) {
+  code: 'ERR_LOAD_URL',
+  runnerError: Error: RunnerError
+      at reviveInvokeError (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:476:64)
+      at Object.invoke (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:549:11)
+      at async ModuleRunner.getModuleInformation (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1086:7)
+      at async request (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1103:83)
+      at async eval (/Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx:9:1)
+      at async ESModulesEvaluator.runInlinedModule (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:913:3)
+      at async ModuleRunner.directRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1146:59)
+      at async ModuleRunner.cachedRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1053:73)
+      at async Promise.all (index 0)
+}
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+7:22:30 PM [vite] Internal server error: Failed to resolve import "../routes/-spike/stores/project-store" from "src/routes/spike/create.tsx?tsr-split=component". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx?tsr-split=component:9:37
+  2  |  var _s = $RefreshSig$();
+  3  |  import { useState } from "react";
+  4  |  import { useSpikeProjectStore } from "../routes/-spike/stores/project-store";
+     |                                        ^
+  5  |  import { logError } from "../routes/-spike/utils/logger";
+  6  |  function ProjectCreationSpike() {
+      at TransformPluginContext._formatLog (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28998:43)
+      at TransformPluginContext.error (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28995:14)
+      at normalizeUrl (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27118:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27176:32
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27144:4)
+      at async EnvironmentPluginContainer.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28796:14)
+      at async loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22669:26)
+      at async viteTransformMiddleware (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:24541:20)
+7:22:32 PM [vite] (client) hmr update /src/routes/spike/create.tsx
+Error: Failed to load url ../routes/-spike/stores/project-store (resolved id: ../routes/-spike/stores/project-store) in /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx. Does the file exist?
+    at loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22662:33) {
+  code: 'ERR_LOAD_URL',
+  runnerError: Error: RunnerError
+      at reviveInvokeError (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:476:64)
+      at Object.invoke (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:549:11)
+      at async ModuleRunner.getModuleInformation (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1086:7)
+      at async request (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1103:83)
+      at async eval (/Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx:9:1)
+      at async ESModulesEvaluator.runInlinedModule (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:913:3)
+      at async ModuleRunner.directRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1146:59)
+      at async ModuleRunner.cachedRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1053:73)
+      at async Promise.all (index 0)
+}
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+7:22:33 PM [vite] Internal server error: Failed to resolve import "../routes/-spike/stores/project-store" from "src/routes/spike/create.tsx?tsr-split=component". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx?tsr-split=component:9:37
+  2  |  var _s = $RefreshSig$();
+  3  |  import { useState } from "react";
+  4  |  import { useSpikeProjectStore } from "../routes/-spike/stores/project-store";
+     |                                        ^
+  5  |  import { logError } from "../routes/-spike/utils/logger";
+  6  |  function ProjectCreationSpike() {
+      at TransformPluginContext._formatLog (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28998:43)
+      at TransformPluginContext.error (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28995:14)
+      at normalizeUrl (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27118:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27176:32
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27144:4)
+      at async EnvironmentPluginContainer.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28796:14)
+      at async loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22669:26)
+      at async viteTransformMiddleware (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:24541:20)
+Error: Failed to load url ../routes/-spike/stores/project-store (resolved id: ../routes/-spike/stores/project-store) in /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx. Does the file exist?
+    at loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22662:33) {
+  code: 'ERR_LOAD_URL',
+  runnerError: Error: RunnerError
+      at reviveInvokeError (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:476:64)
+      at Object.invoke (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:549:11)
+      at async ModuleRunner.getModuleInformation (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1086:7)
+      at async request (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1103:83)
+      at async eval (/Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx:9:1)
+      at async ESModulesEvaluator.runInlinedModule (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:913:3)
+      at async ModuleRunner.directRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1146:59)
+      at async ModuleRunner.cachedRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1053:73)
+      at async Promise.all (index 0)
+}
+Error: Failed to load url ../routes/-spike/stores/project-store (resolved id: ../routes/-spike/stores/project-store) in /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx. Does the file exist?
+    at loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22662:33) {
+  code: 'ERR_LOAD_URL',
+  runnerError: Error: RunnerError
+      at reviveInvokeError (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:476:64)
+      at Object.invoke (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:549:11)
+      at async ModuleRunner.getModuleInformation (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1086:7)
+      at async request (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1103:83)
+      at async eval (/Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx:9:1)
+      at async ESModulesEvaluator.runInlinedModule (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:913:3)
+      at async ModuleRunner.directRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1146:59)
+      at async ModuleRunner.cachedRequest (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1053:73)
+      at async Promise.all (index 0)
+}
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+7:22:33 PM [vite] Internal server error: Failed to resolve import "../routes/-spike/stores/project-store" from "src/routes/spike/create.tsx?tsr-split=component". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/apple/Documents/coding-projects/project-alpha-master/src/routes/spike/create.tsx?tsr-split=component:9:37
+  2  |  var _s = $RefreshSig$();
+  3  |  import { useState } from "react";
+  4  |  import { useSpikeProjectStore } from "../routes/-spike/stores/project-store";
+     |                                        ^
+  5  |  import { logError } from "../routes/-spike/utils/logger";
+  6  |  function ProjectCreationSpike() {
+      at TransformPluginContext._formatLog (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28998:43)
+      at TransformPluginContext.error (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28995:14)
+      at normalizeUrl (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27118:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27176:32
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:27144:4)
+      at async EnvironmentPluginContainer.transform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:28796:14)
+      at async loadAndTransform (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:22669:26)
+      at async viteTransformMiddleware (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:24541:20)
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:57 PM [vite] (client) hmr update /src/routes/spike/create.tsx
+7:25:57 PM [vite] (client) hmr update /src/routes/spike/create.tsx
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:58 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:25:59 PM [vite] (client) hmr update /src/styles.css?direct
+7:40:46 PM [vite] (ssr) page reload src/routes/spike/notes.tsx
+[vite] program reload
+7:40:46 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.tsx, /src/routes/spike/notes.tsx?tsr-split=component
+7:40:46 PM [vite] (ssr) page reload src/routes/spike/notes.tsx
+7:40:46 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.tsx, /src/routes/spike/notes.tsx?tsr-split=component
+7:40:46 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:40:46 PM [vite] (client) page reload src/routeTree.gen.ts
+[WorkspaceStore] Hydration starting...
+[WorkspaceStore] Hydration complete
+[UnifiedChatStore] Hydrated from IndexedDB {
+  conversations: 0,
+  threads: 0,
+  messages: 0,
+  activeConversationId: null
+}
+[RAGStore] Rehydrated from IndexedDB
+[AppStore] Rehydrated from IndexedDB
+[AppStore] Current schema version: v2
+[AppStore] Schema version is current, no migration needed
+[AppStore] Hydration complete: { agentsCount: 1, providersCount: 7, activeProviderId: 'openrouter' }
+[AppStore] No API key migration needed
+[NoteStore] Rehydrated from storage
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+7:48:37 PM [vite] (ssr) page reload src/routes/spike/ide.tsx
+[vite] program reload
+7:48:37 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.tsx, /src/routes/spike/ide.tsx?tsr-split=component
+7:48:37 PM [vite] (ssr) page reload src/routeTree.gen.ts
+7:48:37 PM [vite] (client) page reload src/routeTree.gen.ts
+[WorkspaceStore] Hydration starting...
+[WorkspaceStore] Hydration complete
+[UnifiedChatStore] Hydrated from IndexedDB {
+  conversations: 0,
+  threads: 0,
+  messages: 0,
+  activeConversationId: null
+}
+[RAGStore] Rehydrated from IndexedDB
+[AppStore] Rehydrated from IndexedDB
+[AppStore] Current schema version: v2
+[AppStore] Schema version is current, no migration needed
+[AppStore] Hydration complete: { agentsCount: 1, providersCount: 7, activeProviderId: 'openrouter' }
+[AppStore] No API key migration needed
+[NoteStore] Rehydrated from storage
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+[SSR-ALIAS] Excluding prefix match: @xterm/xterm/css/xterm.css
+[SSR-ALIAS] Excluding exact match: @xterm/xterm
+[SSR-ALIAS] Excluding exact match: @xterm/addon-fit
+[SSR-ALIAS] Excluding exact match: @monaco-editor/react
+[SSR-ALIAS] Excluding exact match: @xyflow/react
+[SSR-ALIAS] Excluding prefix match: @xyflow/react/dist/style.css
+[SSR-ALIAS] Excluding exact match: @xyflow/react
+8:25:11 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:13 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:13 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:18 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:18 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:20 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:20 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:23 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:26 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:43 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:44 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:44 PM [vite] (client) hmr update /src/styles.css?direct
+8:25:48 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:03 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:06 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:07 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:08 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:12 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:16 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:16 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:23 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:23 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:28 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:31 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:31 PM [vite] (client) hmr update /src/styles.css?direct
+8:27:41 PM [vite] (client) hmr update /src/styles.css?direct
+8:56:17 PM [vite] (ssr) page reload src/routes/spike/ide.tsx
+[vite] program reload
+8:56:17 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.tsx, /src/routes/spike/ide.tsx?tsr-split=component
+8:57:34 PM [vite] (ssr) page reload src/routes/spike/ide.$projectId.tsx
+8:57:34 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.$projectId.tsx
+8:57:49 PM [vite] (ssr) page reload src/routes/spike/notes.tsx
+8:57:49 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.tsx, /src/routes/spike/notes.tsx?tsr-split=component
+8:58:12 PM [vite] (ssr) page reload src/routes/spike/notes.$projectId.tsx
+8:58:12 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.$projectId.tsx
+9:22:46 PM [vite] (ssr) page reload src/routes/spike/ide.$projectId.tsx
+9:22:46 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.$projectId.tsx
+9:23:34 PM [vite] (ssr) page reload src/routes/spike/notes.$projectId.tsx
+9:23:34 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.$projectId.tsx
+9:46:37 PM [vite] (ssr) page reload src/routes/spike/ide.tsx
+9:46:37 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.tsx, /src/routes/spike/ide.tsx?tsr-split=component
+9:47:03 PM [vite] (ssr) page reload src/routes/spike/ide.$projectId.tsx
+9:47:03 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.$projectId.tsx
+9:47:54 PM [vite] (ssr) page reload src/routes/spike/ide.$projectId.tsx
+9:47:54 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/ide.$projectId.tsx
+9:48:04 PM [vite] (ssr) page reload src/routes/spike/notes.tsx
+9:48:04 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.tsx, /src/routes/spike/notes.tsx?tsr-split=component
+9:48:18 PM [vite] (ssr) page reload src/routes/spike/notes.tsx
+9:48:18 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.tsx, /src/routes/spike/notes.tsx?tsr-split=component
+9:48:27 PM [vite] (ssr) page reload src/routes/spike/notes.$projectId.tsx
+9:48:27 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/notes.$projectId.tsx
+9:49:13 PM [vite] (ssr) page reload src/routes/spike/index.tsx
+9:49:13 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/index.tsx, /src/routes/spike/index.tsx?tsr-split=component
+9:50:29 PM [vite] (ssr) page reload src/routes/spike/index.tsx
+9:50:29 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/index.tsx, /src/routes/spike/index.tsx?tsr-split=component
+9:50:46 PM [vite] (ssr) page reload src/routes/spike/index.tsx
+9:50:46 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/index.tsx, /src/routes/spike/index.tsx?tsr-split=component
+9:51:14 PM [vite] (ssr) page reload src/routes/spike/create.tsx
+9:51:14 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/spike/create.tsx
+11:05:13 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:13 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:14 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:31 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:05:32 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:11 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:06:45 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:24 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct
+11:07:25 PM [vite] (client) hmr update /src/styles.css?direct

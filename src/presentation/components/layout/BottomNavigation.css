@@ -1,0 +1,252 @@
+/**
+ * @fileoverview BottomNavigation Styles - 8-bit Design System
+ * @module presentation/components/layout/BottomNavigation.css
+ *
+ * EPIC-UXUI-04: Responsive Layout Implementation
+ * - Fixed bottom navigation bar
+ * - Height: 64px
+ * - 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ *
+ * @story UXUI-04-07
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   Bottom Navigation Container
+   ============================================================================ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: hsl(var(--background));
+  border-top: 2px solid hsl(var(--border));
+  /* 8-bit: No border-radius, sharp corners */
+  border-radius: 0;
+  /* Pixel shadow for 8-bit effect */
+  box-shadow: 0 -4px 0 0 hsl(var(--border) / 0.5);
+}
+
+/* ============================================================================
+   Bottom Navigation Container Inner
+   ============================================================================ */
+
+.bottom-nav__container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  height: 64px;
+  padding: 0 8px;
+  gap: 4px;
+}
+
+/* ============================================================================
+   Bottom Navigation Item
+   ============================================================================ */
+
+.bottom-nav__item {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 80px;
+  height: 56px;
+  padding: 4px 8px;
+  gap: 2px;
+
+  /* Reset button styles */
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 0; /* 8-bit: Sharp corners */
+  cursor: pointer;
+
+  /* Transitions */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Position for indicator */
+  position: relative;
+}
+
+/* Hover State */
+.bottom-nav__item:hover {
+  background: hsl(var(--accent));
+}
+
+/* Focus State */
+.bottom-nav__item:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: -2px;
+}
+
+/* Active State */
+.bottom-nav__item--active {
+  background: hsl(var(--accent));
+}
+
+/* Active Indicator - Top Border */
+.bottom-nav__indicator {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Bottom Navigation Icon
+   ============================================================================ */
+
+.bottom-nav__icon {
+  color: hsl(var(--foreground) / 0.7);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  width: 24px;
+  height: 24px;
+}
+
+/* Icon Hover */
+.bottom-nav__item:hover .bottom-nav__icon {
+  color: hsl(var(--foreground));
+}
+
+/* Icon Active */
+.bottom-nav__item--active .bottom-nav__icon {
+  color: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Bottom Navigation Label
+   ============================================================================ */
+
+.bottom-nav__label {
+  font-size: 10px;
+  font-weight: 500;
+  color: hsl(var(--foreground) / 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Label Hover */
+.bottom-nav__item:hover .bottom-nav__label {
+  color: hsl(var(--foreground));
+}
+
+/* Label Active */
+.bottom-nav__item--active .bottom-nav__label {
+  color: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Safe Area Spacer (Notched Devices)
+   ============================================================================ */
+
+.bottom-nav__safe-area {
+  height: env(safe-area-inset-bottom, 0px);
+  background: hsl(var(--background));
+}
+
+/* ============================================================================
+   Animation - Fade In
+   ============================================================================ */
+
+@keyframes bottom-nav-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bottom-nav__item {
+  animation: bottom-nav-fade-in 200ms ease-out forwards;
+  opacity: 0;
+}
+
+/* Stagger animation delays */
+.bottom-nav__item:nth-child(1) { animation-delay: 0ms; }
+.bottom-nav__item:nth-child(2) { animation-delay: 50ms; }
+.bottom-nav__item:nth-child(3) { animation-delay: 100ms; }
+.bottom-nav__item:nth-child(4) { animation-delay: 150ms; }
+.bottom-nav__item:nth-child(5) { animation-delay: 200ms; }
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav__item {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================================================
+   Touch Device Optimizations
+   ============================================================================ */
+
+@media (pointer: coarse) {
+  .bottom-nav__item {
+    min-height: 56px;
+    padding: 8px;
+  }
+
+  .bottom-nav__icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bottom-nav__label {
+    font-size: 11px;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .bottom-nav {
+    border-top-width: 3px;
+  }
+
+  .bottom-nav__item--active {
+    border: 2px solid hsl(var(--primary));
+  }
+
+  .bottom-nav__indicator {
+    height: 3px;
+  }
+}
+
+/* ============================================================================
+   Dark Mode Adjustments
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .bottom-nav {
+    box-shadow: 0 -4px 0 0 hsl(var(--border) / 0.3);
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+  .bottom-nav {
+    display: none !important;
+  }
+}

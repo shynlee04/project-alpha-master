@@ -1,0 +1,369 @@
+/**
+ * @fileoverview Sync Status CSS - 8-bit Design System
+ * @module presentation/components/workspace/sync/sync-status.css
+ * @governance EPIC-CC-01 - Project Space Foundation
+ * @story PS-02-B - Hot Reactive Sync Integration
+ *
+ * 8-bit design system compliant styles for sync components.
+ * No glassmorphism, sharp corners, solid colors.
+ */
+
+/* ============================================================================
+   Sync Status Indicator
+   ============================================================================ */
+
+.sync-status-indicator {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+
+  /* 8-bit design - sharp corners */
+  border: 2px solid transparent;
+  border-radius: 0;
+
+  /* Typography */
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  color: var(--color-fg, #e5e5e5);
+
+  /* Cursor */
+  cursor: pointer;
+  position: relative;
+
+  /* Transition */
+  transition: all 0.15s ease;
+}
+
+/* Status dot */
+.sync-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+/* Status label */
+.sync-status-label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Change count badge */
+.sync-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+
+  /* 8-bit design */
+  border: 2px solid currentColor;
+  border-radius: 0;
+  font-weight: 600;
+  font-size: 10px;
+
+  /* Color */
+  background: var(--color-accent, #3b82f6);
+  color: white;
+  border-color: var(--color-accent, #3b82f6);
+}
+
+/* Last sync time */
+.sync-status-time {
+  opacity: 0.7;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+/* ============================================================================
+   Status Variants
+   ============================================================================ */
+
+.sync-idle {
+  border-color: #22c55e;
+  box-shadow: 4px 4px 0 0 #22c55e;
+}
+
+.sync-idle .sync-status-badge {
+  background: transparent;
+  color: #22c55e;
+  border-color: #22c55e;
+}
+
+.sync-syncing {
+  border-color: #eab308;
+  box-shadow: 4px 4px 0 0 #eab308;
+  animation: sync-pulse 1s infinite;
+}
+
+@keyframes sync-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.sync-error {
+  border-color: #ef4444;
+  box-shadow: 4px 4px 0 0 #ef4444;
+}
+
+.sync-revoked {
+  border-color: #6b7280;
+  box-shadow: 4px 4px 0 0 #6b7280;
+}
+
+.sync-unknown {
+  border-color: #6b7280;
+  box-shadow: 4px 4px 0 0 #6b7280;
+}
+
+/* ============================================================================
+   Tooltip
+   ============================================================================ */
+
+.sync-status-tooltip {
+  /* Positioning */
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+
+  /* Layout */
+  display: none;
+  flex-direction: column;
+  min-width: 200px;
+  max-width: 300px;
+  max-height: 200px;
+  overflow-y: auto;
+
+  /* 8-bit design */
+  border: 2px solid var(--color-border, #404040);
+  border-radius: 0;
+  background: var(--color-bg, #171717);
+  box-shadow: 4px 4px 0 0 var(--color-border, #404040);
+
+  /* Z-index */
+  z-index: 1000;
+}
+
+.sync-status-indicator:hover .sync-status-tooltip {
+  display: flex;
+}
+
+.sync-tooltip-header {
+  padding: 8px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border, #404040);
+  background: var(--color-bg-secondary, #262626);
+}
+
+.sync-tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--color-border, #404040);
+}
+
+.sync-tooltip-item:last-child {
+  border-bottom: none;
+}
+
+.sync-tooltip-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.sync-tooltip-path {
+  font-family: var(--font-family-mono);
+  word-break: break-all;
+}
+
+.sync-tooltip-more {
+  padding: 8px;
+  font-size: 10px;
+  opacity: 0.7;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Change type colors */
+.sync-created .sync-tooltip-icon {
+  color: #22c55e;
+}
+
+.sync-modified .sync-tooltip-icon {
+  color: #eab308;
+}
+
+.sync-deleted .sync-tooltip-icon {
+  color: #ef4444;
+}
+
+/* ============================================================================
+   File Change Notification (Toaster)
+   ============================================================================ */
+
+.sync-notification {
+  /* Layout */
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  min-width: 280px;
+  max-width: 400px;
+
+  /* 8-bit design */
+  border: 2px solid var(--color-border, #404040);
+  border-radius: 0;
+  background: var(--color-bg, #171717);
+  box-shadow: 6px 6px 0 0 var(--color-border, #404040);
+
+  /* Animation */
+  animation: notification-slide-in 0.2s ease-out;
+}
+
+@keyframes notification-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sync-notification-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sync-notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sync-notification-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.sync-notification-path {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  opacity: 0.7;
+  word-break: break-all;
+}
+
+.sync-notification-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Touch targets (44x44px minimum) */
+.sync-notification-button {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 8px 12px;
+
+  /* 8-bit design */
+  border: 2px solid var(--color-border, #404040);
+  border-radius: 0;
+  background: var(--color-bg-secondary, #262626);
+  color: var(--color-fg, #e5e5e5);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+
+  /* Hover effect */
+  transition: all 0.1s ease;
+}
+
+.sync-notification-button:hover {
+  background: var(--color-bg-tertiary, #404040);
+}
+
+.sync-notification-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: none !important;
+}
+
+.sync-notification-button.primary {
+  background: var(--color-accent, #3b82f6);
+  border-color: var(--color-accent, #3b82f6);
+  color: white;
+}
+
+.sync-notification-button.primary:hover {
+  background: var(--color-accent-hover, #2563eb);
+}
+
+/* ============================================================================
+   Notification Container
+   ============================================================================ */
+
+.sync-notification-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  max-width: 400px;
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sync-status-indicator,
+  .sync-notification {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus styles */
+.sync-status-indicator:focus-visible,
+.sync-notification-button:focus-visible {
+  outline: 2px solid var(--color-accent, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .sync-status-indicator {
+    border-width: 3px;
+  }
+
+  .sync-notification {
+    border-width: 3px;
+  }
+}

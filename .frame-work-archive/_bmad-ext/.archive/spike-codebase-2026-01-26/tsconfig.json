@@ -1,0 +1,65 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/tests/**",
+    "**/test/**",
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    ".vinxi",
+    ".output",
+    ".turbo",
+    "e2e"
+  ],
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client"
+    ],
+    /* Node mode for better path resolution */
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    /* Performance & caching */
+    "incremental": true,
+    "tsBuildInfoFile": "node_modules/.cache/tsc/app.tsbuildinfo",
+    /* Linting */
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    /* Module resolution options */
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/core/entities/Agent": ["./src/core/entities/Agent.ts"],
+      "@/core/entities/Conversation": ["./src/core/entities/Conversation.ts"],
+      "@/core/entities/Provider": ["./src/core/entities/Provider.ts"],
+      "@/core/entities/Project": ["./src/core/entities/Project.ts"],
+      "@/core/entities/Workspace": ["./src/core/entities/Workspace.ts"]
+    }
+  }
+}

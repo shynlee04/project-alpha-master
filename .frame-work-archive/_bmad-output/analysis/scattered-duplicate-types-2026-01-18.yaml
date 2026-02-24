@@ -1,0 +1,285 @@
+---
+title: Scattered Duplicate Types Analysis Report
+generated: 2026-01-18
+author: analyst-ext
+scope: Type definitions duplicated across multiple locations
+---
+
+## Executive Summary
+
+| Category | Count | Recommendation |
+|----------|-------|----------------|
+| **Genuine Duplicates** | 7 | CAN ARCHIVE |
+| **Extension Patterns** | 2 | KEEP - Architecture correct |
+| **Inconsistent Definitions** | 3 | NEEDS STANDARDIZATION |
+
+---
+
+## Detailed Findings
+
+### 1. Project Types
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `Project` |
+
+**Locations:**
+
+| File | Layer | Status |
+|------|-------|--------|
+| `src/domain/entities/project.ts` | Domain | CANONICAL |
+| `src/infrastructure/persistence/stores/project/project-types.ts` | Infrastructure | EXTENSION |
+
+**Analysis:**
+- Domain version defines core business entity
+- Infrastructure version **extends** DomainProject with `storageMetadata` field
+- This is **CORRECT architecture** - not a duplicate
+
+**Verdict:** KEEP BOTH - Extension pattern properly applied
+
+---
+
+### 2. NoteRecord Types
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `NoteRecord` |
+
+**Locations:**
+
+| File | Layer | Field Difference |
+|------|-------|------------------|
+| `src/infrastructure/persistence/dexie-db-knowledge-types.ts` | Infrastructure | `blocks: unknown[]` |
+| `src/lib/notes/types.ts` | Lib/Presentation | `blocks: Block[]` |
+
+**Analysis:**
+- Both define same fields: id, projectId, workspaceId, title, emoji, blocks, parentId, isFavorite, order, isIndexed, indexedAt, createdAt, updatedAt
+- Only difference: `unknown[]` vs `Block[]` (Block is from @blocknote/core)
+- Lib version is just a convenience wrapper for presentation layer
+- Infrastructure version is the **canonical persistence type**
+
+**Verdict:** CAN ARCHIVE `lib/notes/types.ts`
+**Reason:** Presentation layer should import from infrastructure and convert Block[] to unknown[] if needed
+
+---
+
+### 3. Flashcard Types
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `Flashcard` |
+
+**Locations:**
+
+| File | Layer | Fields |
+|------|-------|--------|
+| `src/domain/entities/study.ts` | Domain | deckId, front, back, status, nextReview, interval, easeFactor |
+| `src/lib/knowledge/types.ts` | Lib/Archived | sourceId, setId, srsData (simplified) |
+| `src/infrastructure/persistence/dexie-db-study-types.ts` | Persistence | workspaceId, projectId, question, answer, difficulty, topic |
+| `src/infrastructure/persistence/stores/flashcard/flashcard-db.ts` | Persistence | Same as above (NO workspaceId) |
+
+**Analysis:**
+- **Domain version**: Full SRS entity with learning metadata
+- **Lib version**: Archived stub, simplified for knowledge module
+- **Persistence versions**: Record types for IndexedDB storage (different from domain entity)
+- Dexie-DB has `workspaceId`, Flashcard-DB doesn't (per ARC-D02)
+
+**Verdict:** ARCHITECTURALLY CORRECT
+- Domain vs Persistence are intentionally different (entity vs record pattern)
+- Lib version is deprecated/archived - can be removed
+
+---
+
+### 4. Quiz Types - GENUINE DUPLICATES
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `Quiz`, `QuizQuestion` |
+
+**Locations:**
+
+| File | Status | Fields |
+|------|--------|--------|
+| `src/domain/entities/study.ts` | CANONICAL | id, title, questions, metadata, created, updated |
+| `src/lib/study/quiz-types.ts` | DUPLICATE | id, sourceId, questions, createdAt, options (different!) |
+| `src/lib/study/quiz-generator.ts` | DUPLICATE | Similar to quiz-types.ts |
+
+**Analysis:**
+- Domain version: Proper entity with title, metadata, created/updated timestamps
+- Lib versions: Different structure with sourceId, options (deprecated)
+- Both lib files marked as `@deprecated This module is archived for MVP`
+
+**Verdict:** CAN ARCHIVE BOTH `lib/study/quiz-types.ts` and `lib/study/quiz-generator.ts`
+
+---
+
+### 5. QuizQuestion Type - FIELD NAME INCONSISTENCY
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `QuizQuestion` |
+
+**Locations:**
+
+| File | Canonical Field |
+|------|-----------------|
+| `src/domain/entities/study.ts` | `correctOptionIndex` (number) |
+| `src/lib/study/quiz-types.ts` | `correctAnswer` (number) |
+| `src/lib/study/quiz-generator.ts` | `correctAnswer` (number) |
+
+**Analysis:**
+- Domain version uses `correctOptionIndex`
+- Lib versions use `correctAnswer`
+- Both mean the same thing but different naming
+
+**Verdict:** NEEDS STANDARDIZATION
+- If lib versions are used anywhere, should be updated to match domain
+
+---
+
+### 6. ToolResult Type - DUPLICATE
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `ToolResult<T>` |
+
+**Locations:**
+
+| File | Layer |
+|------|-------|
+| `src/lib/agent/tools/types.ts` | Lib/Agent |
+| `src/domain/tools/provider/types.ts` | Domain/Tools |
+
+**Analysis:**
+Both define identical interface:
+```typescript
+interface ToolResult<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+```
+
+**Verdict:** CAN ARCHIVE `domain/tools/provider/types.ts`
+**Reason:** Lib/Agent version is used more widely; Domain version appears unused
+
+---
+
+### 7. ToolCategory Type - INCONSISTENT DEFINITIONS
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `ToolCategory` |
+
+**Locations:**
+
+| File | Categories |
+|------|------------|
+| `src/domain/tools/tool-permissions.ts` | 10 categories (includes notes, unified, composite, provider) |
+| `src/lib/agent/tool-permission/types.ts` | 6 categories (missing some) |
+| `src/types/tool-call.ts` | 6 categories (same as lib version) |
+
+**Analysis:**
+- Domain version is **more complete** with 10 categories
+- Lib version is **subset** with 6 categories
+- Inconsistency could cause type errors when using categories from different files
+
+**Verdict:** NEEDS STANDARDIZATION
+- Lib versions should import from domain (source of truth)
+
+---
+
+### 8. ToolTrustLevel Type
+
+| Property | Value |
+|----------|-------|
+| **Type Name** | `ToolTrustLevel` |
+
+**Locations:**
+
+| File | Definition |
+|------|------------|
+| `src/domain/tools/tool-permissions.ts` | 'auto' \| 'prompt' \| 'block' |
+| `src/lib/agent/tool-permission/types.ts` | 'auto' \| 'prompt' \| 'block' |
+| `src/infrastructure/persistence/stores/permissions/types.ts` | Re-exports from domain |
+
+**Analysis:**
+- All three define identical type with same values
+- Infrastructure version correctly re-exports from domain
+
+**Verdict:** CORRECT - Domain is source of truth, others re-export
+
+---
+
+## Action Items
+
+### High Priority (Can Archive)
+
+| Type | Files to Archive | Reason |
+|------|------------------|--------|
+| `NoteRecord` | `lib/notes/types.ts` | Duplicate of infrastructure version |
+| `Quiz` | `lib/study/quiz-types.ts` | Deprecated archive, different structure |
+| `QuizGenerator` | `lib/study/quiz-generator.ts` | Deprecated archive |
+| `ToolResult` | `domain/tools/provider/types.ts` | Duplicate of lib/agent/tools/types.ts |
+
+### Medium Priority (Standardize)
+
+| Type | Action |
+|------|--------|
+| `ToolCategory` | Update lib versions to import from domain |
+| `QuizQuestion.correctAnswer` | Rename to `correctOptionIndex` to match domain |
+
+### Low Priority (Review)
+
+| Type | Current State | Recommendation |
+|------|---------------|----------------|
+| `Flashcard` | Domain + Persistence + Lib | Keep domain (entity) + persistence (record), remove lib |
+
+---
+
+## Files to Archive
+
+files_to_archive:
+  - path: "src/lib/notes/types.ts"
+    reason: "Duplicate NoteRecord - use infrastructure/persistence/dexie-db-knowledge-types.ts"
+
+  - path: "src/lib/study/quiz-types.ts"
+    reason: "Deprecated archive - use domain/entities/study.ts for Quiz types"
+
+  - path: "src/lib/study/quiz-generator.ts"
+    reason: "Deprecated archive - stub implementation"
+
+  - path: "src/domain/tools/provider/types.ts"
+    reason: "Duplicate ToolResult - use lib/agent/tools/types.ts"
+
+  - path: "src/lib/knowledge/types.ts"
+    reason: "Deprecated archive - flashcard types in domain/entities/study.ts"
+
+---
+
+## Files with Unique Features (KEEP)
+
+files_to_keep:
+  - path: "src/domain/entities/project.ts"
+    reason: "Domain entity - source of truth"
+
+  - path: "src/domain/entities/study.ts"
+    reason: "Domain entities - proper business logic"
+
+  - path: "src/domain/tools/tool-permissions.ts"
+    reason: "Source of truth for ToolCategory, ToolTrustLevel"
+
+  - path: "src/infrastructure/persistence/stores/project/project-types.ts"
+    reason: "Extends domain Project with storageMetadata (correct architecture)"
+
+---
+
+## Statistics
+
+statistics:
+  total_duplicate_type_definitions: 23
+  genuine_duplicates_can_archive: 7
+  extension_patterns_correct_architecture: 2
+  inconsistent_definitions_need_fix: 3
+  deprecated_archives: 5
+  unique_features_keep: 6

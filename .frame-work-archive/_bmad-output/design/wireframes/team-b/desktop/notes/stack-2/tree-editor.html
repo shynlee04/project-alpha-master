@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Notes - Tree + Editor (Stack 2)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Wireframe-specific overrides */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--notes-bg);
+        }
+        
+        .header {
+            height: var(--header-height);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .activity-bar {
+            width: 64px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border-right: var(--border-width) solid var(--border-color);
+        }
+        
+        .activity-bar-top {
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-2);
+            gap: var(--space-1);
+        }
+        
+        .activity-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+            color: var(--muted);
+            transition: all 0.15s ease;
+            position: relative;
+        }
+        
+        .activity-item:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .activity-item.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+        }
+        
+        .activity-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background-color: var(--action);
+            border-radius: 0 2px 2px 0;
+        }
+        
+        .activity-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .note-tree {
+            width: 220px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border-right: var(--border-width) solid var(--border-color);
+        }
+        
+        .tree-header {
+            padding: var(--space-3);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+        }
+        
+        .project-selector:hover {
+            background-color: var(--surface-hover);
+        }
+        
+        .project-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--action);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+        }
+        
+        .project-name {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+        
+        .tree-search {
+            margin-top: var(--space-2);
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+        }
+        
+        .search-input-wrapper svg {
+            position: absolute;
+            left: var(--space-2);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: var(--space-2) var(--space-2) var(--space-2) var(--space-8);
+            font-size: var(--text-sm);
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: var(--action);
+        }
+        
+        .tree-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-2);
+        }
+        
+        .tree-section {
+            margin-bottom: var(--space-4);
+        }
+        
+        .tree-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-1) var(--space-2);
+            margin-bottom: var(--space-1);
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .tree-item:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .tree-item.selected {
+            color: var(--primary);
+            background-color: rgba(249, 115, 22, 0.15);
+            border: 1px solid var(--action);
+        }
+        
+        .tree-item.selected .tree-item-name {
+            color: var(--action);
+        }
+        
+        .tree-item-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .tree-item-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .tree-item-actions {
+            display: none;
+            gap: var(--space-1);
+        }
+        
+        .tree-item:hover .tree-item-actions {
+            display: flex;
+        }
+        
+        .tree-action-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+            color: var(--muted);
+            transition: all 0.15s ease;
+        }
+        
+        .tree-action-btn:hover {
+            color: var(--primary);
+            background-color: var(--surface);
+        }
+        
+        .tree-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .folder-item {
+            color: var(--muted);
+        }
+        
+        .folder-item.open .folder-chevron {
+            transform: rotate(90deg);
+        }
+        
+        .folder-chevron {
+            transition: transform 0.15s ease;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .folder-children {
+            padding-left: var(--space-4);
+        }
+        
+        .editor-area {
+            flex: 1;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background-color: var(--notes-bg);
+        }
+        
+        .editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-2) var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .editor-tabs {
+            display: flex;
+            gap: var(--space-1);
+            align-items: center;
+        }
+        
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .editor-tab:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .editor-tab.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+            border-color: var(--action);
+        }
+        
+        .editor-tab-icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .editor-tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+        }
+        
+        .editor-tab-close:hover {
+            background-color: var(--surface-active);
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: var(--space-2);
+            align-items: center;
+        }
+        
+        .editor-action-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--secondary);
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .editor-action-btn:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .editor-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: white;
+            background-color: var(--action);
+            border: var(--border-width) solid var(--action);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--action-hover);
+            border-color: var(--action-hover);
+            transform: translate(-1px, -1px);
+            box-shadow: var(--shadow-pixel);
+        }
+        
+        .btn-primary:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+        
+        .btn-primary svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .blocknote-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+            color: var(--secondary);
+            background-color: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .toolbar-btn:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+            border-color: var(--border-color);
+        }
+        
+        .toolbar-btn.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+            border-color: var(--action);
+        }
+        
+        .toolbar-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background-color: var(--border-color);
+            margin: 0 var(--space-1);
+        }
+        
+        .editor-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-6);
+            background-color: var(--notes-bg);
+        }
+        
+        .note-document {
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: var(--font-prose);
+            color: var(--primary);
+            line-height: var(--leading-relaxed);
+        }
+        
+        .note-document h1 {
+            font-size: 32px;
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--action);
+        }
+        
+        .note-document h2 {
+            font-size: 24px;
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+            margin-top: var(--space-8);
+            margin-bottom: var(--space-3);
+        }
+        
+        .note-document h3 {
+            font-size: 18px;
+            font-weight: var(--font-semibold);
+            color: var(--action);
+            margin-top: var(--space-6);
+            margin-bottom: var(--space-2);
+        }
+        
+        .note-document p {
+            margin-bottom: var(--space-4);
+            color: var(--secondary);
+        }
+        
+        .note-document ul, .note-document ol {
+            margin-bottom: var(--space-4);
+            padding-left: var(--space-6);
+        }
+        
+        .note-document li {
+            margin-bottom: var(--space-2);
+            color: var(--secondary);
+        }
+        
+        .note-document li::marker {
+            color: var(--action);
+        }
+        
+        .note-document blockquote {
+            padding: var(--space-3) var(--space-4);
+            margin: var(--space-4) 0;
+            background-color: var(--surface);
+            border-left: 4px solid var(--action);
+            color: var(--secondary);
+        }
+        
+        .note-document code {
+            font-family: var(--font-code);
+            font-size: 0.9em;
+            padding: 2px 6px;
+            background-color: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-none);
+            color: var(--action);
+        }
+        
+        .note-document pre {
+            padding: var(--space-4);
+            margin: var(--space-4) 0;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow-x: auto;
+        }
+        
+        .note-document pre code {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            color: var(--primary);
+        }
+        
+        .note-document table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+        }
+        
+        .note-document th, .note-document td {
+            padding: var(--space-2) var(--space-3);
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+        
+        .note-document th {
+            background-color: var(--surface);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+        
+        .note-document td {
+            color: var(--secondary);
+        }
+        
+        .slash-menu {
+            position: absolute;
+            width: 200px;
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel-lg);
+            z-index: var(--z-dropdown);
+        }
+        
+        .slash-menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .slash-menu-item:hover, .slash-menu-item.selected {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .slash-menu-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--canvas);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-none);
+        }
+        
+        .status-bar {
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-4);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            background-color: var(--surface);
+            border-top: var(--border-width) solid var(--border-color);
+        }
+        
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-none);
+        }
+        
+        .status-dot.synced {
+            background-color: var(--success);
+        }
+        
+        .status-dot.syncing {
+            background-color: var(--warning);
+        }
+        
+        .status-dot.error {
+            background-color: var(--error);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="project-selector">
+                <div class="project-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
+                    </svg>
+                </div>
+                <span class="project-name">My Knowledge Base</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M7 10l5 5 5-5H7z"/>
+                </svg>
+            </div>
+            
+            <div class="flex-1" style="margin-left: 32px; max-width: 400px;">
+                <div class="search-input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Search notes..." value="">
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <button class="btn-primary">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    AI Transform
+                </button>
+                <button class="toolbar-btn" title="Settings">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                    </svg>
+                </button>
+                <div class="avatar" style="margin-left: var(--space-2);">JD</div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Activity Bar -->
+            <nav class="activity-bar">
+                <div class="activity-bar-top">
+                    <button class="activity-item active" title="Notes">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z"/>
+                            <path d="M8 12h8v2H8zm0 4h8v2H8z"/>
+                        </svg>
+                    </button>
+                    <button class="activity-item" title="Search">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                    <button class="activity-item" title="Import">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                    </button>
+                    <button class="activity-item" title="AI Assistant">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </button>
+                    <button class="activity-item" title="Settings">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Note Tree Panel -->
+            <aside class="note-tree">
+                <div class="tree-header">
+                    <div class="project-selector">
+                        <div class="project-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
+                            </svg>
+                        </div>
+                        <span class="project-name">My Knowledge Base</span>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                            <path d="M7 10l5 5 5-5H7z"/>
+                        </svg>
+                    </div>
+                    <div class="tree-search">
+                        <div class="search-input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                            <input type="text" class="search-input" placeholder="Filter notes...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tree-content">
+                    <!-- Favorites Section -->
+                    <div class="tree-section">
+                        <div class="tree-section-title">Favorites</div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">Weekly Planning Template</span>
+                            <div class="tree-item-actions">
+                                <button class="tree-action-btn" title="Star">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">AI Agent Architecture</span>
+                            <div class="tree-item-actions">
+                                <button class="tree-action-btn" title="Star">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Section -->
+                    <div class="tree-section">
+                        <div class="tree-section-title">Recent</div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">2024-01-18 Daily Journal</span>
+                            <span style="font-size: 10px; color: var(--muted);">2h ago</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">BMAD Framework Notes</span>
+                            <span style="font-size: 10px; color: var(--muted);">5h ago</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Personal Section -->
+                    <div class="tree-section">
+                        <div class="tree-section-title">Personal</div>
+                        <div class="tree-item folder-item">
+                            <svg class="folder-chevron" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5l8 8-8 8H5V5h3z"/>
+                            </svg>
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                            </svg>
+                            <span class="tree-item-name">Journal</span>
+                        </div>
+                        <div class="folder-children">
+                            <div class="tree-item selected">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">2024-01-18.md</span>
+                            </div>
+                            <div class="tree-item">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">2024-01-17.md</span>
+                            </div>
+                            <div class="tree-item">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">2024-01-16.md</span>
+                            </div>
+                        </div>
+                        <div class="tree-item" style="margin-top: var(--space-2);">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">Reading List</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Work Section -->
+                    <div class="tree-section">
+                        <div class="tree-section-title">Work</div>
+                        <div class="tree-item folder-item">
+                            <svg class="folder-chevron" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5l8 8-8 8H5V5h3z"/>
+                            </svg>
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                            </svg>
+                            <span class="tree-item-name">Projects</span>
+                        </div>
+                        <div class="folder-children">
+                            <div class="tree-item">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">via-gent.md</span>
+                            </div>
+                            <div class="tree-item">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">sprint-planning.md</span>
+                            </div>
+                        </div>
+                        <div class="tree-item" style="margin-top: var(--space-2);">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">Meeting Notes</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">Technical Specs</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Research Section -->
+                    <div class="tree-section">
+                        <div class="tree-section-title">Research</div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">ai-agents.md</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">react-19-features.md</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">tanstack-router.md</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">zustand-patterns.md</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Editor Area -->
+            <main class="editor-area">
+                <!-- Editor Header with Tabs -->
+                <div class="editor-header">
+                    <div class="editor-tabs">
+                        <div class="editor-tab active">
+                            <svg class="editor-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span>2024-01-18.md</span>
+                            <button class="editor-tab-close">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="editor-tab">
+                            <svg class="editor-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span>2024-01-17.md</span>
+                            <button class="editor-tab-close">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-actions">
+                        <button class="editor-action-btn">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+                            </svg>
+                            Save
+                        </button>
+                        <button class="editor-action-btn">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- BlockNote Editor -->
+                <div class="blocknote-editor">
+                    <!-- Editor Toolbar -->
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn" title="Bold (Ctrl+B)">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Italic (Ctrl+I)">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Underline (Ctrl+U)">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Strikethrough">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10 19h4v-3h-4v3zM5 4v3h5v3h4V7h5V4H5zM3 14h18v-2H3v2z"/>
+                            </svg>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" title="Heading 1">
+                            <span style="font-size: 14px; font-weight: 700;">H1</span>
+                        </button>
+                        <button class="toolbar-btn" title="Heading 2">
+                            <span style="font-size: 14px; font-weight: 700;">H2</span>
+                        </button>
+                        <button class="toolbar-btn" title="Heading 3">
+                            <span style="font-size: 14px; font-weight: 700;">H3</span>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" title="Bullet List">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Numbered List">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Todo List">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z"/>
+                            </svg>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" title="Code Block">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Quote">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Table">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H6v-4h3v4zm0-6H6V7h3v4zm4 6h-3v-4h3v4zm0-6h-3V7h3v4zm4 6h-3v-4h3v4zm0-6h-3V7h3v4z"/>
+                            </svg>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" title="Link">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Image">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="AI Insert">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Editor Content (BlockNote Document) -->
+                    <div class="editor-content">
+                        <div class="note-document">
+                            <h1>2024-01-18 Daily Journal</h1>
+                            
+                            <h2>Morning Reflections</h2>
+                            <p>Today I started working on Via-Gent, my personal knowledge management system. The goal is to create a seamless workspace that combines note-taking with AI-assisted writing and editing.</p>
+                            
+                            <h2>Key Insights</h2>
+                            <p>After researching various approaches to progressive disclosure, I realized that:</p>
+                            <ul>
+                                <li>Progressive disclosure helps manage complexity by showing information incrementally</li>
+                                <li>8-bit design creates focus through intentional constraints</li>
+                                <li>Agent collaboration is the future of productivity tools</li>
+                                <li>File system access on desktop enables powerful workflows</li>
+                            </ul>
+                            
+                            <h2>Technical Decisions</h2>
+                            
+                            <h3>Storage Strategy</h3>
+                            <p>Based on the research, I've decided to implement auto-detection for storage type:</p>
+                            <blockquote>
+                                Desktop platforms use File System Access API for native file handling, while mobile falls back to IndexedDB for offline-first behavior.
+                            </blockquote>
+                            
+                            <h3>Architecture Pattern</h3>
+                            <p>Following Clean Architecture principles, the application is structured as:</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Layer</th>
+                                        <th>Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Presentation</td>
+                                        <td>React components and UI logic</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Domain</td>
+                                        <td>Business entities and services</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infrastructure</td>
+                                        <td>External integrations</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h2>Code Snippet - Platform Contract</h2>
+                            <pre><code>interface PlatformContract {
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  storageType: 'fsa' | 'indexeddb';
+  canAccessFSA: boolean;
+  canWatchFiles: boolean;
+}
+
+// Usage: Call ONCE, use everywhere
+const platform = getPlatformContract();</code></pre>
+                            
+                            <h2>Tomorrow's Goals</h2>
+                            <ul>
+                                <li>Complete the FSA storage adapter implementation</li>
+                                <li>Design the AI chat integration for the Notes workspace</li>
+                                <li>Implement the workspace selector component</li>
+                                <li>Write tests for the storage gateway interface</li>
+                            </ul>
+                            
+                            <h2>Progress Tracking</h2>
+                            <pre><code>interface ProgressState {
+  completed: number;
+  total: number;
+}
+
+const currentProgress: ProgressState = {
+  completed: 3,
+  total: 12
+};</code></pre>
+                            
+                            <p style="margin-top: var(--space-8); color: var(--muted); font-size: var(--text-sm);">
+                                ---<br>
+                                Last updated: 2024-01-18 14:32 | 847 words
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item">
+                    <span class="status-dot synced"></span>
+                    <span>Synced</span>
+                </div>
+                <div class="status-item">
+                    <span>847 words</span>
+                </div>
+                <div class="status-item">
+                    <span>UTF-8</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <div class="status-item">
+                    <span>Last saved: 2 min ago</span>
+                </div>
+                <div class="status-item">
+                    <span>Markdown</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent: IDE - Stack 4 (Preview + Chat)</title>
+  <style>
+    /* 8-bit Design System */
+    :root {
+      --color-canvas: #09090b;
+      --color-surface: #18181b;
+      --color-depth: #000000;
+      --color-primary: #fafafa;
+      --color-muted: #a1a1aa;
+      --color-action: #f97316;
+      --color-structural: #3f3f46;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-warning: #eab308;
+      
+      --font-ui: 'JetBrains Mono', monospace;
+      --font-prose: 'Geist Sans', sans-serif;
+      
+      --spacing-unit: 4px;
+      --border-width: 2px;
+    }
+
+    * { box-sizing: border-box; border-radius: 0 !important; }
+
+    body {
+      background-color: #000;
+      color: var(--color-primary);
+      font-family: var(--font-ui);
+      margin: 0;
+      padding: 20px;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wireframe-container {
+      width: 1280px;
+      height: 800px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-structural);
+      box-shadow: 4px 4px 0 0 #000 !important;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      height: 40px;
+      border-bottom: var(--border-width) solid var(--color-structural);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      justify-content: space-between;
+      background-color: var(--color-surface);
+      font-size: 13px;
+    }
+    .header-left { display: flex; gap: 12px; align-items: center; font-weight: bold; }
+    .header-right { display: flex; gap: 16px; color: var(--color-muted); }
+
+    .workspace { flex: 1; display: flex; overflow: hidden; }
+    
+    .sidebar {
+      background-color: var(--color-canvas);
+      border-right: var(--border-width) solid var(--color-structural);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header { padding: 8px 16px; color: var(--color-muted); font-size: 12px; border-bottom: 1px solid var(--color-structural); }
+    .tree-content { padding: 8px; font-size: 12px; }
+    .tree-item { padding: 4px 0; color: var(--color-muted); display: flex; align-items: center; gap: 6px; }
+    .tree-item.active { color: var(--color-action); }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-canvas);
+      border-right: var(--border-width) solid var(--color-structural);
+      position: relative;
+    }
+    .panel:last-child { border-right: none; }
+    
+    .panel-header {
+      height: 32px;
+      border-bottom: var(--border-width) solid var(--color-structural);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      background-color: var(--color-surface);
+      font-size: 12px;
+    }
+    
+    .tab {
+      padding: 0 12px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-right: 1px solid var(--color-structural);
+      color: var(--color-muted);
+      cursor: pointer;
+    }
+    .tab.active {
+      background-color: var(--color-canvas);
+      color: var(--color-primary);
+      border-top: 2px solid var(--color-action);
+    }
+    
+    .editor-code {
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--color-muted);
+    }
+    .k { color: #c678dd; } .c { color: #e5c07b; } .s { color: #98c379; }
+
+    .preview-frame {
+      flex: 1;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+    }
+
+    .chat-view { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .chat-msg { padding: 6px 10px; border: 1px solid var(--color-structural); font-size: 12px; }
+    .chat-msg.ai { align-self: flex-start; border-left: 2px solid var(--color-action); }
+    
+    .status-bar {
+      height: 24px;
+      border-top: var(--border-width) solid var(--color-structural);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      background-color: var(--color-surface);
+      font-size: 11px;
+      color: var(--color-muted);
+      justify-content: space-between;
+    }
+    
+    .w-180 { width: 180px; }
+    .flex-1 { flex: 1; }
+    .w-30p { width: 30%; }
+    .w-22p { width: 22%; }
+  </style>
+</head>
+<body>
+  <div class="wireframe-container">
+    <div class="header">
+      <div class="header-left">
+        <span>[Logo]</span> Project-Alpha
+      </div>
+      <div class="header-right">
+        <span>[Sync:✓]</span>
+        <span>[AI:●]</span>
+        <span>[User:○]</span>
+        <span>[Cmd+K]</span>
+      </div>
+    </div>
+    
+    <div class="workspace">
+      <!-- Tree (180px) -->
+      <div class="sidebar w-180">
+        <div class="sidebar-header">EXPLORER</div>
+        <div class="tree-content">
+          <div class="tree-item">📁 src</div>
+          <div class="tree-item active" style="padding-left: 16px">📄 index.tsx</div>
+        </div>
+      </div>
+      
+      <!-- Editor (Flex) -->
+      <div class="panel flex-1">
+        <div class="panel-header" style="padding: 0;">
+          <div class="tab active">index.tsx</div>
+          <div class="tab" style="border: none">[+]</div>
+        </div>
+        <div class="editor-code">
+          <div><span class="k">import</span> React <span class="k">from</span> <span class="s">'react'</span>;</div>
+          <div><span class="k">export const</span> App = () => {</div>
+          <div>&nbsp;&nbsp;<span class="k">return</span> (</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="c">div</span>&gt;</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="c">h1</span>&gt;Code&lt;/<span class="c">h1</span>&gt;</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="c">div</span>&gt;</div>
+          <div>&nbsp;&nbsp;);</div>
+          <div>};</div>
+        </div>
+      </div>
+      
+      <!-- Preview (30%) -->
+      <div class="panel w-30p">
+        <div class="panel-header">
+          <span>🔒 localhost:3000</span>
+        </div>
+        <div class="preview-frame">
+          <div style="text-align:center">
+            <h3>Rendered</h3>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Chat (22%) -->
+      <div class="panel w-22p">
+        <div class="panel-header">
+          <span>🤖 Gemini 2.5 Pro</span>
+        </div>
+        <div class="chat-view">
+          <div class="chat-msg ai">👋 Hello!</div>
+          <div class="chat-msg" style="align-self: flex-end; color: #fff; background: var(--color-structural)">Can you help?</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="status-bar">
+      <div>[WC:✓] [Agent: idle] [Sync: synced]</div>
+      <div>[Ln 12, Col 8]</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "noPluginsTitle": "Chưa có plugin nào",
+  "noPluginsDescription": "Bật/tắt plugin bằng các nút trên thanh header.",
+  "notFound": "Không tìm thấy plugin",
+  "fallback": {
+    "no-desktop": "Plugin này chỉ khả dụng trên thiết bị desktop. Vui lòng sử dụng máy tính để bàn để truy cập tính năng này.",
+    "no-fsa": "Plugin này yêu cầu File System Access API, không được hỗ trợ trên thiết bị hoặc trình duyệt này.",
+    "requires-plugin": "Plugin này yêu cầu một plugin khác phải được bật trước.",
+    "unsupported": "Plugin này không khả dụng trên thiết bị hiện tại của bạn.",
+    "desktopOnly": "Desktop",
+    "tablet": "Máy tính bảng",
+    "mobile": "Di động",
+    "openOnDesktop": "Mở trên desktop để sử dụng tính năng này"
+  },
+  "terminal": {
+    "name": "Terminal",
+    "unavailable": "Terminal không khả dụng"
+  },
+  "preview": {
+    "name": "Xem trước",
+    "unavailable": "Xem trước không khả dụng"
+  },
+  "monaco": {
+    "name": "Trình soạn code",
+    "unavailable": "Trình soạn code không khả dụng"
+  },
+  "notes": {
+    "name": "Ghi chú",
+    "unavailable": "Ghi chú không khả dụng"
+  },
+  "filetree": {
+    "name": "Cây thư mục",
+    "unavailable": "Cây thư mục không khả dụng"
+  },
+  "chat": {
+    "name": "AI Chat",
+    "unavailable": "AI Chat không khả dụng"
+  }
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Via-Gent Notes - Phone (2 Interfaces)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --action: #f97316;
+      --border: #3f3f46;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+    }
+    body {
+      font-family: 'Geist Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .notes-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      flex-direction: column;
+    }
+    .header {
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.1s;
+    }
+    .icon-btn:active {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .editor-toolbar {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .editor-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      padding: 8px 0;
+    }
+    .editor-content {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      outline: none;
+    }
+    .tab-nav {
+      height: 60px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-shrink: 0;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.1s;
+      gap: 4px;
+    }
+    .tab-item:active {
+      background: var(--surface-hover);
+    }
+    .tab-item.active {
+      background: var(--surface-hover);
+    }
+    .tab-item.active .tab-icon {
+      color: var(--action);
+    }
+    .tab-icon {
+      font-size: 20px;
+      color: var(--text-secondary);
+    }
+    .tab-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .tab-item.active .tab-label {
+      color: var(--text-primary);
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--canvas);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="notes-container">
+    <header class="header">
+      <div class="header-title">📝 Progressive Disclosure</div>
+      <div class="header-actions">
+        <button class="icon-btn">🔍</button>
+        <button class="icon-btn">⋮</button>
+      </div>
+    </header>
+
+    <div class="editor-panel">
+      <div class="editor-toolbar">
+        <input type="text" class="editor-title" value="Progressive Disclosure">
+      </div>
+      <div class="editor-content" contenteditable="true" spellcheck="false">
+        <h1>Progressive Disclosure</h1>
+        
+        <p>On mobile devices, Via-Gent maximizes the editor screen real estate with a bottom navigation bar for quick access to other features.</p>
+        
+        <p>This approach ensures:</p>
+        
+        <ul>
+          <li>Maximum writing space</li>
+          <li>Easy thumb reach for navigation</li>
+          <li>Context switching with one tap</li>
+        </ul>
+        
+        <p>The bottom tab pattern is familiar to mobile users and works great with progressive disclosure - show the current task, hide everything else.</p>
+        
+        <p><strong>Try it:</strong> Swipe left/right or tap the bottom tabs to navigate between notes, preview, and chat.</p>
+      </div>
+    </div>
+
+    <div class="tab-nav">
+      <div class="tab-item active">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">Write</span>
+      </div>
+      <div class="tab-item">
+        <span class="tab-icon">📖</span>
+        <span class="tab-label">Read</span>
+      </div>
+      <div class="tab-item">
+        <span class="tab-icon">📑</span>
+        <span class="tab-label">All Notes</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab-item').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

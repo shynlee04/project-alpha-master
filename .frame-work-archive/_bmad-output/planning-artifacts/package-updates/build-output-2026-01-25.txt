@@ -1,0 +1,13 @@
+
+> project-alpha@ build /Users/apple/Documents/coding-projects/project-alpha-master
+> NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=node vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+
+/grid-pattern.svg referenced in /grid-pattern.svg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/grid.svg referenced in /grid.svg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+[plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/dpack@0.6.22/node_modules/dpack/lib/parse-stream.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/dpack@0.6.22/node_modules/dpack/lib/serialize-stream.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+node_modules/.pnpm/onnxruntime-web@1.14.0/node_modules/onnxruntime-web/dist/ort-web.min.js (6:62546): Use of eval in "node_modules/.pnpm/onnxruntime-web@1.14.0/node_modules/onnxruntime-web/dist/ort-web.min.js" is strongly discouraged as it poses security risks and may cause issues with minification.

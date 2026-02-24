@@ -1,0 +1,153 @@
+src/infrastructure/filesystem/markdown-sync-service.ts(545,5): error TS2740: Type 'Promise<Block[]>' is missing the following properties from type 'Block[]': length, pop, push, concat, and 29 more.
+src/infrastructure/persistence/services/db-consolidation-service.ts(140,34): error TS2345: Argument of type 'FlashcardSetRecord' is not assignable to parameter of type 'FlashcardRecord'.
+  Type 'FlashcardSetRecord' is missing the following properties from type 'FlashcardRecord': question, answer, difficulty, topic
+src/lib/agent/factory.ts(18,1): error TS6192: All imports in import declaration are unused.
+src/lib/agent/factory.ts(19,1): error TS6192: All imports in import declaration are unused.
+src/lib/agent/factory.ts(248,11): error TS6133: 'executeCommand' is declared but its value is never read.
+src/lib/agent/factory.ts(290,40): error TS2339: Property 'processURL' does not exist on type 'AgentTerminalTools'.
+src/lib/agent/factory.ts(290,57): error TS2339: Property 'url' does not exist on type '{ command: string; args?: string[] | undefined; timeout?: number | undefined; cwd?: string | undefined; }'.
+src/lib/agent/factory.ts(329,23): error TS2304: Cannot find name 'getKnowledgeTools'.
+src/lib/agent/factory.ts(397,23): error TS2304: Cannot find name 'getKnowledgeTools'.
+src/lib/agent/factory.ts(418,9): error TS2552: Cannot find name 'synthesize'. Did you mean 'synthesizeDef'?
+src/lib/agent/factory.ts(419,9): error TS2552: Cannot find name 'processPDF'. Did you mean 'processPDFDef'?
+src/lib/agent/factory.ts(733,28): error TS2552: Cannot find name 'createClientKnowledgeTools'. Did you mean 'createClientNoteTools'?
+src/lib/agent/factory.ts(746,27): error TS2339: Property 'executeCommand' does not exist on type '{ synthesize: any; processPDF: any; processImage: ClientTool<ZodObject<{ file: ZodOptional<ZodString>; base64Content: ZodString; filename: ZodOptional<ZodString>; mimeType: ZodOptional<...>; options: ZodOptional<...>; }, $strip>, SchemaInput, "process_image">; processURL: ClientTool<...>; }'.
+src/lib/agent/factory.ts(763,31): error TS2339: Property 'executeCommand' does not exist on type '{ synthesize: any; processPDF: any; processImage: ClientTool<ZodObject<{ file: ZodOptional<ZodString>; base64Content: ZodString; filename: ZodOptional<ZodString>; mimeType: ZodOptional<...>; options: ZodOptional<...>; }, $strip>, SchemaInput, "process_image">; processURL: ClientTool<...>; }'.
+src/lib/agent/tools/note-commands.ts(296,44): error TS6133: 'content' is declared but its value is never read.
+src/lib/agent/tools/note-commands.ts(319,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/lib/agent/tools/note-commands.ts(532,44): error TS6133: 'content' is declared but its value is never read.
+src/lib/agent/tools/note-commands.ts(555,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/lib/agent/tools/process-image-tool.ts(111,78): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-image-tool.ts(115,31): error TS2339: Property 'text' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-image-tool.ts(116,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/lib/agent/tools/process-image-tool.ts(117,33): error TS2339: Property 'detectedObjects' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-image-tool.ts(117,54): error TS7006: Parameter 'obj' implicitly has an 'any' type.
+src/lib/agent/tools/process-image-tool.ts(121,31): error TS2339: Property 'imageType' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(124,74): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-pdf-tool.ts(128,26): error TS2339: Property 'headings' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(128,39): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(133,24): error TS2339: Property 'tables' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(133,35): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(139,25): error TS2339: Property 'figures' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(139,37): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(144,27): error TS2339: Property 'citations' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(144,41): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/lib/agent/tools/process-url-tool.ts(91,73): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-url-tool.ts(95,9): error TS2741: Property 'cleanContent' is missing in type '{ id: string; title?: string | undefined; success: boolean; }' but required in type '{ cleanContent: string; title: string; author?: string | undefined; publishedDate?: string | undefined; contentType?: string | undefined; readingTimeMinutes?: number | undefined; summary?: string | undefined; tags?: string[] | undefined; relatedLinks?: { ...; }[] | undefined; mainImageUrl?: string | undefined; }'.
+src/lib/agent/tools/synthesize-tool.ts(98,9): error TS2322: Type '{ generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined' is not assignable to type 'SynthesisOptions | undefined'.
+  Type '{ generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; }' has no properties in common with type 'SynthesisOptions'.
+src/lib/agent/tools/synthesize-tool.ts(104,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(105,49): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(107,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(108,52): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(110,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(111,69): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(119,29): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(120,33): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(120,62): error TS7006: Parameter 'kc' implicitly has an 'any' type.
+src/lib/agent/tools/synthesize-tool.ts(121,29): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(122,26): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(123,33): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(126,29): error TS2339: Property 'synthesizedAt' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/canvas/linkage-analyzer.ts(125,29): error TS2339: Property 'keyConcepts' does not exist on type 'KnowledgeSource'.
+src/lib/diagnostics/trace-system.ts(339,17): error TS2323: Cannot redeclare exported variable 'completeTrace'.
+src/lib/diagnostics/trace-system.ts(354,23): error TS2323: Cannot redeclare exported variable 'getRecentTraces'.
+src/lib/diagnostics/trace-system.ts(379,47): error TS2345: Argument of type 'DiagnosticTraceEventRecord' is not assignable to parameter of type 'TraceEvent'.
+  Types of property 'flow' are incompatible.
+    Type 'string' is not assignable to type 'FlowName'.
+src/lib/diagnostics/trace-system.ts(390,23): error TS2323: Cannot redeclare exported variable 'clearTraces'.
+src/lib/diagnostics/trace-system.ts(407,3): error TS2323: Cannot redeclare exported variable 'completeTrace'.
+src/lib/diagnostics/trace-system.ts(407,3): error TS2484: Export declaration conflicts with exported declaration of 'completeTrace'.
+src/lib/diagnostics/trace-system.ts(408,3): error TS2323: Cannot redeclare exported variable 'getRecentTraces'.
+src/lib/diagnostics/trace-system.ts(408,3): error TS2484: Export declaration conflicts with exported declaration of 'getRecentTraces'.
+src/lib/diagnostics/trace-system.ts(409,3): error TS2323: Cannot redeclare exported variable 'clearTraces'.
+src/lib/diagnostics/trace-system.ts(409,3): error TS2484: Export declaration conflicts with exported declaration of 'clearTraces'.
+src/lib/notes/format/note-formatter.ts(172,45): error TS2345: Argument of type 'unknown[]' is not assignable to parameter of type 'Block[]'.
+  Type 'unknown' is not assignable to type 'Block'.
+src/lib/notes/format/note-formatter.ts(300,5): error TS6133: 'noteId' is declared but its value is never read.
+src/lib/notes/sync/cache-sync.ts(12,71): error TS6133: 'extractNoteId' is declared but its value is never read.
+src/lib/notes/sync/cache-sync.ts(13,1): error TS6133: 'FileChangeEvent' is declared but its value is never read.
+src/lib/notes/sync/cache-sync.ts(83,13): error TS2300: Duplicate identifier 'adapter'.
+src/lib/notes/sync/cache-sync.ts(186,47): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/lib/notes/sync/cache-sync.ts(189,44): error TS2339: Property 'find' does not exist on type 'Map<string, NoteRecord>'.
+src/lib/notes/sync/cache-sync.ts(189,49): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/notes/sync/cache-sync.ts(193,36): error TS2345: Argument of type 'NoteFrontmatter' is not assignable to parameter of type 'UpdateNoteParams'.
+  Property 'id' is missing in type 'NoteFrontmatter' but required in type 'UpdateNoteParams'.
+src/lib/notes/sync/cache-sync.ts(201,25): error TS2339: Property 'addNote' does not exist on type 'NoteStoreState'.
+src/lib/notes/sync/cache-sync.ts(262,21): error TS2339: Property 'filter' does not exist on type 'Map<string, NoteRecord>'.
+src/lib/notes/sync/cache-sync.ts(262,28): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/notes/sync/cache-sync.ts(263,24): error TS2339: Property 'filter' does not exist on type 'Map<string, NoteRecord>'.
+src/lib/notes/sync/cache-sync.ts(263,31): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/notes/sync/cache-sync.ts(268,26): error TS2339: Property 'filter' does not exist on type 'Map<string, NoteRecord>'.
+src/lib/notes/sync/cache-sync.ts(268,33): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/notes/sync/cache-sync.ts(269,29): error TS2339: Property 'filter' does not exist on type 'Map<string, NoteRecord>'.
+src/lib/notes/sync/cache-sync.ts(269,36): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/notes/sync/cache-sync.ts(270,7): error TS2353: Object literal may only specify known properties, and 'totalMerges' does not exist in type 'SyncStatistics'.
+src/lib/notes/sync/note-sync-layer.ts(87,13): error TS6138: Property 'adapter' is declared but its value is never read.
+src/lib/workspace/project-repository.ts(31,3): error TS6133: 'traceVerifyHandleAccess' is declared but its value is never read.
+src/lib/workspace/project-repository.ts(273,9): error TS2322: Type 'number' is not assignable to type 'Date'.
+src/lib/workspace/project-repository.ts(280,29): error TS2345: Argument of type 'Project' is not assignable to parameter of type 'ProjectRecord'.
+  Type 'Project' is missing the following properties from type 'ProjectRecord': path, workspaceId
+src/plugins/chat/useChatPlugin.ts(82,53): error TS2339: Property 'Context' does not exist on type 'FC<{ projectId: string; children: ReactNode; }>'.
+src/plugins/chat/useChatPlugin.ts(92,16): error TS18046: 'context' is of type 'unknown'.
+src/plugins/chat/useChatPlugin.ts(93,18): error TS18046: 'context' is of type 'unknown'.
+src/plugins/chat/useChatPlugin.ts(94,18): error TS18046: 'context' is of type 'unknown'.
+src/plugins/chat/useChatPlugin.ts(95,17): error TS18046: 'context' is of type 'unknown'.
+src/plugins/chat/useChatPlugin.ts(96,23): error TS18046: 'context' is of type 'unknown'.
+src/plugins/monaco/MonacoPlugin.tsx(29,1): error TS6192: All imports in import declaration are unused.
+src/plugins/monaco/MonacoPlugin.tsx(94,11): error TS6133: 'project' is declared but its value is never read.
+src/plugins/monaco/MonacoPlugin.tsx(94,29): error TS6133: 'openFile' is declared but its value is never read.
+src/plugins/monaco/MonacoPlugin.tsx(94,49): error TS6133: 'refreshFileTree' is declared but its value is never read.
+src/plugins/monaco/MonacoPlugin.tsx(110,9): error TS6133: 'loadFile' is declared but its value is never read.
+src/plugins/monaco/MonacoPlugin.tsx(147,13): error TS6133: 'data' is declared but its value is never read.
+src/plugins/monaco/MonacoPlugin.tsx(225,9): error TS6133: 'language' is declared but its value is never read.
+src/plugins/monaco/types.ts(15,1): error TS6133: 'React' is declared but its value is never read.
+src/plugins/terminal/TerminalPlugin.tsx(70,15): error TS2339: Property 'deviceType' does not exist on type 'Project'.
+src/presentation/components/ide/StorageBadge.tsx(20,1): error TS6133: 'PlatformContract' is declared but its value is never read.
+src/presentation/components/layout/hooks/useIDEFileHandlers.ts(69,11): error TS6198: All destructured elements are unused.
+src/presentation/components/layout/MobileIDELayout.tsx(201,9): error TS2353: Object literal may only specify known properties, and 'syncManagerRef' does not exist in type 'UseIDEFileHandlersOptions'.
+src/presentation/components/project/steps/ReviewStep.tsx(186,43): error TS2339: Property 'knowledge' does not exist on type 'Omit<WorkspaceBindings, "knowledge" | "study">'.
+src/presentation/components/project/steps/ReviewStep.tsx(196,43): error TS2339: Property 'study' does not exist on type 'Omit<WorkspaceBindings, "knowledge" | "study">'.
+src/presentation/components/project/steps/ReviewStep.tsx(228,18): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ readonly webcontainer: "WebContainer"; readonly local: "Local"; }'.
+src/presentation/components/project/steps/ReviewStep.tsx(228,49): error TS2339: Property 'workspaceType' does not exist on type 'WizardFormData'.
+src/presentation/components/project/steps/ReviewStep.tsx(255,27): error TS2339: Property 'selectedAgent' does not exist on type 'WizardFormData'.
+src/presentation/components/project/steps/ReviewStep.tsx(263,27): error TS2339: Property 'agentPermissions' does not exist on type 'WizardFormData'.
+src/presentation/components/project/steps/ReviewStep.tsx(268,27): error TS2339: Property 'agentPermissions' does not exist on type 'WizardFormData'.
+src/presentation/components/project/steps/ReviewStep.tsx(273,27): error TS2339: Property 'agentPermissions' does not exist on type 'WizardFormData'.
+src/presentation/components/project/steps/ReviewStep.tsx(285,17): error TS2339: Property 'fileSetupEnabled' does not exist on type 'WizardFormData'.
+src/presentation/components/project/steps/ReviewStep.tsx(297,23): error TS2339: Property 'createGitignore' does not exist on type 'WizardFormData'.
+src/presentation/components/sidebar/AgentToolsPanel.tsx(20,1): error TS6133: 'React' is declared but its value is never read.
+src/presentation/components/sidebar/AgentToolsPanel.tsx(46,33): error TS6133: 'currentProjectId' is declared but its value is never read.
+src/presentation/components/sidebar/ChatThreadList.tsx(20,1): error TS6133: 'React' is declared but its value is never read.
+src/presentation/components/sidebar/ChatThreadList.tsx(47,32): error TS6133: 'currentProjectId' is declared but its value is never read.
+src/presentation/components/sidebar/ChatThreadList.tsx(48,9): error TS6133: 'chatService' is declared but its value is never read.
+src/presentation/components/sidebar/ChatThreadList.tsx(63,9): error TS6133: 'handleThreadClick' is declared but its value is never read.
+src/presentation/components/sidebar/ChatThreadList.tsx(63,30): error TS6133: 'threadId' is declared but its value is never read.
+src/routes/api/provider-test.ts(249,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.execute.ts(108,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.test.ts(129,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.ts(151,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.ts(136,3): error TS2578: Unused '@ts-expect-error' directive.
+src/scripts/rollback-fsa-migration.ts(165,35): error TS6133: 'options' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(184,16): error TS6133: 'step1_BackupCurrentState' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(184,41): error TS6133: 'options' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(207,16): error TS6133: 'step2_RevertStorageType' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(207,40): error TS6133: 'options' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(233,16): error TS6133: 'step3_ImportFSAFiles' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(233,37): error TS6133: 'options' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(265,16): error TS6133: 'step4_ValidateRollback' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(265,39): error TS6133: 'options' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(283,16): error TS6133: 'ensureBackupDir' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(283,32): error TS6133: 'dir' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(290,16): error TS6133: 'copyDirectory' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(290,30): error TS6133: 'source' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(290,46): error TS6133: 'destination' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(297,10): error TS6133: 'generateImportReport' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(297,31): error TS6133: 'stats' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(297,63): error TS6133: 'errors' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(305,10): error TS6133: 'validateNoteNoteRecord' is declared but its value is never read.
+src/scripts/rollback-fsa-migration.ts(305,33): error TS6133: 'note' is declared but its value is never read.

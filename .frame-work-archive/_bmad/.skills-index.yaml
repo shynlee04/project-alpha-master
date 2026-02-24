@@ -1,0 +1,673 @@
+# BMAD Skills Index
+# Single source of truth for all BMAD skills
+# References _bmad/ modules, workflows, and agents
+
+version: "1.0.0"
+last_updated: "2026-01-05T16:30:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SKILLS REGISTRY
+# ═══════════════════════════════════════════════════════════════════════════
+
+skills:
+
+  # ==========================================================================
+  # ASGL - Autonomous Orchestration
+  # ==========================================================================
+  autonomous-loop:
+    name: "Autonomous Loop Orchestrator"
+    module: "asgl"
+    workflow: "workflows/main-loop"
+    agent: "bmad-master"
+    base_path: "_bmad/modules/asgl/"
+    triggers:
+      - "autonomous loop"
+      - "execute sprint"
+      - "course correction"
+      - "run full cycle"
+    description: "Orchestrates autonomous development cycles by invoking specialized modules"
+    state_file: ".claude/AGENT-STATE.yaml"
+
+  governance-update:
+    name: "Governance Update"
+    module: "asgl"
+    workflow: "workflows/governance-update"
+    agent: "bmad-master"
+    base_path: "_bmad/modules/asgl/"
+    triggers:
+      - "governance update"
+      - "update agents.md"
+      - "update claude.md"
+    description: "Updates AGENTS.md and CLAUDE.md documentation"
+
+  # ==========================================================================
+  # QUALITY - Diagnostics (upgraded from deep-scan)
+  # ==========================================================================
+  full-scan:
+    name: "Full Codebase Scan"
+    module: "quality"
+    workflow: "workflows/full-scan"
+    agent: "orchestrator"
+    base_path: "_bmad/modules/quality/"
+    triggers:
+      - "diagnose codebase"
+      - "full scan"
+      - "health check"
+      - "analyze architecture"
+    description: "Comprehensive scan of entire codebase"
+
+  targeted-scan:
+    name: "Targeted Domain Scan"
+    module: "quality"
+    workflow: "workflows/targeted-scan"
+    agent: "domain-scanner"
+    base_path: "_bmad/modules/quality/"
+    triggers:
+      - "scan stores"
+      - "scan types"
+      - "scan architecture"
+      - "scan persistence"
+    description: "Domain-specific diagnostic scan"
+
+  state-scan:
+    name: "State Scanner"
+    module: "quality"
+    agent: "state-scanner"
+    base_path: "_bmad/modules/quality/scanners/"
+    triggers:
+      - "god stores"
+      - "store duplication"
+      - "circular dependencies"
+      - "state issues"
+    description: "Scans for state management issues"
+
+  types-scan:
+    name: "TypeScript Scanner"
+    module: "quality"
+    agent: "types-scanner"
+    base_path: "_bmad/modules/quality/scanners/"
+    triggers:
+      - "typescript errors"
+      - "type issues"
+      - "ts errors"
+    description: "Scans for TypeScript errors and contract drift"
+
+  architecture-scan:
+    name: "Architecture Scanner"
+    module: "quality"
+    agent: "architecture-scanner"
+    base_path: "_bmad/modules/quality/scanners/"
+    triggers:
+      - "layer violations"
+      - "god components"
+      - "architecture issues"
+    description: "Scans for architectural violations"
+
+  ux-scan:
+    name: "UX Scanner"
+    module: "quality"
+    agent: "ux-scanner"
+    base_path: "_bmad/modules/quality/scanners/"
+    triggers:
+      - "mobile issues"
+      - "i18n coverage"
+      - "accessibility"
+    description: "Scans for UX and accessibility issues"
+
+  persistence-scan:
+    name: "Persistence Scanner"
+    module: "quality"
+    agent: "persistence-scanner"
+    base_path: "_bmad/modules/quality/scanners/"
+    triggers:
+      - "indexeddb"
+      - "dexie"
+      - "storage quota"
+      - "data loss"
+    description: "Scans for persistence layer issues"
+
+  # ==========================================================================
+  # ARCHITECTURE REMEDIATION - Fixes
+  # ==========================================================================
+  eliminate-god-stores:
+    name: "Eliminate God Stores"
+    module: "architecture-remediation"
+    workflow: "workflows/eliminate-god-stores"
+    agent: "store-refactorer"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "god store"
+      - "split store"
+      - "store refactoring"
+      - "eliminate god stores"
+    description: "Splits oversized stores (>300 lines) into focused slices (≤120 lines)"
+    acceptance_criteria:
+      - "All slices ≤120 lines"
+      - "Single bounded store"
+      - "Facade for backwards compatibility"
+
+  normalize-components:
+    name: "Normalize Components"
+    module: "architecture-remediation"
+    workflow: "workflows/normalize-components"
+    agent: "component-splitter"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "component too big"
+      - "split component"
+      - "component over 300 lines"
+      - "normalize component"
+    description: "Splits oversized components (>300 lines) into focused modules"
+    acceptance_criteria:
+      - "All components ≤300 lines"
+      - "Hooks extracted"
+      - "No breaking changes"
+
+  fix-typescript-errors:
+    name: "Fix TypeScript Errors"
+    module: "architecture-remediation"
+    workflow: "workflows/fix-typescript-errors"
+    agent: "typescript-fixer"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "typescript errors"
+      - "fix ts"
+      - "type errors"
+      - "ts issues"
+    description: "Batch fixes TypeScript errors in production code"
+    acceptance_criteria:
+      - "Zero TS errors in production code"
+      - "No new errors introduced"
+
+  state-consolidation-cycle:
+    name: "State Consolidation Cycle"
+    module: "architecture-remediation"
+    workflow: "workflows/state-consolidation-cycle"
+    agent: "store-refactorer"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "consolidate state"
+      - "merge stores"
+      - "state migration"
+      - "epic 53"
+      - "adr-024"
+    description: "Consolidates duplicate state stores to single canonical location"
+    acceptance_criteria:
+      - "Single canonical location per store"
+      - "No duplicate store files"
+      - "Facade at old locations"
+
+  workspace-file-system-e2e:
+    name: "Workspace File System E2E"
+    module: "architecture-remediation"
+    workflow: "workflows/workspace-file-system-e2e"
+    agent: "workspace-architect"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "workspace e2e"
+      - "file sync"
+      - "notes sync"
+      - "workspace implementation"
+    description: "End-to-end workspace file system implementation"
+    acceptance_criteria:
+      - "Notes workspace loads project files"
+      - "Sync is bidirectional"
+      - "Non-markdown files ignored"
+
+  eliminate-circular-deps:
+    name: "Eliminate Circular Dependencies"
+    module: "architecture-remediation"
+    workflow: "workflows/eliminate-circular-deps"
+    agent: "dependency-architect"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "circular dependency"
+      - "circular import"
+      - "break cycle"
+    description: "Breaks circular dependencies between modules"
+    acceptance_criteria:
+      - "Zero circular dependencies"
+      - "Clean dependency graph"
+
+  # ==========================================================================
+  # BMAD CORE - Standard Development
+  # ==========================================================================
+  dev-story:
+    name: "Dev Story Implementation"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/dev-story"
+    agent: "dev"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "implement story"
+      - "story development"
+      - "user story"
+      - "develop feature"
+    description: "Standard story implementation workflow"
+    acceptance_criteria:
+      - "Story requirements met"
+      - "Tests passing"
+      - "Code reviewed"
+
+  code-review:
+    name: "Code Review"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/code-review"
+    agent: "dev"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "code review"
+      - "review changes"
+      - "pr review"
+      - "review code"
+    description: "Systematic code review workflow"
+    acceptance_criteria:
+      - "All review points addressed"
+      - "No critical issues"
+
+  plan-story:
+    name: "Plan Story"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/plan-story"
+    agent: "architect"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "plan"
+      - "design"
+      - "architecture"
+    description: "Story planning and design workflow"
+    acceptance_criteria:
+      - "Technical design complete"
+      - "Implementation plan ready"
+
+  test-story:
+    name: "Test Story"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/test-story"
+    agent: "tea"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "test"
+      - "testing"
+      - "coverage"
+    description: "Story testing workflow"
+    acceptance_criteria:
+      - "Test coverage ≥80%"
+      - "All tests passing"
+
+  # ==========================================================================
+  # GLOBAL STANDARDS - Agent Coding Standards
+  # ==========================================================================
+  global-coding-style:
+    name: "Global Coding Style"
+    module: "standards"
+    standard: "agent-os/standards/global/coding-style.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "coding style"
+      - "code formatting"
+      - "naming conventions"
+    description: "Global coding style standards (naming, formatting, DRY)"
+
+  global-commenting:
+    name: "Global Commenting Standards"
+    module: "standards"
+    standard: "agent-os/standards/global/commenting.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "comments"
+      - "documentation"
+      - "code comments"
+    description: "Self-documenting code with minimal comments"
+
+  global-conventions:
+    name: "Global Conventions"
+    module: "standards"
+    standard: "agent-os/standards/global/conventions.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "conventions"
+      - "project structure"
+      - "environment config"
+    description: "General development conventions and patterns"
+
+  global-error-handling:
+    name: "Global Error Handling"
+    module: "standards"
+    standard: "agent-os/standards/global/error-handling.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "error handling"
+      - "exceptions"
+      - "error boundaries"
+      - "graceful degradation"
+    description: "Robust error handling with fallbacks"
+
+  global-validation:
+    name: "Global Validation Standards"
+    module: "standards"
+    standard: "agent-os/standards/global/validation.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "input validation"
+      - "server-side validation"
+      - "allowlist"
+      - "sanitization"
+    description: "Robust input validation with specific error messages"
+
+  # ==========================================================================
+  # FRONTEND STANDARDS
+  # ==========================================================================
+  frontend-components:
+    name: "Frontend Components"
+    module: "standards"
+    standard: "agent-os/standards/frontend/components.md"
+    base_path: "agent-os/standards/frontend/"
+    triggers:
+      - "react components"
+      - "component design"
+      - "ui components"
+    description: "Build reusable, composable UI components"
+
+  frontend-css:
+    name: "Frontend CSS"
+    module: "standards"
+    standard: "agent-os/standards/frontend/css.md"
+    base_path: "agent-os/standards/frontend/"
+    triggers:
+      - "css"
+      - "styling"
+      - "tailwind"
+      - "design tokens"
+    description: "Maintainable CSS following established methodologies"
+
+  frontend-accessibility:
+    name: "Frontend Accessibility"
+    module: "standards"
+    standard: "agent-os/standards/frontend/accessibility.md"
+    base_path: "agent-os/standards/frontend/"
+    triggers:
+      - "a11y"
+      - "accessibility"
+      - "wcag"
+      - "screen reader"
+    description: "Accessible UI following WCAG guidelines"
+
+  # ==========================================================================
+  # BACKEND STANDARDS
+  # ==========================================================================
+  backend-queries:
+    name: "Backend Queries"
+    module: "standards"
+    standard: "agent-os/standards/backend/queries.md"
+    base_path: "agent-os/standards/backend/"
+    triggers:
+      - "database queries"
+      - "sql"
+      - "query optimization"
+      - "n+1 problem"
+    description: "Efficient, secure database queries"
+
+  backend-migrations:
+    name: "Backend Migrations"
+    module: "standards"
+    standard: "agent-os/standards/backend/migrations.md"
+    base_path: "agent-os/standards/backend/"
+    triggers:
+      - "database migration"
+      - "schema change"
+      - "zero-downtime"
+      - "rollback"
+    description: "Reversible database migrations with safe rollbacks"
+
+  # ==========================================================================
+  # DEVELOPMENT WORKFLOWS
+  # ==========================================================================
+  brainstorming:
+    name: "Brainstorming"
+    module: "bmad-core"
+    workflow: "bmm/workflows/3-discovery/brainstorming"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "brainstorm"
+      - "ideation"
+      - "explore ideas"
+    description: "Explore options before creative work"
+
+  writing-plans:
+    name: "Writing Plans"
+    module: "bmad-core"
+    workflow: "bmm/workflows/2-planning/writing-plans"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "write plan"
+      - "create spec"
+      - "technical design"
+    description: "Create technical specifications before implementation"
+
+  requesting-code-review:
+    name: "Requesting Code Review"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/code-review"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "request review"
+      - "code review"
+      - "pr review"
+    description: "Request review after completing tasks"
+
+  receiving-code-review:
+    name: "Receiving Code Review"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "review feedback"
+      - "review comments"
+      - "address review"
+    description: "Handle code review feedback with technical rigor"
+
+  test-driven-development:
+    name: "Test Driven Development"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "tdd"
+      - "test driven"
+      - "test first"
+    description: "Write tests before implementation code"
+
+  systematic-debugging:
+    name: "Systematic Debugging"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "debug"
+      - "bug"
+      - "fix error"
+      - "troubleshoot"
+    description: "Systematic problem analysis before fixes"
+
+  executing-plans:
+    name: "Executing Plans"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/executing-plans"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "execute plan"
+      - "implement spec"
+      - "follow plan"
+    description: "Execute written implementation plans"
+
+  finishing-a-development-branch:
+    name: "Finishing Development Branch"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/finishing"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "finish branch"
+      - "complete feature"
+      - "done with branch"
+    description: "Complete development work and decide integration"
+
+  verification-before-completion:
+    name: "Verification Before Completion"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "verify completion"
+      - "check done"
+      - "validate before commit"
+    description: "Run verification commands before claiming work complete"
+
+  dispatching-parallel-agents:
+    name: "Dispatching Parallel Agents"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "parallel agents"
+      - "concurrent tasks"
+      - "dispatch agents"
+    description: "Execute 2+ independent tasks in parallel"
+
+  architecture-remediation:
+    name: "Architecture Remediation"
+    module: "architecture-remediation"
+    workflow: "workflows/eliminate-god-stores"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "god store"
+      - "god component"
+      - "remediation"
+      - "technical debt"
+    description: "Systematic elimination of technical debt"
+
+  using-git-worktrees:
+    name: "Using Git Worktrees"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "worktree"
+      "git worktree"
+      - "parallel branches"
+    description: "Use isolated git worktrees for feature work"
+
+  using-superpowers:
+    name: "Using Superpowers"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "superpower"
+      - "skill"
+      - "abilities"
+    description: "Find and use skills for enhanced capabilities"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AGENT LOADER REFERENCE
+# ═══════════════════════════════════════════════════════════════════════════
+
+# To load any skill dynamically:
+load_skill: |
+  function loadSkill(skillName) {
+    const index = readYaml('_bmad/.skills-index.yaml');
+    const skill = index.skills[skillName];
+
+    return {
+      name: skillName,
+      module: skill.module,
+      workflowPath: `_bmad/modules/${skill.module}/${skill.workflow}`,
+      agentPath: `_bmad/modules/${skill.module}/agents/${skill.agent}.md`,
+      base_path: skill.base_path,
+      triggers: skill.triggers,
+      // Load only when invoked
+    };
+  }
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC MAPPINGS
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_mappings:
+  Epic-53:
+    name: "State Consolidation"
+    default_skill: "state-consolidation-cycle"
+    stories_use: "state-consolidation-cycle"
+
+  CC-1:
+    name: "Conversation Consolidation"
+    default_skill: "state-consolidation-cycle"
+    module: "architecture-remediation"
+
+  CP-1:
+    name: "Project Consolidation"
+    default_skill: "state-consolidation-cycle"
+    module: "architecture-remediation"
+
+  ARC-1:
+    name: "Unified Sync Manager"
+    default_skill: "workspace-file-system-e2e"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SKILL CONSOLIDATION STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+consolidation:
+  skills_total: 42
+  skills_indexed: 42  # All skills now indexed
+  skills_pending: 0   # All consolidated ✓
+
+  # Skills consolidated (added to index):
+  consolidated_2026_01_06:
+    - "global-coding-style"
+    - "global-commenting"
+    - "global-conventions"
+    - "global-error-handling"
+    - "global-validation"
+    - "frontend-components"
+    - "frontend-css"
+    - "frontend-accessibility"
+    - "backend-queries"
+    - "backend-migrations"
+    - "brainstorming"
+    - "writing-plans"
+    - "requesting-code-review"
+    - "receiving-code-review"
+    - "test-driven-development"
+    - "systematic-debugging"
+    - "executing-plans"
+    - "finishing-a-development-branch"
+    - "verification-before-completion"
+    - "dispatching-parallel-agents"
+    - "architecture-remediation"
+    - "using-git-worktrees"
+    - "using-superpowers"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CLAUDE SKILL INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+claude_skill_integration:
+  entry_point: ".claude/skills/bmad-orchestrator/SKILL.md"
+  coordinator: ".claude/AGENT-COORDINATOR.md"
+  intent_matrix: ".claude/intent-matrix.yaml"
+  state_file: ".claude/AGENT-STATE.yaml"
+
+  # When bmad-orchestrator skill activates:
+  on_activation:
+    - "Load AGENT-COORDINATOR.md"
+    - "Load intent-matrix.yaml"
+    - "Load AGENT-STATE.yaml"
+    - "Detect user intent"
+    - "Route to appropriate BMAD module"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# VERSION HISTORY
+# ═══════════════════════════════════════════════════════════════════════════
+
+history:
+  - version: "1.0.0"
+    date: "2026-01-05"
+    changes:
+      - "Initial skills index creation"
+      - "20 core skills indexed"
+      - "Epic mappings established"
+      - "Claude skill integration defined"

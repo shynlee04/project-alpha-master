@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IDE Focus Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#ea580c", // Deep Orange
+                        "bg-canvas": "#050505", // Almost black
+                        "bg-panel": "#111111", // Dark gray for panels
+                        "bg-sub": "#1a1a1a", // Slightly lighter for active states
+                        "border-base": "#333333", // Dark gray border
+                        "border-active": "#555555", // Lighter border
+                        "text-main": "#eeeeee",
+                        "text-muted": "#888888",
+                    },
+                    fontFamily: {
+                        display: ["'Courier Prime'", "monospace"],
+                        mono: ["'Fira Code'", "'Courier Prime'", "monospace"],
+                        sans: ["'Inter'", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'pixel': '4px 4px 0px 0px #000000',
+                        'pixel-sm': '2px 2px 0px 0px #000000',
+                        'pixel-lg': '6px 6px 0px 0px #000000',
+                        'pixel-border': 'inset 0 0 0 2px #333',
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px", 
+                        'none': "0px",
+                    },
+                },
+            },
+        };
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&amp;family=Fira+Code:wght@300;400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Material+Icons+Outlined&amp;display=swap" rel="stylesheet"/>
+<style>
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111; 
+            border-left: 1px solid #333;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border: 2px solid #111;}
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        ::-webkit-scrollbar-corner {
+            background: #111;
+        }
+        .pixel-antialiased {
+            image-rendering: pixelated;
+        }.retro-toggle:checked + div {
+            background-color: #ea580c;
+        }
+        .retro-toggle:checked + div:after {
+            transform: translateX(100%);
+            border-color: #000;
+        }
+    </style>
+</head>
+<body class="bg-bg-canvas text-text-main font-sans h-screen flex flex-col overflow-hidden antialiased selection:bg-primary selection:text-white">
+<header class="h-14 flex items-center justify-between px-4 bg-bg-panel border-b-2 border-border-base shrink-0 z-20">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 group cursor-pointer">
+<div class="w-8 h-8 bg-black flex items-center justify-center border border-border-base shadow-pixel-sm group-hover:border-primary transition-colors">
+<span class="material-icons-outlined text-primary text-xl">terminal</span>
+</div>
+<span class="font-display font-bold text-lg tracking-tight text-white group-hover:text-primary transition-colors">Via-gent</span>
+</div>
+<div class="hidden md:flex items-center text-sm font-mono text-text-muted border-l-2 border-border-base pl-4 h-6">
+<span class="mx-2 text-border-active">/</span>
+<span class="truncate max-w-[200px]">ide:proj_1768403933140</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 bg-black px-3 py-1.5 border-2 border-border-base shadow-pixel-sm">
+<span class="w-2 h-2 bg-green-500 animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-text-muted">Focus Mode</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer retro-toggle" type="checkbox" value=""/>
+<div class="w-10 h-5 bg-gray-800 peer-focus:outline-none rounded-none peer border-2 border-gray-600 after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-400 after:border after:rounded-none after:h-3 after:w-3 after:transition-all"></div>
+</label>
+</div>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center hover:bg-bg-sub border border-transparent hover:border-border-base transition-all">
+<span class="material-icons-outlined text-text-muted text-sm">wifi</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-bg-sub border border-transparent hover:border-border-base transition-all">
+<span class="material-icons-outlined text-text-muted text-sm">settings</span>
+</button>
+</div>
+<div class="w-8 h-8 bg-primary text-white flex items-center justify-center font-bold text-xs shadow-pixel-sm border border-black">
+                VG
+            </div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden relative">
+<aside class="w-16 bg-bg-panel border-r-2 border-border-base flex flex-col items-center py-4 gap-4 shrink-0 z-10">
+<div class="group relative flex justify-center w-full">
+<button class="w-10 h-10 flex items-center justify-center text-text-muted hover:text-white hover:bg-bg-sub hover:shadow-pixel-sm border border-transparent hover:border-border-base transition-all">
+<span class="material-icons-outlined text-2xl">folder</span>
+</button>
+<div class="absolute left-14 top-2 bg-primary text-white text-xs font-mono px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-pixel border border-black">Explorer</div>
+</div>
+<div class="group relative flex justify-center w-full">
+<button class="w-10 h-10 flex items-center justify-center text-text-muted hover:text-white hover:bg-bg-sub hover:shadow-pixel-sm border border-transparent hover:border-border-base transition-all">
+<span class="material-icons-outlined text-2xl">search</span>
+</button>
+<div class="absolute left-14 top-2 bg-primary text-white text-xs font-mono px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-pixel border border-black">Search</div>
+</div>
+<div class="group relative flex justify-center w-full">
+<button class="w-10 h-10 flex items-center justify-center text-primary bg-black border-l-4 border-primary shadow-inner">
+<span class="material-icons-outlined text-2xl">code</span>
+</button>
+<div class="absolute left-14 top-2 bg-primary text-white text-xs font-mono px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-pixel border border-black">Editor</div>
+</div>
+<div class="group relative flex justify-center w-full">
+<button class="w-10 h-10 flex items-center justify-center text-text-muted hover:text-white hover:bg-bg-sub hover:shadow-pixel-sm border border-transparent hover:border-border-base transition-all">
+<span class="material-icons-outlined text-2xl">extension</span>
+</button>
+<div class="absolute left-14 top-2 bg-primary text-white text-xs font-mono px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-pixel border border-black">Extensions</div>
+</div>
+<div class="mt-auto flex flex-col gap-4 w-full items-center">
+<button class="w-10 h-10 flex items-center justify-center text-text-muted hover:text-white transition-colors">
+<span class="material-icons-outlined text-2xl">account_circle</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-text-muted hover:text-white transition-colors">
+<span class="material-icons-outlined text-2xl">settings</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col bg-bg-canvas relative min-w-0">
+<div class="h-10 flex items-end bg-bg-panel border-b-2 border-border-base overflow-x-auto scrollbar-hide">
+<div class="group flex items-center px-4 py-2 bg-bg-canvas border-t-2 border-x-2 border-primary text-white text-sm font-mono min-w-[140px] relative top-[2px]">
+<span class="material-icons-outlined text-base mr-2 text-yellow-500">code</span>
+<span class="truncate">drizzle.svg</span>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-text-muted hover:text-white">
+<span class="material-icons-outlined text-sm">close</span>
+</button>
+</div>
+<div class="group flex items-center px-4 py-2 border-r border-border-base text-text-muted hover:bg-bg-sub hover:text-white text-sm font-mono min-w-[140px] cursor-pointer transition-colors">
+<span class="material-icons-outlined text-base mr-2 text-blue-400">image</span>
+<span class="truncate">example-guitar.jpg</span>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-text-muted hover:text-white">
+<span class="material-icons-outlined text-sm">close</span>
+</button>
+</div>
+<div class="group flex items-center px-4 py-2 border-r border-border-base text-text-muted hover:bg-bg-sub hover:text-white text-sm font-mono min-w-[140px] cursor-pointer transition-colors">
+<span class="material-icons-outlined text-base mr-2 text-yellow-400">javascript</span>
+<span class="truncate">main.ts</span>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-text-muted hover:text-white">
+<span class="material-icons-outlined text-sm">close</span>
+</button>
+</div>
+<button class="px-3 py-2 text-text-muted hover:text-white hover:bg-bg-sub ml-1">
+<span class="material-icons-outlined text-lg">add</span>
+</button>
+</div>
+<div class="flex-1 relative overflow-auto font-mono text-sm leading-6 flex bg-[#050505]">
+<div class="w-12 bg-bg-panel text-gray-600 text-right pr-3 pt-4 select-none border-r border-border-base shrink-0">
+<div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div>
+</div>
+<div class="p-4 pt-4 text-gray-300 w-full">
+<pre><code class="language-xml"><span class="text-blue-400">&lt;svg</span> <span class="text-purple-400">xmlns</span>=<span class="text-green-400">"http://www.w3.org/2000/svg"</span> <span class="text-purple-400">width</span>=<span class="text-green-400">"160"</span> <span class="text-purple-400">height</span>=<span class="text-green-400">"160"</span> <span class="text-purple-400">viewBox</span>=<span class="text-green-400">"0 0 160 160"</span><span class="text-blue-400">&gt;</span>
+  <span class="text-gray-500 italic">&lt;!-- Drizzle ORM Logo Reconstruction --&gt;</span>
+  <span class="text-blue-400">&lt;defs&gt;</span>
+    <span class="text-blue-400">&lt;linearGradient</span> <span class="text-purple-400">id</span>=<span class="text-green-400">"grad1"</span> <span class="text-purple-400">x1</span>=<span class="text-green-400">"0%"</span> <span class="text-purple-400">y1</span>=<span class="text-green-400">"0%"</span> <span class="text-purple-400">x2</span>=<span class="text-green-400">"100%"</span> <span class="text-purple-400">y2</span>=<span class="text-green-400">"100%"</span><span class="text-blue-400">&gt;</span>
+      <span class="text-blue-400">&lt;stop</span> <span class="text-purple-400">offset</span>=<span class="text-green-400">"0%"</span> <span class="text-purple-400">style</span>=<span class="text-green-400">"stop-color:rgb(255,255,0);stop-opacity:1"</span> <span class="text-blue-400">/&gt;</span>
+      <span class="text-blue-400">&lt;stop</span> <span class="text-purple-400">offset</span>=<span class="text-green-400">"100%"</span> <span class="text-purple-400">style</span>=<span class="text-green-400">"stop-color:rgb(255,0,0);stop-opacity:1"</span> <span class="text-blue-400">/&gt;</span>
+    <span class="text-blue-400">&lt;/linearGradient&gt;</span>
+  <span class="text-blue-400">&lt;/defs&gt;</span>
+  <span class="text-blue-400">&lt;rect</span> <span class="text-purple-400">width</span>=<span class="text-green-400">"100%"</span> <span class="text-purple-400">height</span>=<span class="text-green-400">"100%"</span> <span class="text-purple-400">fill</span>=<span class="text-green-400">"#18181b"</span> <span class="text-blue-400">/&gt;</span>
+  <span class="text-blue-400">&lt;circle</span> <span class="text-purple-400">cx</span>=<span class="text-green-400">"80"</span> <span class="text-purple-400">cy</span>=<span class="text-green-400">"80"</span> <span class="text-purple-400">r</span>=<span class="text-green-400">"40"</span> <span class="text-purple-400">stroke</span>=<span class="text-green-400">"url(#grad1)"</span> <span class="text-purple-400">stroke-width</span>=<span class="text-green-400">"4"</span> <span class="text-purple-400">fill</span>=<span class="text-green-400">"none"</span> <span class="text-blue-400">/&gt;</span>
+  <span class="text-blue-400">&lt;text</span> <span class="text-purple-400">x</span>=<span class="text-green-400">"50%"</span> <span class="text-purple-400">y</span>=<span class="text-green-400">"50%"</span> <span class="text-purple-400">text-anchor</span>=<span class="text-green-400">"middle"</span> <span class="text-purple-400">stroke</span>=<span class="text-green-400">"#ffffff"</span> <span class="text-purple-400">stroke-width</span>=<span class="text-green-400">"1px"</span> <span class="text-purple-400">dy</span>=<span class="text-green-400">".3em"</span><span class="text-blue-400">&gt;</span>IDE<span class="text-blue-400">&lt;/text&gt;</span>
+<span class="text-blue-400">&lt;/svg&gt;</span></code></pre>
+</div>
+</div>
+<div class="absolute right-0 top-10 bottom-0 w-1/3 bg-black border-l-2 border-border-base hidden xl:flex flex-col z-0">
+<div class="h-8 bg-bg-panel border-b border-border-base flex items-center px-4 justify-between">
+<span class="text-xs uppercase font-bold tracking-wider text-text-muted">Preview</span>
+<div class="flex gap-2">
+<span class="material-icons-outlined text-sm cursor-pointer text-text-muted hover:text-primary">refresh</span>
+<span class="material-icons-outlined text-sm cursor-pointer text-text-muted hover:text-primary">open_in_new</span>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-center p-8 bg-[radial-gradient(#222_1px,transparent_1px)] [background-size:16px_16px]">
+<div class="w-48 h-48 border-2 border-dashed border-gray-700 flex items-center justify-center bg-black shadow-pixel">
+<div class="text-center">
+<div class="w-20 h-20 rounded-full border-4 border-gradient-to-br from-yellow-400 to-red-500 mx-auto mb-2 opacity-80"></div>
+<span class="font-mono text-xs text-gray-400">Rendered SVG</span>
+</div>
+</div>
+</div>
+<div class="h-1/3 border-t-2 border-border-base bg-black flex flex-col">
+<div class="h-8 flex items-center px-4 gap-4 border-b border-border-base bg-bg-panel">
+<span class="text-xs text-primary border-b-2 border-primary h-full flex items-center font-bold">Terminal</span>
+<span class="text-xs text-text-muted hover:text-white cursor-pointer">Output</span>
+<span class="text-xs text-text-muted hover:text-white cursor-pointer">Problems</span>
+</div>
+<div class="p-3 font-mono text-xs text-gray-400 overflow-y-auto space-y-1">
+<div class="flex gap-2"><span class="text-green-500">➜</span> <span class="text-white">~ npm run dev</span></div>
+<div class="flex gap-2 text-gray-600"><span>ready in 1432ms</span></div>
+<div class="flex gap-2"><span class="text-blue-500 font-bold">info</span> <span>Watching for file changes...</span></div>
+<div class="flex gap-2 text-gray-600"><span>&gt; processing svg...</span></div>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-14 bg-bg-panel border-l-2 border-border-base flex flex-col items-center py-4 gap-6 shrink-0 z-10">
+<div class="group relative flex justify-center w-full">
+<button class="w-10 h-10 rounded-none bg-primary text-white flex items-center justify-center shadow-pixel-sm border border-black hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-pixel transition-all">
+<span class="material-icons-outlined text-xl">chat_bubble</span>
+</button>
+<div class="absolute right-14 top-2 bg-black text-white text-xs font-mono px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-pixel border border-white">Ask AI</div>
+</div>
+<div class="w-8 h-0.5 bg-border-base"></div>
+<div class="group relative flex justify-center w-full">
+<button class="p-2 text-text-muted hover:text-white transition-colors">
+<span class="material-icons-outlined text-xl">history</span>
+</button>
+</div>
+<div class="group relative flex justify-center w-full">
+<button class="p-2 text-text-muted hover:text-white transition-colors">
+<span class="material-icons-outlined text-xl">bug_report</span>
+</button>
+</div>
+</aside>
+<div class="absolute top-14 bottom-12 right-16 w-96 bg-bg-panel border-2 border-border-base shadow-pixel-lg z-40 flex flex-col" style="right: 4.5rem;">
+<div class="h-12 border-b-2 border-border-base flex items-center justify-between px-4 bg-bg-sub">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.5)]"></span>
+<span class="font-bold text-sm tracking-wide uppercase text-white font-mono">AI Agent</span>
+</div>
+<div class="flex gap-3">
+<button class="text-text-muted hover:text-white">
+<span class="material-icons-outlined text-lg">open_in_full</span>
+</button>
+<button class="text-text-muted hover:text-white">
+<span class="material-icons-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-5 bg-black">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-none bg-primary text-white flex items-center justify-center shrink-0 border border-black shadow-pixel-sm">
+<span class="material-icons-outlined text-sm">smart_toy</span>
+</div>
+<div class="bg-bg-panel border border-border-base p-3 shadow-pixel-sm text-sm text-gray-300">
+<p>Hello! I'm your AI assistant. I can help you generate code, debug issues, or explain complex logic.</p>
+</div>
+</div>
+<div class="flex gap-3 flex-row-reverse">
+<div class="w-8 h-8 bg-gray-800 flex items-center justify-center shrink-0 border border-gray-600 text-gray-400">
+<span class="text-[10px] font-bold">ME</span>
+</div>
+<div class="bg-primary text-white p-3 shadow-pixel-sm text-sm max-w-[85%] border border-orange-700">
+<p>Can you explain what the SVG code on the left is doing?</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-none bg-primary text-white flex items-center justify-center shrink-0 border border-black shadow-pixel-sm">
+<span class="material-icons-outlined text-sm">smart_toy</span>
+</div>
+<div class="bg-bg-panel border border-border-base p-3 shadow-pixel-sm text-sm space-y-2 text-gray-300">
+<p>Sure! This SVG creates a simple graphic with a gradient background.</p>
+<ul class="list-none pl-2 space-y-1 text-xs text-gray-400 font-mono border-l-2 border-gray-700 ml-1">
+<li class="flex items-start gap-2"><span class="text-primary">&gt;</span> Defines a linearGradient</li>
+<li class="flex items-start gap-2"><span class="text-primary">&gt;</span> Draws a circle with stroke</li>
+<li class="flex items-start gap-2"><span class="text-primary">&gt;</span> Centers text "IDE"</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="p-3 bg-bg-panel border-t-2 border-border-base">
+<div class="relative">
+<input class="w-full bg-black border-2 border-border-base py-3 pl-3 pr-10 text-sm focus:border-primary focus:ring-0 outline-none text-white placeholder-gray-600 font-mono" placeholder="Ask a question..." type="text"/>
+<button class="absolute right-2 top-2 p-1.5 text-primary hover:text-white hover:bg-primary transition-colors">
+<span class="material-icons-outlined text-lg">send</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-2 px-1">
+<div class="flex gap-3 text-xs text-gray-500 font-mono">
+<span class="flex items-center gap-1 hover:text-primary cursor-pointer border border-transparent hover:border-gray-700 px-1"><span class="material-icons-outlined text-[10px]">attach_file</span> Context</span>
+<span class="flex items-center gap-1 hover:text-primary cursor-pointer border border-transparent hover:border-gray-700 px-1"><span class="material-icons-outlined text-[10px]">code</span> Codebase</span>
+</div>
+<span class="text-[10px] text-gray-600 font-mono uppercase">RET to send</span>
+</div>
+</div>
+</div>
+</div>
+<footer class="h-[48px] bg-primary text-white flex items-center justify-between px-4 text-xs font-mono font-medium shrink-0 z-50 border-t-4 border-black">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 hover:bg-black/20 px-2 py-1 cursor-pointer transition-colors">
+<span class="material-icons-outlined text-sm">cloud_queue</span>
+<span>Via-gent Coder</span>
+</div>
+<div class="flex items-center gap-2 hover:bg-black/20 px-2 py-1 cursor-pointer transition-colors">
+<span class="material-icons-outlined text-sm">sync</span>
+<span>Synced</span>
+</div>
+<div class="flex items-center gap-2 hover:bg-black/20 px-2 py-1 cursor-pointer transition-colors opacity-80">
+<span class="material-icons-outlined text-sm">error_outline</span>
+<span>0 Errors</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 opacity-80">
+<span>Ln 18, Col 7</span>
+</div>
+<div class="flex items-center gap-1 opacity-80">
+<span>UTF-8</span>
+</div>
+<div class="flex items-center gap-1 opacity-80">
+<span>XML</span>
+</div>
+<div class="hover:bg-black/20 p-1 cursor-pointer transition-colors">
+<span class="material-icons-outlined text-sm">notifications</span>
+</div>
+</div>
+</footer>
+
+</body></html>

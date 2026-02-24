@@ -1,0 +1,332 @@
+/**
+ * @fileoverview ResponsiveLayout Styles - 8-bit Design System
+ * @module presentation/components/layout/ResponsiveLayout.css
+ *
+ * EPIC-UXUI-04: Responsive Layout Implementation
+ * FIX-2026-02-01: Removed GlobalSidebar - now 5-column grid
+ * 
+ * - Desktop grid: [0.5:2:4:2.5:0.5] (ActivityBar:PanelLeft:Main:PanelRight:ActivityBar)
+ * - Tablet landscape: [0.5:3:4:2:0.5]
+ * - Mobile/Tablet portrait: Single panel + bottom nav
+ * - 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ *
+ * @story UXUI-04-07
+ * @created 2026-01-30
+ * @updated 2026-02-01
+ */
+
+/* ============================================================================
+   Responsive Layout Container
+   ============================================================================ */
+
+.responsive-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+  overflow: hidden;
+  background: hsl(var(--background));
+  /* 8-bit: No border-radius, sharp corners */
+  border-radius: 0;
+}
+
+/* Transition state */
+.responsive-layout--transitioning {
+  pointer-events: none;
+}
+
+/* ============================================================================
+   Layout Container
+   ============================================================================ */
+
+.responsive-layout__container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ============================================================================
+   Desktop Layout
+   Grid: [0.5:2:4:2.5:0.5] - NO GlobalSidebar (handled by ProjectAwareLayout)
+   ============================================================================ */
+
+.responsive-layout__desktop {
+  display: grid;
+  grid-template-columns: 48px 2fr 4fr 2.5fr 48px;
+  grid-template-rows: 1fr;
+  grid-template-areas:
+    "activity-bar-left panel-left panel-main panel-right activity-bar-right";
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Grid areas for desktop - NO global-sidebar needed */
+.responsive-layout__activity-bar-left {
+  grid-area: activity-bar-left;
+  min-width: 48px;
+  max-width: 48px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.responsive-layout__panel-left {
+  grid-area: panel-left;
+  min-width: 200px;
+  height: 100%;
+  overflow: hidden;
+  border-right: 2px solid hsl(var(--border));
+}
+
+.responsive-layout__panel-main {
+  grid-area: panel-main;
+  min-width: 300px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.responsive-layout__panel-right {
+  grid-area: panel-right;
+  min-width: 200px;
+  height: 100%;
+  overflow: hidden;
+  border-left: 2px solid hsl(var(--border));
+}
+
+.responsive-layout__activity-bar-right {
+  grid-area: activity-bar-right;
+  min-width: 48px;
+  max-width: 48px;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Tablet Landscape Layout
+   Grid: [0.5:3:4:2:0.5] - NO GlobalSidebar
+   ============================================================================ */
+
+.responsive-layout__tablet-landscape {
+  display: grid;
+  grid-template-columns: 48px 3fr 4fr 2fr 48px;
+  grid-template-rows: 1fr;
+  grid-template-areas:
+    "activity-bar-left panel-left panel-main panel-right activity-bar-right";
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Use same grid areas as desktop, just different column ratios */
+.responsive-layout__tablet-landscape .responsive-layout__panel-left {
+  min-width: 180px;
+}
+
+.responsive-layout__tablet-landscape .responsive-layout__panel-right {
+  min-width: 150px;
+}
+
+/* ============================================================================
+   Single Panel Layout (Tablet Portrait & Mobile)
+   ============================================================================ */
+
+.responsive-layout__single-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "content"
+    "bottom-nav";
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.responsive-layout__single-content {
+  grid-area: content;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  padding: 8px;
+}
+
+/* Bottom navigation is rendered as a separate component */
+.responsive-layout__single-panel .bottom-nav {
+  grid-area: bottom-nav;
+}
+
+/* ============================================================================
+   Breakpoint-Specific Styles
+   ============================================================================ */
+
+/* Mobile: < 600px */
+@media (max-width: 599px) {
+  .responsive-layout--mobile .responsive-layout__activity-bar-left,
+  .responsive-layout--mobile .responsive-layout__activity-bar-right,
+  .responsive-layout--mobile .responsive-layout__panel-left,
+  .responsive-layout--mobile .responsive-layout__panel-right {
+    display: none;
+  }
+}
+
+/* Tablet Portrait: 600px - 767px */
+@media (min-width: 600px) and (max-width: 767px) {
+  .responsive-layout--tabletPortrait .responsive-layout__activity-bar-left,
+  .responsive-layout--tabletPortrait .responsive-layout__activity-bar-right,
+  .responsive-layout--tabletPortrait .responsive-layout__panel-left,
+  .responsive-layout--tabletPortrait .responsive-layout__panel-right {
+    display: none;
+  }
+}
+
+/* Tablet Landscape: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .responsive-layout--tabletLandscape .responsive-layout__single-panel {
+    display: none;
+  }
+}
+
+/* Desktop: >= 1024px */
+@media (min-width: 1024px) {
+  .responsive-layout--desktop .responsive-layout__single-panel {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   Transitions
+   ============================================================================ */
+
+.responsive-layout__container {
+  transition: opacity 150ms ease-out;
+}
+
+.responsive-layout--transitioning .responsive-layout__container {
+  opacity: 0.8;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .responsive-layout__container {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Touch Device Optimizations
+   ============================================================================ */
+
+@media (pointer: coarse) {
+  .responsive-layout__single-content {
+    /* Prevent horizontal scroll on touch devices */
+    overscroll-behavior-x: none;
+    /* Smooth scrolling */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ============================================================================
+   Safe Area Support (Notched Devices)
+   ============================================================================ */
+
+@supports (padding: max(0px)) {
+  .responsive-layout {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+
+  .responsive-layout__single-panel {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================================
+   Plugin Docker Container
+   ============================================================================ */
+
+.responsive-layout__docker-container {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.responsive-layout__docker-container > * {
+  pointer-events: auto;
+}
+
+.responsive-layout__docker {
+  height: 100%;
+  background: hsl(var(--background));
+  border-left: 2px solid hsl(var(--border));
+  box-shadow: -4px 0 0 0 hsl(var(--border));
+  transition: transform 200ms ease-out;
+}
+
+.responsive-layout__docker-toggle {
+  width: 24px;
+  height: 48px;
+  background: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
+  border-right: none;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: hsl(var(--foreground));
+  transition: background-color 150ms ease;
+  margin-right: -2px;
+}
+
+.responsive-layout__docker-toggle:hover {
+  background: hsl(var(--accent));
+}
+
+.responsive-layout__docker-toggle:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.responsive-layout__docker-toggle-icon {
+  font-family: monospace;
+  line-height: 1;
+}
+
+/* Hide docker on non-desktop layouts */
+@media (max-width: 1023px) {
+  .responsive-layout__docker-container {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+  .responsive-layout {
+    height: auto;
+    overflow: visible;
+  }
+
+  .responsive-layout__activity-bar-left,
+  .responsive-layout__activity-bar-right,
+  .bottom-nav,
+  .responsive-layout__docker-container {
+    display: none !important;
+  }
+
+  .responsive-layout__panel-main {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

@@ -1,0 +1,2853 @@
+.
+├── _bmad
+│   ├── _config
+│   │   ├── agent-manifest.csv
+│   │   ├── agents
+│   │   │   ├── bmb-agent-builder.customize.yaml
+│   │   │   ├── bmb-bmad-builder.customize.yaml
+│   │   │   ├── bmb-module-builder.customize.yaml
+│   │   │   ├── bmb-workflow-builder.customize.yaml
+│   │   │   ├── bmm-analyst.customize.yaml
+│   │   │   ├── bmm-architect.customize.yaml
+│   │   │   ├── bmm-dev.customize.yaml
+│   │   │   ├── bmm-pm.customize.yaml
+│   │   │   ├── bmm-quick-flow-solo-dev.customize.yaml
+│   │   │   ├── bmm-sm.customize.yaml
+│   │   │   ├── bmm-tea.customize.yaml
+│   │   │   ├── bmm-tech-writer.customize.yaml
+│   │   │   ├── bmm-ux-designer.customize.yaml
+│   │   │   ├── cis-brainstorming-coach.customize.yaml
+│   │   │   ├── cis-creative-problem-solver.customize.yaml
+│   │   │   ├── cis-design-thinking-coach.customize.yaml
+│   │   │   ├── cis-innovation-strategist.customize.yaml
+│   │   │   ├── cis-presentation-master.customize.yaml
+│   │   │   ├── cis-storyteller.customize.yaml
+│   │   │   └── core-bmad-master.customize.yaml
+│   │   ├── custom
+│   │   ├── files-manifest.csv
+│   │   ├── ides
+│   │   │   ├── claude-code.yaml
+│   │   │   └── codex.yaml
+│   │   ├── manifest.yaml
+│   │   ├── task-manifest.csv
+│   │   ├── tool-manifest.csv
+│   │   └── workflow-manifest.csv
+│   ├── _memory
+│   │   ├── config.yaml
+│   │   └── storyteller-sidecar
+│   │       ├── stories-told.md
+│   │       ├── stories-told.md.bak
+│   │       ├── story-preferences.md
+│   │       └── story-preferences.md.bak
+│   ├── bmb
+│   │   ├── agents
+│   │   │   ├── agent-builder.md
+│   │   │   ├── bmad-builder.md
+│   │   │   ├── module-builder.md
+│   │   │   └── workflow-builder.md
+│   │   ├── config.yaml
+│   │   ├── docs
+│   │   │   ├── agents
+│   │   │   │   ├── agent-compilation.md
+│   │   │   │   ├── agent-compilation.md.bak
+│   │   │   │   ├── agent-menu-patterns.md
+│   │   │   │   ├── agent-menu-patterns.md.bak
+│   │   │   │   ├── expert-agent-architecture.md
+│   │   │   │   ├── expert-agent-architecture.md.bak
+│   │   │   │   ├── index.md
+│   │   │   │   ├── index.md.bak
+│   │   │   │   ├── kb.csv
+│   │   │   │   ├── simple-agent-architecture.md
+│   │   │   │   ├── simple-agent-architecture.md.bak
+│   │   │   │   ├── understanding-agent-types.md
+│   │   │   │   └── understanding-agent-types.md.bak
+│   │   │   ├── index.md
+│   │   │   ├── README.md.bak
+│   │   │   └── workflows
+│   │   │       ├── architecture.md
+│   │   │       ├── architecture.md.bak
+│   │   │       ├── common-workflow-tools.csv
+│   │   │       ├── common-workflow-tools.csv.bak
+│   │   │       ├── csv-data-file-standards.md
+│   │   │       ├── csv-data-file-standards.md.bak
+│   │   │       ├── index.md
+│   │   │       ├── index.md.bak
+│   │   │       ├── intent-vs-prescriptive-spectrum.md
+│   │   │       ├── intent-vs-prescriptive-spectrum.md.bak
+│   │   │       ├── kb.csv
+│   │   │       ├── templates
+│   │   │       │   ├── step-01-init-continuable-template.md
+│   │   │       │   ├── step-01-init-continuable-template.md.bak
+│   │   │       │   ├── step-1b-template.md
+│   │   │       │   ├── step-1b-template.md.bak
+│   │   │       │   ├── step-file.md
+│   │   │       │   ├── step-file.md.bak
+│   │   │       │   ├── step-template.md
+│   │   │       │   ├── step-template.md.bak
+│   │   │       │   ├── workflow-template.md
+│   │   │       │   ├── workflow-template.md.bak
+│   │   │       │   ├── workflow.md
+│   │   │       │   └── workflow.md.bak
+│   │   │       ├── terms.md
+│   │   │       └── terms.md.bak
+│   │   ├── README.md
+│   │   ├── reference
+│   │   │   ├── agents
+│   │   │   │   ├── expert-examples
+│   │   │   │   │   └── journal-keeper
+│   │   │   │   │       └── README.md.bak
+│   │   │   │   ├── module-examples
+│   │   │   │   │   └── README.md.bak
+│   │   │   │   └── simple-examples
+│   │   │   │       ├── README.md
+│   │   │   │       └── README.md.bak
+│   │   │   ├── README.md
+│   │   │   ├── README.md.bak
+│   │   │   └── workflows
+│   │   │       └── meal-prep-nutrition
+│   │   │           ├── data
+│   │   │           │   ├── dietary-restrictions.csv
+│   │   │           │   ├── dietary-restrictions.csv.bak
+│   │   │           │   ├── macro-calculator.csv
+│   │   │           │   ├── macro-calculator.csv.bak
+│   │   │           │   ├── recipe-database.csv
+│   │   │           │   └── recipe-database.csv.bak
+│   │   │           ├── steps
+│   │   │           │   ├── step-01-init.md
+│   │   │           │   ├── step-01-init.md.bak
+│   │   │           │   ├── step-01b-continue.md
+│   │   │           │   ├── step-01b-continue.md.bak
+│   │   │           │   ├── step-02-profile.md
+│   │   │           │   ├── step-02-profile.md.bak
+│   │   │           │   ├── step-03-assessment.md
+│   │   │           │   ├── step-03-assessment.md.bak
+│   │   │           │   ├── step-04-strategy.md
+│   │   │           │   ├── step-04-strategy.md.bak
+│   │   │           │   ├── step-05-shopping.md
+│   │   │           │   ├── step-05-shopping.md.bak
+│   │   │           │   ├── step-06-prep-schedule.md
+│   │   │           │   └── step-06-prep-schedule.md.bak
+│   │   │           ├── templates
+│   │   │           │   ├── assessment-section.md
+│   │   │           │   ├── assessment-section.md.bak
+│   │   │           │   ├── nutrition-plan.md
+│   │   │           │   ├── nutrition-plan.md.bak
+│   │   │           │   ├── prep-schedule-section.md
+│   │   │           │   ├── prep-schedule-section.md.bak
+│   │   │           │   ├── profile-section.md
+│   │   │           │   ├── profile-section.md.bak
+│   │   │           │   ├── shopping-section.md
+│   │   │           │   ├── shopping-section.md.bak
+│   │   │           │   ├── strategy-section.md
+│   │   │           │   └── strategy-section.md.bak
+│   │   │           ├── workflow.md
+│   │   │           └── workflow.md.bak
+│   │   ├── workflows
+│   │   │   ├── create-agent
+│   │   │   │   ├── data
+│   │   │   │   │   ├── agent-validation-checklist.md
+│   │   │   │   │   ├── agent-validation-checklist.md.bak
+│   │   │   │   │   ├── brainstorm-context.md
+│   │   │   │   │   ├── brainstorm-context.md.bak
+│   │   │   │   │   ├── communication-presets.csv
+│   │   │   │   │   ├── communication-presets.csv.bak
+│   │   │   │   │   ├── info-and-installation-guide.md
+│   │   │   │   │   ├── info-and-installation-guide.md.bak
+│   │   │   │   │   ├── reference
+│   │   │   │   │   │   ├── agents
+│   │   │   │   │   │   │   ├── expert-examples
+│   │   │   │   │   │   │   │   └── journal-keeper
+│   │   │   │   │   │   │   │       ├── README.md
+│   │   │   │   │   │   │   │       └── README.md.bak
+│   │   │   │   │   │   │   ├── module-examples
+│   │   │   │   │   │   │   │   ├── README.md
+│   │   │   │   │   │   │   │   └── README.md.bak
+│   │   │   │   │   │   │   └── simple-examples
+│   │   │   │   │   │   │       ├── README.md
+│   │   │   │   │   │   │       └── README.md.bak
+│   │   │   │   │   │   ├── README.md
+│   │   │   │   │   │   ├── README.md.bak
+│   │   │   │   │   │   └── workflows
+│   │   │   │   │   │       └── meal-prep-nutrition
+│   │   │   │   │   │           ├── data
+│   │   │   │   │   │           │   ├── dietary-restrictions.csv
+│   │   │   │   │   │           │   ├── dietary-restrictions.csv.bak
+│   │   │   │   │   │           │   ├── macro-calculator.csv
+│   │   │   │   │   │           │   ├── macro-calculator.csv.bak
+│   │   │   │   │   │           │   ├── recipe-database.csv
+│   │   │   │   │   │           │   └── recipe-database.csv.bak
+│   │   │   │   │   │           ├── steps
+│   │   │   │   │   │           │   ├── step-01-init.md
+│   │   │   │   │   │           │   ├── step-01-init.md.bak
+│   │   │   │   │   │           │   ├── step-01b-continue.md
+│   │   │   │   │   │           │   ├── step-01b-continue.md.bak
+│   │   │   │   │   │           │   ├── step-02-profile.md
+│   │   │   │   │   │           │   ├── step-02-profile.md.bak
+│   │   │   │   │   │           │   ├── step-03-assessment.md
+│   │   │   │   │   │           │   ├── step-03-assessment.md.bak
+│   │   │   │   │   │           │   ├── step-04-strategy.md
+│   │   │   │   │   │           │   ├── step-04-strategy.md.bak
+│   │   │   │   │   │           │   ├── step-05-shopping.md
+│   │   │   │   │   │           │   ├── step-05-shopping.md.bak
+│   │   │   │   │   │           │   ├── step-06-prep-schedule.md
+│   │   │   │   │   │           │   └── step-06-prep-schedule.md.bak
+│   │   │   │   │   │           ├── templates
+│   │   │   │   │   │           │   ├── assessment-section.md
+│   │   │   │   │   │           │   ├── assessment-section.md.bak
+│   │   │   │   │   │           │   ├── nutrition-plan.md
+│   │   │   │   │   │           │   ├── nutrition-plan.md.bak
+│   │   │   │   │   │           │   ├── prep-schedule-section.md
+│   │   │   │   │   │           │   ├── prep-schedule-section.md.bak
+│   │   │   │   │   │           │   ├── profile-section.md
+│   │   │   │   │   │           │   ├── profile-section.md.bak
+│   │   │   │   │   │           │   ├── shopping-section.md
+│   │   │   │   │   │           │   ├── shopping-section.md.bak
+│   │   │   │   │   │           │   ├── strategy-section.md
+│   │   │   │   │   │           │   └── strategy-section.md.bak
+│   │   │   │   │   │           ├── workflow.md
+│   │   │   │   │   │           └── workflow.md.bak
+│   │   │   │   │   ├── validation-complete.md
+│   │   │   │   │   └── validation-complete.md.bak
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-brainstorm.md
+│   │   │   │   │   ├── step-01-brainstorm.md.bak
+│   │   │   │   │   ├── step-02-discover.md
+│   │   │   │   │   ├── step-02-discover.md.bak
+│   │   │   │   │   ├── step-03-persona.md
+│   │   │   │   │   ├── step-03-persona.md.bak
+│   │   │   │   │   ├── step-04-commands.md
+│   │   │   │   │   ├── step-04-commands.md.bak
+│   │   │   │   │   ├── step-05-name.md
+│   │   │   │   │   ├── step-05-name.md.bak
+│   │   │   │   │   ├── step-06-build.md
+│   │   │   │   │   ├── step-06-build.md.bak
+│   │   │   │   │   ├── step-07-validate.md
+│   │   │   │   │   ├── step-07-validate.md.bak
+│   │   │   │   │   ├── step-08-celebrate.md
+│   │   │   │   │   └── step-08-celebrate.md.bak
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── agent-plan.template.md
+│   │   │   │   │   ├── agent-plan.template.md.bak
+│   │   │   │   │   ├── expert-agent.template.md
+│   │   │   │   │   ├── expert-agent.template.md.bak
+│   │   │   │   │   ├── simple-agent.template.md
+│   │   │   │   │   └── simple-agent.template.md.bak
+│   │   │   │   ├── workflow.md
+│   │   │   │   └── workflow.md.bak
+│   │   │   ├── create-module
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-init.md
+│   │   │   │   │   ├── step-01-init.md.bak
+│   │   │   │   │   ├── step-01b-continue.md
+│   │   │   │   │   ├── step-01b-continue.md.bak
+│   │   │   │   │   ├── step-02-concept.md
+│   │   │   │   │   ├── step-02-concept.md.bak
+│   │   │   │   │   ├── step-03-components.md
+│   │   │   │   │   ├── step-03-components.md.bak
+│   │   │   │   │   ├── step-04-structure.md
+│   │   │   │   │   ├── step-04-structure.md.bak
+│   │   │   │   │   ├── step-05-config.md
+│   │   │   │   │   ├── step-05-config.md.bak
+│   │   │   │   │   ├── step-06-agents.md
+│   │   │   │   │   ├── step-06-agents.md.bak
+│   │   │   │   │   ├── step-07-workflows.md
+│   │   │   │   │   ├── step-07-workflows.md.bak
+│   │   │   │   │   ├── step-08-installer.md
+│   │   │   │   │   ├── step-08-installer.md.bak
+│   │   │   │   │   ├── step-09-documentation.md
+│   │   │   │   │   ├── step-09-documentation.md.bak
+│   │   │   │   │   ├── step-10-roadmap.md
+│   │   │   │   │   ├── step-10-roadmap.md.bak
+│   │   │   │   │   ├── step-11-validate.md
+│   │   │   │   │   └── step-11-validate.md.bak
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── agent.template.md
+│   │   │   │   │   ├── agent.template.md.bak
+│   │   │   │   │   ├── installer.template.js
+│   │   │   │   │   ├── installer.template.js.bak
+│   │   │   │   │   ├── module-plan.template.md
+│   │   │   │   │   ├── module-plan.template.md.bak
+│   │   │   │   │   ├── module.template.yaml
+│   │   │   │   │   ├── module.template.yaml.bak
+│   │   │   │   │   ├── workflow-plan-template.md
+│   │   │   │   │   └── workflow-plan-template.md.bak
+│   │   │   │   ├── validation.md
+│   │   │   │   ├── validation.md.bak
+│   │   │   │   ├── workflow.md
+│   │   │   │   └── workflow.md.bak
+│   │   │   ├── create-workflow
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-init.md
+│   │   │   │   │   ├── step-01-init.md.bak
+│   │   │   │   │   ├── step-02-gather.md
+│   │   │   │   │   ├── step-02-gather.md.bak
+│   │   │   │   │   ├── step-03-tools-configuration.md
+│   │   │   │   │   ├── step-03-tools-configuration.md.bak
+│   │   │   │   │   ├── step-04-plan-review.md
+│   │   │   │   │   ├── step-04-plan-review.md.bak
+│   │   │   │   │   ├── step-05-output-format-design.md
+│   │   │   │   │   ├── step-05-output-format-design.md.bak
+│   │   │   │   │   ├── step-06-design.md
+│   │   │   │   │   ├── step-06-design.md.bak
+│   │   │   │   │   ├── step-07-build.md
+│   │   │   │   │   ├── step-07-build.md.bak
+│   │   │   │   │   ├── step-08-review.md
+│   │   │   │   │   ├── step-08-review.md.bak
+│   │   │   │   │   ├── step-09-complete.md
+│   │   │   │   │   └── step-09-complete.md.bak
+│   │   │   │   ├── workflow.md
+│   │   │   │   └── workflow.md.bak
+│   │   │   ├── edit-agent
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-discover-intent.md
+│   │   │   │   │   ├── step-01-discover-intent.md.bak
+│   │   │   │   │   ├── step-02-analyze-agent.md
+│   │   │   │   │   ├── step-02-analyze-agent.md.bak
+│   │   │   │   │   ├── step-03-propose-changes.md
+│   │   │   │   │   ├── step-03-propose-changes.md.bak
+│   │   │   │   │   ├── step-04-apply-changes.md
+│   │   │   │   │   ├── step-04-apply-changes.md.bak
+│   │   │   │   │   ├── step-05-validate.md
+│   │   │   │   │   └── step-05-validate.md.bak
+│   │   │   │   ├── workflow.md
+│   │   │   │   └── workflow.md.bak
+│   │   │   ├── edit-workflow
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-analyze.md
+│   │   │   │   │   ├── step-01-analyze.md.bak
+│   │   │   │   │   ├── step-02-discover.md
+│   │   │   │   │   ├── step-02-discover.md.bak
+│   │   │   │   │   ├── step-03-improve.md
+│   │   │   │   │   ├── step-03-improve.md.bak
+│   │   │   │   │   ├── step-04-validate.md
+│   │   │   │   │   ├── step-04-validate.md.bak
+│   │   │   │   │   ├── step-05-compliance-check.md
+│   │   │   │   │   └── step-05-compliance-check.md.bak
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── completion-summary.md
+│   │   │   │   │   ├── completion-summary.md.bak
+│   │   │   │   │   ├── improvement-goals.md
+│   │   │   │   │   ├── improvement-goals.md.bak
+│   │   │   │   │   ├── improvement-log.md
+│   │   │   │   │   ├── improvement-log.md.bak
+│   │   │   │   │   ├── validation-results.md
+│   │   │   │   │   ├── validation-results.md.bak
+│   │   │   │   │   ├── workflow-analysis.md
+│   │   │   │   │   └── workflow-analysis.md.bak
+│   │   │   │   ├── workflow.md
+│   │   │   │   └── workflow.md.bak
+│   │   │   └── workflow-compliance-check
+│   │   │       ├── steps
+│   │   │       │   ├── step-01-validate-goal.md
+│   │   │       │   ├── step-01-validate-goal.md.bak
+│   │   │       │   ├── step-02-workflow-validation.md
+│   │   │       │   ├── step-02-workflow-validation.md.bak
+│   │   │       │   ├── step-03-step-validation.md
+│   │   │       │   ├── step-03-step-validation.md.bak
+│   │   │       │   ├── step-04-file-validation.md
+│   │   │       │   ├── step-04-file-validation.md.bak
+│   │   │       │   ├── step-05-intent-spectrum-validation.md
+│   │   │       │   ├── step-05-intent-spectrum-validation.md.bak
+│   │   │       │   ├── step-06-web-subprocess-validation.md
+│   │   │       │   ├── step-06-web-subprocess-validation.md.bak
+│   │   │       │   ├── step-07-holistic-analysis.md
+│   │   │       │   ├── step-07-holistic-analysis.md.bak
+│   │   │       │   ├── step-08-generate-report.md
+│   │   │       │   └── step-08-generate-report.md.bak
+│   │   │       ├── templates
+│   │   │       │   ├── compliance-report.md
+│   │   │       │   └── compliance-report.md.bak
+│   │   │       ├── workflow.md
+│   │   │       └── workflow.md.bak
+│   │   └── workflows-legacy
+│   │       ├── edit-module
+│   │       │   ├── checklist.md
+│   │       │   ├── checklist.md.bak
+│   │       │   ├── instructions.md
+│   │       │   ├── instructions.md.bak
+│   │       │   ├── README.md
+│   │       │   ├── README.md.bak
+│   │       │   ├── workflow.yaml
+│   │       │   └── workflow.yaml.bak
+│   │       └── module-brief
+│   │           ├── checklist.md
+│   │           ├── checklist.md.bak
+│   │           ├── instructions.md
+│   │           ├── instructions.md.bak
+│   │           ├── README.md
+│   │           ├── README.md.bak
+│   │           ├── template.md
+│   │           ├── template.md.bak
+│   │           ├── workflow.yaml
+│   │           └── workflow.yaml.bak
+│   ├── bmm
+│   │   ├── agents
+│   │   │   ├── analyst.md
+│   │   │   ├── architect.md
+│   │   │   ├── dev.md
+│   │   │   ├── pm.md
+│   │   │   ├── quick-flow-solo-dev.md
+│   │   │   ├── sm.md
+│   │   │   ├── tea.md
+│   │   │   ├── tech-writer.md
+│   │   │   └── ux-designer.md
+│   │   ├── config.yaml
+│   │   ├── data
+│   │   │   ├── documentation-standards.md
+│   │   │   ├── documentation-standards.md.bak
+│   │   │   ├── project-context-template.md
+│   │   │   ├── project-context-template.md.bak
+│   │   │   ├── README.md
+│   │   │   └── README.md.bak
+│   │   ├── docs
+│   │   │   ├── agents-guide.md
+│   │   │   ├── agents-guide.md.bak
+│   │   │   ├── bmad-quick-flow.md
+│   │   │   ├── bmad-quick-flow.md.bak
+│   │   │   ├── brownfield-guide.md
+│   │   │   ├── brownfield-guide.md.bak
+│   │   │   ├── enterprise-agentic-development.md
+│   │   │   ├── enterprise-agentic-development.md.bak
+│   │   │   ├── faq.md
+│   │   │   ├── faq.md.bak
+│   │   │   ├── glossary.md
+│   │   │   ├── glossary.md.bak
+│   │   │   ├── images
+│   │   │   │   ├── README.md
+│   │   │   │   ├── README.md.bak
+│   │   │   │   ├── workflow-method-greenfield.excalidraw
+│   │   │   │   ├── workflow-method-greenfield.excalidraw.bak
+│   │   │   │   ├── workflow-method-greenfield.svg
+│   │   │   │   └── workflow-method-greenfield.svg.bak
+│   │   │   ├── index.md
+│   │   │   ├── party-mode.md
+│   │   │   ├── party-mode.md.bak
+│   │   │   ├── quick-flow-solo-dev.md
+│   │   │   ├── quick-flow-solo-dev.md.bak
+│   │   │   ├── quick-spec-flow.md
+│   │   │   ├── quick-spec-flow.md.bak
+│   │   │   ├── quick-start.md
+│   │   │   ├── quick-start.md.bak
+│   │   │   ├── README.md.bak
+│   │   │   ├── scale-adaptive-system.md
+│   │   │   ├── scale-adaptive-system.md.bak
+│   │   │   ├── test-architecture.md
+│   │   │   ├── test-architecture.md.bak
+│   │   │   ├── troubleshooting.md
+│   │   │   ├── troubleshooting.md.bak
+│   │   │   ├── workflow-architecture-reference.md
+│   │   │   ├── workflow-architecture-reference.md.bak
+│   │   │   ├── workflow-document-project-reference.md
+│   │   │   ├── workflow-document-project-reference.md.bak
+│   │   │   ├── workflows-analysis.md
+│   │   │   ├── workflows-analysis.md.bak
+│   │   │   ├── workflows-implementation.md
+│   │   │   ├── workflows-implementation.md.bak
+│   │   │   ├── workflows-planning.md
+│   │   │   ├── workflows-planning.md.bak
+│   │   │   ├── workflows-solutioning.md
+│   │   │   └── workflows-solutioning.md.bak
+│   │   ├── README.md
+│   │   ├── README.md.bak
+│   │   ├── teams
+│   │   │   ├── default-party.csv
+│   │   │   ├── default-party.csv.bak
+│   │   │   ├── team-fullstack.yaml
+│   │   │   └── team-fullstack.yaml.bak
+│   │   ├── testarch
+│   │   │   ├── knowledge
+│   │   │   │   ├── api-request.md
+│   │   │   │   ├── api-request.md.bak
+│   │   │   │   ├── auth-session.md
+│   │   │   │   ├── auth-session.md.bak
+│   │   │   │   ├── burn-in.md
+│   │   │   │   ├── burn-in.md.bak
+│   │   │   │   ├── ci-burn-in.md
+│   │   │   │   ├── ci-burn-in.md.bak
+│   │   │   │   ├── component-tdd.md
+│   │   │   │   ├── component-tdd.md.bak
+│   │   │   │   ├── contract-testing.md
+│   │   │   │   ├── contract-testing.md.bak
+│   │   │   │   ├── data-factories.md
+│   │   │   │   ├── data-factories.md.bak
+│   │   │   │   ├── email-auth.md
+│   │   │   │   ├── email-auth.md.bak
+│   │   │   │   ├── error-handling.md
+│   │   │   │   ├── error-handling.md.bak
+│   │   │   │   ├── feature-flags.md
+│   │   │   │   ├── feature-flags.md.bak
+│   │   │   │   ├── file-utils.md
+│   │   │   │   ├── file-utils.md.bak
+│   │   │   │   ├── fixture-architecture.md
+│   │   │   │   ├── fixture-architecture.md.bak
+│   │   │   │   ├── fixtures-composition.md
+│   │   │   │   ├── fixtures-composition.md.bak
+│   │   │   │   ├── intercept-network-call.md
+│   │   │   │   ├── intercept-network-call.md.bak
+│   │   │   │   ├── log.md
+│   │   │   │   ├── log.md.bak
+│   │   │   │   ├── network-error-monitor.md
+│   │   │   │   ├── network-error-monitor.md.bak
+│   │   │   │   ├── network-first.md
+│   │   │   │   ├── network-first.md.bak
+│   │   │   │   ├── network-recorder.md
+│   │   │   │   ├── network-recorder.md.bak
+│   │   │   │   ├── nfr-criteria.md
+│   │   │   │   ├── nfr-criteria.md.bak
+│   │   │   │   ├── overview.md
+│   │   │   │   ├── overview.md.bak
+│   │   │   │   ├── playwright-config.md
+│   │   │   │   ├── playwright-config.md.bak
+│   │   │   │   ├── probability-impact.md
+│   │   │   │   ├── probability-impact.md.bak
+│   │   │   │   ├── recurse.md
+│   │   │   │   ├── recurse.md.bak
+│   │   │   │   ├── risk-governance.md
+│   │   │   │   ├── risk-governance.md.bak
+│   │   │   │   ├── selective-testing.md
+│   │   │   │   ├── selective-testing.md.bak
+│   │   │   │   ├── selector-resilience.md
+│   │   │   │   ├── selector-resilience.md.bak
+│   │   │   │   ├── test-healing-patterns.md
+│   │   │   │   ├── test-healing-patterns.md.bak
+│   │   │   │   ├── test-levels-framework.md
+│   │   │   │   ├── test-levels-framework.md.bak
+│   │   │   │   ├── test-priorities-matrix.md
+│   │   │   │   ├── test-priorities-matrix.md.bak
+│   │   │   │   ├── test-quality.md
+│   │   │   │   ├── test-quality.md.bak
+│   │   │   │   ├── timing-debugging.md
+│   │   │   │   ├── timing-debugging.md.bak
+│   │   │   │   ├── visual-debugging.md
+│   │   │   │   └── visual-debugging.md.bak
+│   │   │   ├── tea-index.csv
+│   │   │   └── tea-index.csv.bak
+│   │   └── workflows
+│   │       ├── 1-analysis
+│   │       │   ├── create-product-brief
+│   │       │   │   ├── product-brief.template.md
+│   │       │   │   ├── product-brief.template.md.bak
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-init.md
+│   │       │   │   │   ├── step-01-init.md.bak
+│   │       │   │   │   ├── step-01b-continue.md
+│   │       │   │   │   ├── step-01b-continue.md.bak
+│   │       │   │   │   ├── step-02-vision.md
+│   │       │   │   │   ├── step-02-vision.md.bak
+│   │       │   │   │   ├── step-03-users.md
+│   │       │   │   │   ├── step-03-users.md.bak
+│   │       │   │   │   ├── step-04-metrics.md
+│   │       │   │   │   ├── step-04-metrics.md.bak
+│   │       │   │   │   ├── step-05-scope.md
+│   │       │   │   │   ├── step-05-scope.md.bak
+│   │       │   │   │   ├── step-06-complete.md
+│   │       │   │   │   └── step-06-complete.md.bak
+│   │       │   │   ├── workflow.md
+│   │       │   │   └── workflow.md.bak
+│   │       │   └── research
+│   │       │       ├── domain-steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-01-init.md.bak
+│   │       │       │   ├── step-02-domain-analysis.md
+│   │       │       │   ├── step-02-domain-analysis.md.bak
+│   │       │       │   ├── step-03-competitive-landscape.md
+│   │       │       │   ├── step-03-competitive-landscape.md.bak
+│   │       │       │   ├── step-04-regulatory-focus.md
+│   │       │       │   ├── step-04-regulatory-focus.md.bak
+│   │       │       │   ├── step-05-technical-trends.md
+│   │       │       │   ├── step-05-technical-trends.md.bak
+│   │       │       │   ├── step-06-research-synthesis.md
+│   │       │       │   └── step-06-research-synthesis.md.bak
+│   │       │       ├── market-steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-01-init.md.bak
+│   │       │       │   ├── step-02-customer-behavior.md
+│   │       │       │   ├── step-02-customer-behavior.md.bak
+│   │       │       │   ├── step-02-customer-insights.md
+│   │       │       │   ├── step-02-customer-insights.md.bak
+│   │       │       │   ├── step-03-customer-pain-points.md
+│   │       │       │   ├── step-03-customer-pain-points.md.bak
+│   │       │       │   ├── step-04-customer-decisions.md
+│   │       │       │   ├── step-04-customer-decisions.md.bak
+│   │       │       │   ├── step-05-competitive-analysis.md
+│   │       │       │   ├── step-05-competitive-analysis.md.bak
+│   │       │       │   ├── step-06-research-completion.md
+│   │       │       │   └── step-06-research-completion.md.bak
+│   │       │       ├── research.template.md
+│   │       │       ├── research.template.md.bak
+│   │       │       ├── technical-steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-01-init.md.bak
+│   │       │       │   ├── step-02-technical-overview.md
+│   │       │       │   ├── step-02-technical-overview.md.bak
+│   │       │       │   ├── step-03-integration-patterns.md
+│   │       │       │   ├── step-03-integration-patterns.md.bak
+│   │       │       │   ├── step-04-architectural-patterns.md
+│   │       │       │   ├── step-04-architectural-patterns.md.bak
+│   │       │       │   ├── step-05-implementation-research.md
+│   │       │       │   ├── step-05-implementation-research.md.bak
+│   │       │       │   ├── step-06-research-synthesis.md
+│   │       │       │   └── step-06-research-synthesis.md.bak
+│   │       │       ├── workflow.md
+│   │       │       └── workflow.md.bak
+│   │       ├── 2-plan-workflows
+│   │       │   ├── create-ux-design
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-init.md
+│   │       │   │   │   ├── step-01-init.md.bak
+│   │       │   │   │   ├── step-01b-continue.md
+│   │       │   │   │   ├── step-01b-continue.md.bak
+│   │       │   │   │   ├── step-02-discovery.md
+│   │       │   │   │   ├── step-02-discovery.md.bak
+│   │       │   │   │   ├── step-03-core-experience.md
+│   │       │   │   │   ├── step-03-core-experience.md.bak
+│   │       │   │   │   ├── step-04-emotional-response.md
+│   │       │   │   │   ├── step-04-emotional-response.md.bak
+│   │       │   │   │   ├── step-05-inspiration.md
+│   │       │   │   │   ├── step-05-inspiration.md.bak
+│   │       │   │   │   ├── step-06-design-system.md
+│   │       │   │   │   ├── step-06-design-system.md.bak
+│   │       │   │   │   ├── step-07-defining-experience.md
+│   │       │   │   │   ├── step-07-defining-experience.md.bak
+│   │       │   │   │   ├── step-08-visual-foundation.md
+│   │       │   │   │   ├── step-08-visual-foundation.md.bak
+│   │       │   │   │   ├── step-09-design-directions.md
+│   │       │   │   │   ├── step-09-design-directions.md.bak
+│   │       │   │   │   ├── step-10-user-journeys.md
+│   │       │   │   │   ├── step-10-user-journeys.md.bak
+│   │       │   │   │   ├── step-11-component-strategy.md
+│   │       │   │   │   ├── step-11-component-strategy.md.bak
+│   │       │   │   │   ├── step-12-ux-patterns.md
+│   │       │   │   │   ├── step-12-ux-patterns.md.bak
+│   │       │   │   │   ├── step-13-responsive-accessibility.md
+│   │       │   │   │   ├── step-13-responsive-accessibility.md.bak
+│   │       │   │   │   ├── step-14-complete.md
+│   │       │   │   │   └── step-14-complete.md.bak
+│   │       │   │   ├── ux-design-template.md
+│   │       │   │   ├── ux-design-template.md.bak
+│   │       │   │   ├── workflow.md
+│   │       │   │   └── workflow.md.bak
+│   │       │   └── prd
+│   │       │       ├── domain-complexity.csv
+│   │       │       ├── domain-complexity.csv.bak
+│   │       │       ├── prd-template.md
+│   │       │       ├── prd-template.md.bak
+│   │       │       ├── project-types.csv
+│   │       │       ├── project-types.csv.bak
+│   │       │       ├── steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-01-init.md.bak
+│   │       │       │   ├── step-01b-continue.md
+│   │       │       │   ├── step-01b-continue.md.bak
+│   │       │       │   ├── step-02-discovery.md
+│   │       │       │   ├── step-02-discovery.md.bak
+│   │       │       │   ├── step-03-success.md
+│   │       │       │   ├── step-03-success.md.bak
+│   │       │       │   ├── step-04-journeys.md
+│   │       │       │   ├── step-04-journeys.md.bak
+│   │       │       │   ├── step-05-domain.md
+│   │       │       │   ├── step-05-domain.md.bak
+│   │       │       │   ├── step-06-innovation.md
+│   │       │       │   ├── step-06-innovation.md.bak
+│   │       │       │   ├── step-07-project-type.md
+│   │       │       │   ├── step-07-project-type.md.bak
+│   │       │       │   ├── step-08-scoping.md
+│   │       │       │   ├── step-08-scoping.md.bak
+│   │       │       │   ├── step-09-functional.md
+│   │       │       │   ├── step-09-functional.md.bak
+│   │       │       │   ├── step-10-nonfunctional.md
+│   │       │       │   ├── step-10-nonfunctional.md.bak
+│   │       │       │   ├── step-11-complete.md
+│   │       │       │   └── step-11-complete.md.bak
+│   │       │       ├── workflow.md
+│   │       │       └── workflow.md.bak
+│   │       ├── 3-solutioning
+│   │       │   ├── check-implementation-readiness
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-document-discovery.md
+│   │       │   │   │   ├── step-01-document-discovery.md.bak
+│   │       │   │   │   ├── step-02-prd-analysis.md
+│   │       │   │   │   ├── step-02-prd-analysis.md.bak
+│   │       │   │   │   ├── step-03-epic-coverage-validation.md
+│   │       │   │   │   ├── step-03-epic-coverage-validation.md.bak
+│   │       │   │   │   ├── step-04-ux-alignment.md
+│   │       │   │   │   ├── step-04-ux-alignment.md.bak
+│   │       │   │   │   ├── step-05-epic-quality-review.md
+│   │       │   │   │   ├── step-05-epic-quality-review.md.bak
+│   │       │   │   │   ├── step-06-final-assessment.md
+│   │       │   │   │   └── step-06-final-assessment.md.bak
+│   │       │   │   ├── templates
+│   │       │   │   │   ├── readiness-report-template.md
+│   │       │   │   │   └── readiness-report-template.md.bak
+│   │       │   │   ├── workflow.md
+│   │       │   │   └── workflow.md.bak
+│   │       │   ├── create-architecture
+│   │       │   │   ├── architecture-decision-template.md
+│   │       │   │   ├── architecture-decision-template.md.bak
+│   │       │   │   ├── data
+│   │       │   │   │   ├── domain-complexity.csv
+│   │       │   │   │   ├── domain-complexity.csv.bak
+│   │       │   │   │   ├── project-types.csv
+│   │       │   │   │   └── project-types.csv.bak
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-init.md
+│   │       │   │   │   ├── step-01-init.md.bak
+│   │       │   │   │   ├── step-01b-continue.md
+│   │       │   │   │   ├── step-01b-continue.md.bak
+│   │       │   │   │   ├── step-02-context.md
+│   │       │   │   │   ├── step-02-context.md.bak
+│   │       │   │   │   ├── step-03-starter.md
+│   │       │   │   │   ├── step-03-starter.md.bak
+│   │       │   │   │   ├── step-04-decisions.md
+│   │       │   │   │   ├── step-04-decisions.md.bak
+│   │       │   │   │   ├── step-05-patterns.md
+│   │       │   │   │   ├── step-05-patterns.md.bak
+│   │       │   │   │   ├── step-06-structure.md
+│   │       │   │   │   ├── step-06-structure.md.bak
+│   │       │   │   │   ├── step-07-validation.md
+│   │       │   │   │   ├── step-07-validation.md.bak
+│   │       │   │   │   ├── step-08-complete.md
+│   │       │   │   │   └── step-08-complete.md.bak
+│   │       │   │   ├── workflow.md
+│   │       │   │   └── workflow.md.bak
+│   │       │   └── create-epics-and-stories
+│   │       │       ├── steps
+│   │       │       │   ├── step-01-validate-prerequisites.md
+│   │       │       │   ├── step-01-validate-prerequisites.md.bak
+│   │       │       │   ├── step-02-design-epics.md
+│   │       │       │   ├── step-02-design-epics.md.bak
+│   │       │       │   ├── step-03-create-stories.md
+│   │       │       │   ├── step-03-create-stories.md.bak
+│   │       │       │   ├── step-04-final-validation.md
+│   │       │       │   └── step-04-final-validation.md.bak
+│   │       │       ├── templates
+│   │       │       │   ├── epics-template.md
+│   │       │       │   └── epics-template.md.bak
+│   │       │       ├── workflow.md
+│   │       │       └── workflow.md.bak
+│   │       ├── 4-implementation
+│   │       │   ├── code-review
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.xml
+│   │       │   │   ├── instructions.xml.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── correct-course
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── create-story
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.xml
+│   │       │   │   ├── instructions.xml.bak
+│   │       │   │   ├── template.md
+│   │       │   │   ├── template.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── dev-story
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.xml
+│   │       │   │   ├── instructions.xml.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── retrospective
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── sprint-planning
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── sprint-status-template.yaml
+│   │       │   │   ├── sprint-status-template.yaml.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   └── sprint-status
+│   │       │       ├── instructions.md
+│   │       │       ├── instructions.md.bak
+│   │       │       ├── workflow.yaml
+│   │       │       └── workflow.yaml.bak
+│   │       ├── bmad-quick-flow
+│   │       │   ├── create-tech-spec
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   └── quick-dev
+│   │       │       ├── checklist.md.bak
+│   │       │       ├── instructions.md.bak
+│   │       │       ├── steps
+│   │       │       │   ├── step-01-mode-detection.md
+│   │       │       │   ├── step-02-context-gathering.md
+│   │       │       │   ├── step-03-execute.md
+│   │       │       │   ├── step-04-self-check.md
+│   │       │       │   ├── step-05-adversarial-review.md
+│   │       │       │   └── step-06-resolve-findings.md
+│   │       │       ├── workflow.md
+│   │       │       └── workflow.yaml.bak
+│   │       ├── document-project
+│   │       │   ├── checklist.md
+│   │       │   ├── checklist.md.bak
+│   │       │   ├── documentation-requirements.csv
+│   │       │   ├── documentation-requirements.csv.bak
+│   │       │   ├── instructions.md
+│   │       │   ├── instructions.md.bak
+│   │       │   ├── templates
+│   │       │   │   ├── deep-dive-template.md
+│   │       │   │   ├── deep-dive-template.md.bak
+│   │       │   │   ├── index-template.md
+│   │       │   │   ├── index-template.md.bak
+│   │       │   │   ├── project-overview-template.md
+│   │       │   │   ├── project-overview-template.md.bak
+│   │       │   │   ├── project-scan-report-schema.json
+│   │       │   │   ├── project-scan-report-schema.json.bak
+│   │       │   │   ├── source-tree-template.md
+│   │       │   │   └── source-tree-template.md.bak
+│   │       │   ├── workflow.yaml
+│   │       │   ├── workflow.yaml.bak
+│   │       │   └── workflows
+│   │       │       ├── deep-dive-instructions.md
+│   │       │       ├── deep-dive-instructions.md.bak
+│   │       │       ├── deep-dive.yaml
+│   │       │       ├── deep-dive.yaml.bak
+│   │       │       ├── full-scan-instructions.md
+│   │       │       ├── full-scan-instructions.md.bak
+│   │       │       ├── full-scan.yaml
+│   │       │       └── full-scan.yaml.bak
+│   │       ├── excalidraw-diagrams
+│   │       │   ├── _shared
+│   │       │   │   ├── excalidraw-library.json
+│   │       │   │   ├── excalidraw-library.json.bak
+│   │       │   │   ├── excalidraw-templates.yaml
+│   │       │   │   └── excalidraw-templates.yaml.bak
+│   │       │   ├── create-dataflow
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── create-diagram
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── create-flowchart
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   └── create-wireframe
+│   │       │       ├── checklist.md
+│   │       │       ├── checklist.md.bak
+│   │       │       ├── instructions.md
+│   │       │       ├── instructions.md.bak
+│   │       │       ├── workflow.yaml
+│   │       │       └── workflow.yaml.bak
+│   │       ├── generate-project-context
+│   │       │   ├── project-context-template.md
+│   │       │   ├── project-context-template.md.bak
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-discover.md
+│   │       │   │   ├── step-01-discover.md.bak
+│   │       │   │   ├── step-02-generate.md
+│   │       │   │   ├── step-02-generate.md.bak
+│   │       │   │   ├── step-03-complete.md
+│   │       │   │   └── step-03-complete.md.bak
+│   │       │   ├── workflow.md
+│   │       │   └── workflow.md.bak
+│   │       ├── testarch
+│   │       │   ├── atdd
+│   │       │   │   ├── atdd-checklist-template.md
+│   │       │   │   ├── atdd-checklist-template.md.bak
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── automate
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── ci
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── github-actions-template.yaml
+│   │       │   │   ├── github-actions-template.yaml.bak
+│   │       │   │   ├── gitlab-ci-template.yaml
+│   │       │   │   ├── gitlab-ci-template.yaml.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── framework
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── nfr-assess
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── nfr-report-template.md
+│   │       │   │   ├── nfr-report-template.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── test-design
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── test-design-template.md
+│   │       │   │   ├── test-design-template.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   ├── test-review
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── checklist.md.bak
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── instructions.md.bak
+│   │       │   │   ├── test-review-template.md
+│   │       │   │   ├── test-review-template.md.bak
+│   │       │   │   ├── workflow.yaml
+│   │       │   │   └── workflow.yaml.bak
+│   │       │   └── trace
+│   │       │       ├── checklist.md
+│   │       │       ├── checklist.md.bak
+│   │       │       ├── instructions.md
+│   │       │       ├── instructions.md.bak
+│   │       │       ├── trace-template.md
+│   │       │       ├── trace-template.md.bak
+│   │       │       ├── workflow.yaml
+│   │       │       └── workflow.yaml.bak
+│   │       └── workflow-status
+│   │           ├── init
+│   │           │   ├── instructions.md
+│   │           │   ├── instructions.md.bak
+│   │           │   ├── workflow.yaml
+│   │           │   └── workflow.yaml.bak
+│   │           ├── instructions.md
+│   │           ├── instructions.md.bak
+│   │           ├── paths
+│   │           │   ├── enterprise-brownfield.yaml
+│   │           │   ├── enterprise-brownfield.yaml.bak
+│   │           │   ├── enterprise-greenfield.yaml
+│   │           │   ├── enterprise-greenfield.yaml.bak
+│   │           │   ├── method-brownfield.yaml
+│   │           │   ├── method-brownfield.yaml.bak
+│   │           │   ├── method-greenfield.yaml
+│   │           │   └── method-greenfield.yaml.bak
+│   │           ├── project-levels.yaml
+│   │           ├── project-levels.yaml.bak
+│   │           ├── workflow-status-template.yaml
+│   │           ├── workflow-status-template.yaml.bak
+│   │           ├── workflow.yaml
+│   │           └── workflow.yaml.bak
+│   ├── cis
+│   │   ├── agents
+│   │   │   ├── brainstorming-coach.md
+│   │   │   ├── creative-problem-solver.md
+│   │   │   ├── design-thinking-coach.md
+│   │   │   ├── innovation-strategist.md
+│   │   │   ├── presentation-master.md
+│   │   │   └── storyteller
+│   │   │       └── storyteller.md
+│   │   ├── config.yaml
+│   │   ├── docs
+│   │   │   └── index.md
+│   │   ├── readme.md.bak
+│   │   ├── teams
+│   │   │   ├── creative-squad.yaml
+│   │   │   ├── creative-squad.yaml.bak
+│   │   │   ├── default-party.csv
+│   │   │   └── default-party.csv.bak
+│   │   └── workflows
+│   │       ├── design-thinking
+│   │       │   ├── design-methods.csv
+│   │       │   ├── design-methods.csv.bak
+│   │       │   ├── instructions.md
+│   │       │   ├── instructions.md.bak
+│   │       │   ├── README.md
+│   │       │   ├── README.md.bak
+│   │       │   ├── template.md
+│   │       │   ├── template.md.bak
+│   │       │   ├── workflow.yaml
+│   │       │   └── workflow.yaml.bak
+│   │       ├── innovation-strategy
+│   │       │   ├── innovation-frameworks.csv
+│   │       │   ├── innovation-frameworks.csv.bak
+│   │       │   ├── instructions.md
+│   │       │   ├── instructions.md.bak
+│   │       │   ├── README.md
+│   │       │   ├── README.md.bak
+│   │       │   ├── template.md
+│   │       │   ├── template.md.bak
+│   │       │   ├── workflow.yaml
+│   │       │   └── workflow.yaml.bak
+│   │       ├── problem-solving
+│   │       │   ├── instructions.md
+│   │       │   ├── instructions.md.bak
+│   │       │   ├── README.md
+│   │       │   ├── README.md.bak
+│   │       │   ├── solving-methods.csv
+│   │       │   ├── solving-methods.csv.bak
+│   │       │   ├── template.md
+│   │       │   ├── template.md.bak
+│   │       │   ├── workflow.yaml
+│   │       │   └── workflow.yaml.bak
+│   │       ├── README.md
+│   │       ├── README.md.bak
+│   │       └── storytelling
+│   │           ├── instructions.md
+│   │           ├── instructions.md.bak
+│   │           ├── README.md
+│   │           ├── README.md.bak
+│   │           ├── story-types.csv
+│   │           ├── story-types.csv.bak
+│   │           ├── template.md
+│   │           ├── template.md.bak
+│   │           ├── workflow.yaml
+│   │           └── workflow.yaml.bak
+│   ├── core
+│   │   ├── agents
+│   │   │   └── bmad-master.md
+│   │   ├── config.yaml
+│   │   ├── resources
+│   │   │   └── excalidraw
+│   │   │       ├── excalidraw-helpers.md
+│   │   │       ├── excalidraw-helpers.md.bak
+│   │   │       ├── library-loader.md
+│   │   │       ├── library-loader.md.bak
+│   │   │       ├── README.md
+│   │   │       ├── README.md.bak
+│   │   │       ├── validate-json-instructions.md
+│   │   │       └── validate-json-instructions.md.bak
+│   │   ├── tasks
+│   │   │   ├── advanced-elicitation-methods.csv
+│   │   │   ├── advanced-elicitation-methods.csv.bak
+│   │   │   ├── advanced-elicitation.xml
+│   │   │   ├── advanced-elicitation.xml.bak
+│   │   │   ├── index-docs.xml
+│   │   │   ├── index-docs.xml.bak
+│   │   │   ├── review-adversarial-general.xml
+│   │   │   ├── validate-workflow.xml
+│   │   │   ├── validate-workflow.xml.bak
+│   │   │   ├── workflow.xml
+│   │   │   ├── workflow.xml.bak
+│   │   │   └── workflow.yaml
+│   │   ├── tools
+│   │   │   ├── shard-doc.xml
+│   │   │   └── shard-doc.xml.bak
+│   │   └── workflows
+│   │       ├── brainstorming
+│   │       │   ├── brain-methods.csv
+│   │       │   ├── brain-methods.csv.bak
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-session-setup.md
+│   │       │   │   ├── step-01-session-setup.md.bak
+│   │       │   │   ├── step-01b-continue.md
+│   │       │   │   ├── step-01b-continue.md.bak
+│   │       │   │   ├── step-02a-user-selected.md
+│   │       │   │   ├── step-02a-user-selected.md.bak
+│   │       │   │   ├── step-02b-ai-recommended.md
+│   │       │   │   ├── step-02b-ai-recommended.md.bak
+│   │       │   │   ├── step-02c-random-selection.md
+│   │       │   │   ├── step-02c-random-selection.md.bak
+│   │       │   │   ├── step-02d-progressive-flow.md
+│   │       │   │   ├── step-02d-progressive-flow.md.bak
+│   │       │   │   ├── step-03-technique-execution.md
+│   │       │   │   ├── step-03-technique-execution.md.bak
+│   │       │   │   ├── step-04-idea-organization.md
+│   │       │   │   └── step-04-idea-organization.md.bak
+│   │       │   ├── template.md
+│   │       │   ├── template.md.bak
+│   │       │   ├── workflow.md
+│   │       │   └── workflow.md.bak
+│   │       └── party-mode
+│   │           ├── steps
+│   │           │   ├── step-01-agent-loading.md
+│   │           │   ├── step-01-agent-loading.md.bak
+│   │           │   ├── step-02-discussion-orchestration.md
+│   │           │   ├── step-02-discussion-orchestration.md.bak
+│   │           │   ├── step-03-graceful-exit.md
+│   │           │   └── step-03-graceful-exit.md.bak
+│   │           ├── workflow.md
+│   │           └── workflow.md.bak
+│   └── custom
+│       ├── config.yaml
+│       └── src
+│           └── modules
+│               └── cham
+│                   ├── agents
+│                   │   ├── architecture-compliance.agent.yaml
+│                   │   ├── architecture-fixer.agent.yaml
+│                   │   ├── cartographer.agent.yaml
+│                   │   ├── dependency-hygiene.agent.yaml
+│                   │   ├── documenter.agent.yaml
+│                   │   ├── final-validator.agent.yaml
+│                   │   ├── master-orchestrator-sidecar
+│                   │   │   ├── memories.md
+│                   │   │   └── plans
+│                   │   │       ├── template-cycle-prompts.md
+│                   │   │       ├── template-execution-status.json
+│                   │   │       └── template-master-plan.md
+│                   │   ├── master-orchestrator.agent.yaml
+│                   │   ├── pattern-analyzer.agent.yaml
+│                   │   ├── performance.agent.yaml
+│                   │   ├── security-data-flow.agent.yaml
+│                   │   ├── state-management.agent.yaml
+│                   │   ├── state-refactor.agent.yaml
+│                   │   ├── synthesizer.agent.yaml
+│                   │   ├── test-coverage.agent.yaml
+│                   │   ├── test-validator.agent.yaml
+│                   │   ├── test-writer.agent.yaml
+│                   │   ├── type-safety-fixer.agent.yaml
+│                   │   ├── type-safety.agent.yaml
+│                   │   └── ux-consistency.agent.yaml
+│                   ├── control
+│                   │   ├── config.yaml
+│                   │   └── platform-configs
+│                   │       ├── agent.yaml
+│                   │       ├── claude.yaml
+│                   │       ├── cursor.yaml
+│                   │       ├── gemini.yaml
+│                   │       ├── kilocode.yaml
+│                   │       └── windsurf.yaml
+│                   ├── docs
+│                   │   ├── agent-specifications.md
+│                   │   ├── architecture.md
+│                   │   ├── master-orchestrator-guide.md
+│                   │   ├── platform-guide.md
+│                   │   └── usage-guide.md
+│                   ├── module-plan-cham.md
+│                   ├── README.md
+│                   ├── status
+│                   │   ├── 2025-12-09-v2
+│                   │   │   ├── codebase-map.json
+│                   │   │   ├── issue-reports
+│                   │   │   │   └── architecture.json
+│                   │   │   ├── patterns-detected.yaml
+│                   │   │   ├── phase-discovery.json
+│                   │   │   ├── phase-scanning.json
+│                   │   │   ├── phase-synthesis.json
+│                   │   │   ├── remediation-roadmap.md
+│                   │   │   └── synthesis-report.md
+│                   │   ├── 2025-12-10
+│                   │   │   ├── diagnostic-request.md
+│                   │   │   └── proposal-diagnostic-framework.md
+│                   │   ├── 2025-12-12
+│                   │   │   ├── phase-scanning.json
+│                   │   │   └── phase-synthesis.json
+│                   │   ├── 2025-12-13
+│                   │   │   ├── codebase-map.json
+│                   │   │   ├── issue-reports
+│                   │   │   │   ├── architecture.json
+│                   │   │   │   ├── dependencies.json
+│                   │   │   │   ├── performance.json
+│                   │   │   │   ├── security.json
+│                   │   │   │   ├── state.json
+│                   │   │   │   ├── testing.json
+│                   │   │   │   ├── type-safety.json
+│                   │   │   │   └── ux.json
+│                   │   │   ├── patterns-detected.yaml
+│                   │   │   ├── phase-discovery.json
+│                   │   │   ├── phase-scanning.json
+│                   │   │   ├── phase-synthesis.json
+│                   │   │   └── remediation-roadmap.md
+│                   │   ├── 2025-12-13-audit
+│                   │   │   ├── discovery-report.md
+│                   │   │   ├── integration-analysis.md
+│                   │   │   ├── remediation-roadmap.md
+│                   │   │   ├── revised-epic-priorities.yaml
+│                   │   │   └── synthesis-report.md
+│                   │   └── audit-status.json
+│                   └── workflows
+│                       ├── continuous-monitoring
+│                       │   └── workflow.md
+│                       ├── full-audit
+│                       │   ├── steps
+│                       │   │   ├── step-01-discovery.md
+│                       │   │   ├── step-02-scanning.md
+│                       │   │   ├── step-03-synthesis.md
+│                       │   │   ├── step-04-remediation.md
+│                       │   │   └── step-05-validation.md
+│                       │   └── workflow.md
+│                       ├── incremental-remediation
+│                       │   └── workflow.md
+│                       └── master-orchestration
+│                           ├── steps
+│                           │   ├── step-01-understand.md
+│                           │   ├── step-02-diagnose.md
+│                           │   ├── step-03-plan.md
+│                           │   ├── step-04-generate-prompts.md
+│                           │   └── step-05-execute.md
+│                           └── workflow.md
+├── _bmad-output
+│   ├── agent-instructions
+│   │   ├── dependency-libraries-usage.md
+│   │   ├── project-fugu-integration-guide.md
+│   │   └── roo-code-agent-patterns.md
+│   ├── ai-sdk-agents-design
+│   │   ├── ai-sdk-agent-patterns-tools.md
+│   │   ├── bmm-bundles
+│   │   │   ├── agents
+│   │   │   │   ├── analyst.xml
+│   │   │   │   ├── architect.xml
+│   │   │   │   ├── index.html
+│   │   │   │   ├── pm.xml
+│   │   │   │   ├── quick-flow-solo-dev.xml
+│   │   │   │   ├── sm.xml
+│   │   │   │   ├── tech-writer.xml
+│   │   │   │   └── ux-designer.xml
+│   │   │   └── teams
+│   │   │       └── team-fullstack.xml
+│   │   └── tools-concepts-roo-code.md
+│   ├── analysis
+│   │   ├── course-corrections-p0-critical-2025-12-23.md
+│   │   ├── epic-28-holistic-integration-analysis.md
+│   │   ├── node-module-sync-2025-12-21.md
+│   │   ├── post-mvp-0-research-gaps.md
+│   │   ├── product-brief-via-gent-2025-12-10-architectural-slice.md
+│   │   ├── research
+│   │   │   ├── advanced-ide-spike-remediation-impact-2025-12-10.md
+│   │   │   ├── technical-tanstack-start-routing-research-2025-12-10.md
+│   │   │   ├── technical-via-gent-client-side-agentic-ide-stack-research-2025-12-10.md
+│   │   │   └── technical-via-gent-foundational-architectural-slice-spike-research-2025-12-10.md
+│   │   ├── retrospectives
+│   │   │   └── spike-validation-retro-2025-12-10.md
+│   │   ├── spike-to-cluster-mapping.md
+│   │   ├── spikes
+│   │   │   ├── advanced-ide-spike-fix-report-2025-12-10.md
+│   │   │   ├── advanced-ide-spike-mechanics-2025-12-10.md
+│   │   │   ├── advanced-ide-spike-spec-2025-12-10.md
+│   │   │   ├── tanstack-ai-start-spike-spec-2025-12-10.md
+│   │   │   ├── tanstack-ai-start-spike-status.md
+│   │   │   └── unified-architecture-blueprint-2025-12-10.md
+│   │   ├── stack-enhancement-report-2025-12-21.md
+│   │   ├── tech-debt-architecture-gaps-report-2025-12-21-corrected-updates.md
+│   │   ├── tech-debt-architecture-gaps-report-2025-12-21.md
+│   │   └── tech-debt-epic-27-28-analysis-2025-12-23.md
+│   ├── architectural-stabilization-proposal-v1-2025-12-21.md
+│   ├── architecture
+│   │   ├── agent-architecture-guidelines-2025-12-24.md
+│   │   ├── agent-tool-architecture-epic-6-prep.md
+│   │   ├── agent-tool-facade-layer-epic-12.md
+│   │   ├── architecture-completion-summary.md
+│   │   ├── architecture-validation-results.md
+│   │   ├── architecture.md
+│   │   ├── code-quality-standards-course-correction-v3.md
+│   │   ├── code-quality-standards-mandatory-course-correction-v3.md
+│   │   ├── core-architectural-decisions.md
+│   │   ├── data-and-contracts-2025-12-22-1105.md
+│   │   ├── epic-3-validated-implementation-patterns.md
+│   │   ├── event-bus-architecture-epic-10.md
+│   │   ├── file-tools-edge-case-analysis-2025-12-25.md
+│   │   ├── flows-and-workflows-2025-12-22-1121.md
+│   │   ├── homepage-layout-redesign-2025-12-27.md
+│   │   ├── implementation-patterns-consistency-rules.md
+│   │   ├── index.md
+│   │   ├── lessons-learned-retrospectives-synthesis.md
+│   │   ├── mcp-research-protocol-mandatory.md
+│   │   ├── multi-root-workspace-roadmap-epic-9-post-mvp.md
+│   │   ├── phase2-architectural-slices-completion-2025-12-22-1132.md
+│   │   ├── project-context-analysis.md
+│   │   ├── project-fugu-enhancement-layer-epic-45.md
+│   │   ├── project-structure-boundaries.md
+│   │   ├── related-documents.md
+│   │   ├── starter-template-evaluation.md
+│   │   ├── tech-context-2025-12-22-1127.md
+│   │   ├── terminal-integration-epic-13-course-correction-v5.md
+│   │   ├── via-gent-foundational-architectural-slice-project-alpha.md
+│   │   ├── workspace-context-layer-epic-3-hotfix.md
+│   │   └── workspaceorchestrator-layer.md
+│   ├── architecture.md
+│   ├── archive
+│   │   ├── 2025-12-28-pre-pivot
+│   │   │   └── archive-manifest.md
+│   │   ├── architecture.md
+│   │   ├── epics.md
+│   │   └── sprint-status-legacy-viagent-2025-12-27.yaml
+│   ├── bento-grid-implementation-2025-12-26.md
+│   ├── bmm-epics.md
+│   ├── bmm-workflow-status-consolidated.yaml
+│   ├── bmm-workflow-status-original-backup.yaml
+│   ├── bmm-workflow-status.yaml
+│   ├── bmm-workflows
+│   │   ├── correct-course-2025-12-29-sweep.md
+│   │   └── correct-course-2025-12-29.md
+│   ├── bug-fixes
+│   │   └── mobile-error-messages-fix-2025-12-28.md
+│   ├── build-error-2.log
+│   ├── build-error-node.log
+│   ├── build-error.log
+│   ├── cis
+│   │   └── knowledge-synthesis-station-concept-2025-12-26.md
+│   ├── code-reviews
+│   │   └── STORY-2-4-Review.md
+│   ├── complete-new-approach
+│   │   ├── prd-draft.md
+│   │   └── spec-draft.md
+│   ├── component-inventory.md
+│   ├── component-library-specifications-2025-12-25.md
+│   ├── components
+│   │   ├── button-design-2025-12-25.md
+│   │   └── input-design-2025-12-25.md
+│   ├── consolidation
+│   │   ├── dead-artifacts-inventory.md
+│   │   ├── epic-overlap-analysis.md
+│   │   ├── final-consolidation-report.md
+│   │   └── user-journey-definition.md
+│   ├── Coordinate_CodeBlock_Component_2025_22_12.md
+│   ├── coordination
+│   │   └── team-coordination-recommendations-2025-12-29.md
+│   ├── course-correction
+│   │   └── navigation-layout-vision-alignment-2025-12-27.md
+│   ├── course-correction-epic-23-ux-modernization-2025-12-21.md
+│   ├── course-corrections
+│   │   ├── agentic-loop-missing-2025-12-25.md
+│   │   ├── comprehensive-investigation-consolidation-2025-12-27.md
+│   │   ├── list-files-root-path-fix-2025-12-25.md
+│   │   ├── mvp-3-agentic-execution-loop-2025-12-25.md
+│   │   ├── mvp-3-path-handling-bugs-2025-12-25.md
+│   │   ├── mvp-3-usememo-deps-bug-2025-12-25.md
+│   │   ├── openrouter-401-fix-2025-12-25.md
+│   │   ├── read-file-and-agentic-execution-analysis-2025-12-25.md
+│   │   └── systematic-course-correction-2025-12-26.md
+│   ├── crisis-response
+│   │   └── crisis-resolution-summary-2025-12-26.md
+│   ├── critical-incidents
+│   │   └── root-cause-analysis-e2e-validation-failure-2025-12-24.md
+│   ├── custom-assets-2025-12-26.md
+│   ├── deployment-log
+│   │   └── cloudflare-21-dec-2025.md
+│   ├── design
+│   │   └── ux-ui-navigation-overhaul-spec-2025-12-27.md
+│   ├── design-system-8bit-2025-12-25.md
+│   ├── development-guide.md
+│   ├── docs
+│   │   ├── 2025-12-28
+│   │   │   ├── correct-course
+│   │   │   │   ├── knowledge-synthesis-proposal-2025-12-28.md
+│   │   │   │   └── ux-ui-knowledge-synthesis-proposal-2025-12-28.md
+│   │   │   ├── gemini-api-integration.md
+│   │   │   ├── investigation-report.md
+│   │   │   ├── rag-infrastructure.md
+│   │   │   ├── target-architecture.md
+│   │   │   ├── validation-report.md
+│   │   │   └── version-2
+│   │   │       ├── domain-1-llm-provider-config-research.md
+│   │   │       ├── domain-2-agent-config-architecture-research.md
+│   │   │       ├── domain-3-rag-infrastructure-research.md
+│   │   │       ├── implementation-roadmap.md
+│   │   │       ├── remediation-epics.md
+│   │   │       └── technical-architecture-document.md
+│   │   ├── architecture-analysis-2025-12-28.md
+│   │   ├── development-patterns-conventions-2025-12-28.md
+│   │   ├── E2E_VALIDATION_CHECKLIST.md
+│   │   ├── index.md
+│   │   ├── project-overview-2025-12-28.md
+│   │   ├── source-tree-analysis-2025-12-28.md
+│   │   └── tech-stack-documentation-2025-12-28.md
+│   ├── documentation
+│   │   ├── development-workflow-2025-12-27.md
+│   │   ├── index.md
+│   │   ├── internationalization-setup-2025-12-27.md
+│   │   ├── project-architecture-analysis-2025-12-27.md
+│   │   └── testing-infrastructure-2025-12-27.md
+│   ├── documentation-consolidation-validation.md
+│   ├── e2e-screenshots-2025-12-26
+│   ├── e2e-verification
+│   │   ├── CHECKLIST-TEMPLATE.md
+│   │   ├── course-correction-2025-12-27
+│   │   │   └── hub-page-loaded.png
+│   │   ├── mvp-1
+│   │   │   └── VERIFICATION-PLACEHOLDER.md
+│   │   ├── mvp-2
+│   │   │   └── VERIFICATION-PLACEHOLDER.md
+│   │   └── MVP-E2E-verification-guide-2025-12-27.md
+│   ├── e2e-verification-results-2025-12-26.md
+│   ├── epic-23-P1.3-information-architecture-audit-2025-12-25-2102.md
+│   ├── epic-23-P1.5-navigation-audit-2025-12-25-2158.md
+│   ├── epic-23-p1.7-responsive-design-audit-2025-12-25.md
+│   ├── epic-23-p1.8-accessibility-audit-2025-12-25.md
+│   ├── epic-23-p1.9-error-handling-audit-2025-12-25.md
+│   ├── epic-retrospectives
+│   │   ├── epic-3-retrospective-2025-12-29.md
+│   │   ├── epic-4-retrospective-2025-12-29.md
+│   │   ├── epic-5-retrospective-2025-12-29.md
+│   │   └── README.md
+│   ├── epics
+│   │   ├── epic-1-project-foundation-ide-shell.md
+│   │   ├── epic-10-sync-architecture-refactor.md
+│   │   ├── epic-11-code-splitting-module-refactor.md
+│   │   ├── epic-12-agent-tool-interface-layer.md
+│   │   ├── epic-13-terminal-sync-stability.md
+│   │   ├── epic-14-ide-theming-accessibility.md
+│   │   ├── epic-15-performance-optimization.md
+│   │   ├── epic-16-test-framework-quality-gates.md
+│   │   ├── epic-17-open-source-documentation.md
+│   │   ├── epic-18-static-deployment-pwa.md
+│   │   ├── epic-19-client-side-security.md
+│   │   ├── epic-2-webcontainers-integration.md
+│   │   ├── epic-20-advanced-ide-features.md
+│   │   ├── epic-21-client-side-localization-envi.md
+│   │   ├── epic-22-production-hardening-new-course-correction-v6.md
+│   │   ├── epic-23-uxui-modernization-new-course-correction-v6.md
+│   │   ├── epic-24-smart-dependency-sync-new-2025-12-21.md
+│   │   ├── epic-25-ai-foundation-sprint-new-2025-12-21.md
+│   │   ├── epic-26-agent-management-dashboard-new-2025-12-21.md
+│   │   ├── epic-27-state-architecture-stabilization.md
+│   │   ├── epic-28-ux-brand-identity-design-system.md
+│   │   ├── epic-29-agentic-execution-loop.md
+│   │   ├── epic-3-file-system-access-layer-reopened.md
+│   │   ├── epic-3-file-system-access-layer.md
+│   │   ├── epic-4-ide-components.md
+│   │   ├── epic-45-project-fugu-enhancements-new.md
+│   │   ├── epic-5-persistence-layer.md
+│   │   ├── epic-6-ai-agent-integration.md
+│   │   ├── epic-7-extended-git-integration-enhancements.md
+│   │   ├── epic-7-git-integration.md
+│   │   ├── epic-8-validation-polish.md
+│   │   ├── epic-9-multi-root-workspace-support-post-mvp.md
+│   │   ├── epic-list.md
+│   │   ├── epic-summary-updates.md
+│   │   ├── index.md
+│   │   ├── multi-root-workspace-architecture-reference.md
+│   │   ├── overview.md
+│   │   ├── recommended-implementation-order-updated-2025-12-20.md
+│   │   ├── recommended-implementation-order-updated-2025-12-21.md
+│   │   └── requirements-inventory.md
+│   ├── epics_backup.md
+│   ├── epics-latest.md
+│   ├── epics.md
+│   ├── frontend-fixes-summary-2025-12-27.md
+│   ├── governance
+│   │   ├── GOVERNANCE-INDEX-2025-12-26.md
+│   │   ├── HANDOFF-INDEX-2025-12-26.md
+│   │   ├── handoff-mcp-validation-2025-12-26.md
+│   │   ├── HANDOFF-PROTOCOL-2025-12-26.md
+│   │   ├── mcp-guidelines-by-mode-2025-12-26.md
+│   │   ├── mcp-research-enforcement-checklist-2025-12-26.md
+│   │   ├── mcp-research-template-2025-12-26.md
+│   │   ├── mvp-traceability-matrix-2025-12-26.md
+│   │   ├── status-correction-log-2025-12-26.md
+│   │   ├── STATUS-SYNC-PROCEDURE-2025-12-26.md
+│   │   └── status-update-procedure-2025-12-26.md
+│   ├── governance-audit
+│   │   ├── governance-audit-executive-summary-2025-12-26.md
+│   │   ├── governance-audit-part1-executive-summary-2025-12-26.md
+│   │   ├── governance-audit-part2-ai-agent-system-2025-12-26.md
+│   │   ├── governance-audit-part3-components-architecture-2025-12-26.md
+│   │   ├── governance-audit-part4-configuration-2025-12-26.md
+│   │   ├── governance-audit-part5-documentation-2025-12-26.md
+│   │   ├── governance-audit-part6-remediation-2025-12-26.md
+│   │   ├── governance-audit-part7-governance-infrastructure-2025-12-26.md
+│   │   ├── governance-audit-part8-mcp-research-protocol-2025-12-26.md
+│   │   ├── governance-audit-report-2025-12-26.md
+│   │   └── remediation-plan-2025-12-26.md
+│   ├── GOVERNANCE-INDEX.md
+│   ├── guidelines
+│   │   ├── mcp-research-protocol-2025-12-24.md
+│   │   └── mcp-servers.json
+│   ├── handoff-validation
+│   │   └── HANDOFF-VALIDATION-CHECKLIST.md
+│   ├── handoffs
+│   │   ├── architect-phase2-completion-2025-12-22-1157.md
+│   │   ├── architect-to-bmad-master-ux-ui-overhaul-2025-12-27.md
+│   │   ├── architect-to-master-homepage-layout-2025-12-27.md
+│   │   ├── architect-to-pm-governance-fixes-2025-12-26.md
+│   │   ├── bmad-master-epic23-p1.13-hub-based-navigation-2025-12-26.md
+│   │   ├── bmad-master-to-architect-homepage-layout-redesign-2025-12-27.md
+│   │   ├── bmad-master-to-dev-2025-12-20-1631.md
+│   │   ├── bmad-master-to-dev-23-3-2025-12-20-1934.md
+│   │   ├── bmad-master-to-dev-23-3-2025-12-20-1945.md
+│   │   ├── bmad-master-to-dev-28-22-2025-12-22-1741.md
+│   │   ├── bmad-master-to-dev-28-24-2025-12-24.md
+│   │   ├── bmad-master-to-dev-epic25-2025-12-22-1200.md
+│   │   ├── bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md
+│   │   ├── bmad-master-to-dev-tool-wiring-implementation-2025-12-26.md
+│   │   ├── bmad-master-to-pm-requirements-rescoping-2025-12-24.md
+│   │   ├── bmad-master-to-pm-sprint-planning-mvp-2025-12-24.md
+│   │   ├── bmad-master-to-sm-pm-emergency-course-correction-2025-12-24.md
+│   │   ├── code-review-25-6-2025-12-24.md
+│   │   ├── code-reviewer-2025-12-20-1615.md
+│   │   ├── dev-2025-12-20-1445.md
+│   │   ├── dev-completion-2025-12-20-1603.md
+│   │   ├── dev-completion-tool-wiring-2025-12-26.md
+│   │   ├── dev-epic-2-story-0-2025-12-28.md
+│   │   ├── dev-epic-23-story-23-6-2025-12-21-1615.md
+│   │   ├── dev-epic-23-story-23-6-completion-2025-12-21-1656.md
+│   │   ├── dev-epic-27-story-27-1x-2025-12-21.md
+│   │   ├── dev-epic-4-story-1-2025-12-28.md
+│   │   ├── dev-to-code-reviewer-2025-12-20-1534.md
+│   │   ├── dev-to-code-reviewer-2025-12-20-1755.md
+│   │   ├── dev-to-code-reviewer-2025-12-21-0302.md
+│   │   ├── dev-to-reviewer-epic-4-story-1-2025-12-28.md
+│   │   ├── dev-to-reviewer-P1.4-2025-12-25T21-50.md
+│   │   ├── epic-27-integration-impact-report-2025-12-21.md
+│   │   ├── master-to-dev-layout-4-2025-12-27.md
+│   │   ├── master-to-dev-layout-5-2025-12-27.md
+│   │   ├── master-to-dev-layout-6-2025-12-27.md
+│   │   ├── master-to-dev-layout-7-2025-12-27.md
+│   │   ├── team-coordination-anchor-2025-12-29.md
+│   │   ├── ux-designer-2025-12-20-1332.md
+│   │   ├── ux-designer-theming-continuation-2025-12-21.md
+│   │   └── validation-framework-enhancement-completion-2025-12-29.md
+│   ├── index.md
+│   ├── information-architecture-2025-12-25.md
+│   ├── investigation
+│   │   ├── agentic-two-layer-architecture-2025-12-27.md
+│   │   ├── agentic-workflow-bugs-2025-12-27.md
+│   │   ├── agentic-workflow-gap-analysis-2025-12-26.md
+│   │   ├── governance-failure-root-causes-2025-12-26.md
+│   │   ├── navigation-routing-investigation-2025-12-27.md
+│   │   ├── rag-multimodal-current-state-analysis-2025-12-27.md
+│   │   └── tech-stack-knowledge-synthesis-2025-12-26.md
+│   ├── knowledge
+│   │   └── validated-agentic-loop-knowledge-2025-12-25.md
+│   ├── marketing-content
+│   │   └── blog-series
+│   │       ├── 00-series-outline.md
+│   │       ├── blog-01-tai-sao-to-xay-dung-via-gent.md
+│   │       ├── blog-02-webcontainers-architecture.md
+│   │       ├── blog-03-ai-agent-system.md
+│   │       └── blog-04-monaco-editor-integration.md
+│   ├── marketing-plan
+│   │   ├── marketing-focus.md
+│   │   └── via-gent-marketing-strategy-vietnam-2025-12-24.md
+│   ├── mcp-research
+│   │   └── MCP-RESEARCH-TEMPLATE.md
+│   ├── new-ADR-total-client-side
+│   │   ├── facing-issues
+│   │   │   ├── anti-fragment.md
+│   │   │   └── client-side-local-file-api.md
+│   │   ├── high-level-architecture-proposal.md
+│   │   ├── prd-proposal.md
+│   │   └── validation-and-recommendation.md
+│   ├── p0-fixes
+│   │   └── p0-fixes-implementation-2025-12-26.md
+│   ├── p1-fixes
+│   │   └── p1-fixes-implementation-2025-12-26.md
+│   ├── p1-governance-fixes-completed-2025-12-26.md
+│   ├── p2-fixes
+│   │   ├── consolidation-mapping-2025-12-26.md
+│   │   ├── naming-convention-guidelines-2025-12-26.md
+│   │   ├── p2-fixes-implementation-2025-12-26.md
+│   │   └── persistence-strategy-2025-12-26.md
+│   ├── p2-minor-improvements-analysis-2025-12-26.md
+│   ├── p2-minor-improvements-implementation-2025-12-26.md
+│   ├── parallel-execution-strategy.md
+│   ├── perplexity-advisor-system-instruction.md
+│   ├── prd-v2-knowledge-synthesis-station.md
+│   ├── prd.md
+│   ├── project-context.md
+│   ├── project-overview.md
+│   ├── project-planning-artifacts
+│   │   ├── architecture-enhanced-2025-12-29.md
+│   │   ├── architecture.md
+│   │   ├── epics-enhanced-2025-12-29.md
+│   │   ├── parallel-development-dual-agents-mode.md
+│   │   ├── prd-enhanced-2025-12-29.md
+│   │   ├── prd.md
+│   │   ├── project-context.md
+│   │   ├── ux-design-specification-enhanced-2025-12-29.md
+│   │   └── ux-design-specification.md
+│   ├── prompts
+│   │   ├── 2025-12-24
+│   │   │   └── course-correction-report.md
+│   │   ├── 2025-12-25
+│   │   │   └── ux-ui-improvement.md
+│   │   ├── 2025-12-28
+│   │   │   ├── dev-cycle-prompt.md
+│   │   │   └── project-restart-2025-12-28.md
+│   │   ├── 2025-12-29
+│   │   │   └── loop-prompt-2025-12-29
+│   │   ├── ai-agent-readiness-for-e2e-analysis-feedback-2025-12-24.md
+│   │   ├── ai-agent-readiness-for-e2e-review.md
+│   │   ├── dev-tasks.md
+│   │   ├── epic-28-dev-cycle.md
+│   │   ├── epic-28-suggestions.md
+│   │   └── foundational-ai-agent-dev-validation.md
+│   ├── proposal
+│   │   ├── project-fugu.md
+│   │   ├── roo-code-custom-instruction.md
+│   │   ├── roo-code-modes-agents.md
+│   │   ├── roo-code-samples.md
+│   │   ├── roo-code-slashes-commands.md
+│   │   └── roo-code-tools.md
+│   ├── ralph-loop-validation-report-2025-12-29-final.md
+│   ├── ralph-loop-validation-report-2025-12-29.md
+│   ├── remediation
+│   │   ├── frontend-remediation-2025-12-27.md
+│   │   ├── mvp-3-e2e-verification-checklist-2025-12-26.md
+│   │   ├── post-mvp-3-remediation-plan-2025-12-26.md
+│   │   ├── remediation-execution-roadmap-2025-12-26.md
+│   │   ├── remediation-plan-2025-12-24-v1.md
+│   │   ├── remediation-plan-2025-12-24-v2.md
+│   │   ├── remediation-plan-2025-12-24.md
+│   │   └── remediation-prioritization-matrix-2025-12-26.md
+│   ├── requirements-rescoped-e2e-integration-2025-12-24.md
+│   ├── research
+│   │   ├── 20205-12-25
+│   │   │   └── agentic-coding-platforms-explanation.md
+│   │   ├── advanced-ide-spike-tanstack-ai-tools-application-2025-12-10.md
+│   │   ├── agentic-coding-deep-research-2025-12-27.md
+│   │   ├── agentic-execution-loop-deep-research-2025-12-25.md
+│   │   ├── client-side-git-architecture.md
+│   │   ├── coding-agent-architecture-analysis.md
+│   │   ├── coding-agent-comprehensive-design.md
+│   │   ├── coding-agent-knowledge-synthesis-v2-2025-12-24.md
+│   │   ├── context-engineering-multi-agent-orchestration-2025-12-27.md
+│   │   ├── ddd-eda-patterns-2025-12-09.md
+│   │   ├── deep-research-tool-design-2025-12-27.md
+│   │   ├── indexeddb-persistence-patterns-2025-12-10.md
+│   │   ├── knowledge-synthesis-tanstack-ai.md
+│   │   ├── llm-provider-configuration-research-2025-12-27.md
+│   │   ├── mobile-file-access-research-2025-12-28.md
+│   │   ├── roo-code-synthesis-2025-12-25.md
+│   │   ├── tanstack-ai-agentic-cycle-2025-12-10.md
+│   │   ├── tanstack-ai-orchestration-2025-12-09.md
+│   │   ├── tanstack-ai-patterns-synthesized-2025-12-27.md
+│   │   ├── tanstack-ai-streaming-2025-12-10.md
+│   │   ├── tanstack-ai-tools-2025-12-10.md
+│   │   ├── tanstack-ai-usechat-2025-12-10.md
+│   │   ├── tanstack-router-search-params-2025-12-10.md
+│   │   ├── tanstack-start-patterns-2025-12-09.md
+│   │   ├── webcontainer-local-fs-sync-architecture.md
+│   │   ├── webcontainers-fs-patterns-2025-12-09.md
+│   │   └── webcontainers-terminal-patterns-2025-12-10.md
+│   ├── research-epic-22-tech-stack.md
+│   ├── research-report.md
+│   ├── research-synthesis-ai-agent-patterns-2025-12-24.md
+│   ├── retrospectives
+│   │   └── EPIC-2-RETRO.md
+│   ├── shadcn-ui-mcp-server-guide.md
+│   ├── source-tree-analysis.md
+│   ├── sprint-artifacts
+│   │   ├── 1-1-responsive-breakpoint-foundation-context.xml
+│   │   ├── 1-1-responsive-breakpoint-foundation.md
+│   │   ├── 1-2-dark-light-theme-system-context.xml
+│   │   ├── 1-2-dark-light-theme-system.md
+│   │   ├── 1-3-mobile-demo-mode-context.xml
+│   │   ├── 1-3-mobile-demo-mode.md
+│   │   ├── 1-4-accessibility-foundation-context.xml
+│   │   ├── 1-4-accessibility-foundation.md
+│   │   ├── 12-1-create-agentfiletools-facade-context.xml
+│   │   ├── 12-1-create-agentfiletools-facade.md
+│   │   ├── 12-1b-add-concurrency-control-context.xml
+│   │   ├── 12-1b-add-concurrency-control.md
+│   │   ├── 12-2-create-agentterminaltools-facade-context.xml
+│   │   ├── 12-2-create-agentterminaltools-facade.md
+│   │   ├── 12-5-wire-facades-to-tanstack-ai-tools-context.xml
+│   │   ├── 12-5-wire-facades-to-tanstack-ai-tools.md
+│   │   ├── 13-1-fix-terminal-working-directory-context.xml
+│   │   ├── 13-1-fix-terminal-working-directory.md
+│   │   ├── 13-2-fix-auto-sync-on-project-load-context.xml
+│   │   ├── 13-2-fix-auto-sync-on-project-load.md
+│   │   ├── 13-3-add-sync-progress-indicator-context.xml
+│   │   ├── 13-3-add-sync-progress-indicator.md
+│   │   ├── 13-4-preserve-file-tree-state-context.xml
+│   │   ├── 13-4-preserve-file-tree-state.md
+│   │   ├── 13-5-improve-permission-restoration-context.xml
+│   │   ├── 13-5-improve-permission-restoration.md
+│   │   ├── 13-6-fix-preview-in-new-tab-context.xml
+│   │   ├── 13-6-fix-preview-in-new-tab.md
+│   │   ├── 2-0-credential-vault-implementation-context.xml
+│   │   ├── 2-0-credential-vault-implementation.md
+│   │   ├── 2-1-zustand-dexie-state-migration-context.xml
+│   │   ├── 2-1-zustand-dexie-state-migration.md
+│   │   ├── 2-2-agent-crud-operations-context.xml
+│   │   ├── 2-2-agent-crud-operations.md
+│   │   ├── 2-3-streaming-chat-tool-approval-context.xml
+│   │   ├── 2-3-streaming-chat-tool-approval.md
+│   │   ├── 2-4-conversation-persistence-context.xml
+│   │   ├── 2-4-conversation-persistence.md
+│   │   ├── 21-1-locale-aware-routing-and-html-lang-context.xml
+│   │   ├── 21-1-locale-aware-routing-and-html-lang.md
+│   │   ├── 21-3-language-switcher-and-persistence-context.xml
+│   │   ├── 21-3-language-switcher-and-persistence.md
+│   │   ├── 21-5-ui-migration-wave-2-ide-surfaces-context.xml
+│   │   ├── 21-5-ui-migration-wave-2-ide-surfaces.md
+│   │   ├── 21-8-complete-localization-coverage.md
+│   │   ├── 22-1-implement-security-headers-context.xml
+│   │   ├── 22-1-implement-security-headers.md
+│   │   ├── 22-2-create-cicd-pipeline-context.xml
+│   │   ├── 22-2-create-cicd-pipeline.md
+│   │   ├── 22-3-add-integration-tests-context.xml
+│   │   ├── 22-3-add-integration-tests.md
+│   │   ├── 22-4-configure-error-monitoring-context.xml
+│   │   ├── 22-4-configure-error-monitoring.md
+│   │   ├── 22-5-create-deployment-docs-context.xml
+│   │   ├── 22-5-create-deployment-docs.md
+│   │   ├── 22-6-establish-performance-benchmarks.md
+│   │   ├── 22-7-enable-typescript-strict.md
+│   │   ├── 22-8-add-eslint-prettier.md
+│   │   ├── 23-1-install-tailwindcss-4-context.xml
+│   │   ├── 23-1-install-tailwindcss-4.md
+│   │   ├── 23-2-initialize-shadcnui-context.xml
+│   │   ├── 23-2-initialize-shadcnui.md
+│   │   ├── 23-3-migrate-layout-components-context.xml
+│   │   ├── 23-3-migrate-layout-components.md
+│   │   ├── 23-4-migrate-ide-panel-components-context.xml
+│   │   ├── 23-4-migrate-ide-panel-components.md
+│   │   ├── 23-5-implement-theme-toggle-context.xml
+│   │   ├── 23-5-implement-theme-toggle.md
+│   │   ├── 24-1-incremental-sync-metadata-cache-context.xml
+│   │   ├── 24-1-incremental-sync-metadata-cache.md
+│   │   ├── 24-2-fsa-handle-persistence-context.xml
+│   │   ├── 24-2-fsa-handle-persistence.md
+│   │   ├── 24-3-conversation-history-auto-restore-context.xml
+│   │   ├── 24-3-conversation-history-auto-restore.md
+│   │   ├── 24-4-tool-execution-context-persistence-context.xml
+│   │   ├── 24-4-tool-execution-context-persistence.md
+│   │   ├── 25-0-create-provideradapterfactory-context.xml
+│   │   ├── 25-0-create-provideradapterfactory.md
+│   │   ├── 25-1-tanstack-ai-integration-setup-context.xml
+│   │   ├── 25-1-tanstack-ai-integration-setup.md
+│   │   ├── 25-2-implement-file-tools-context.xml
+│   │   ├── 25-2-implement-file-tools.md
+│   │   ├── 25-3-implement-terminal-tools-context.xml
+│   │   ├── 25-3-implement-terminal-tools.md
+│   │   ├── 25-4-wire-tool-execution-to-ui-context.xml
+│   │   ├── 25-4-wire-tool-execution-to-ui.md
+│   │   ├── 25-5-implement-approval-flow-context.xml
+│   │   ├── 25-5-implement-approval-flow.md
+│   │   ├── 25-6-wire-agent-ui-to-providers-context.xml
+│   │   ├── 25-6-wire-agent-ui-to-providers.md
+│   │   ├── 25-R1-integrate-useagentchat-to-chatpanel-context.xml
+│   │   ├── 25-R1-integrate-useagentchat-to-chatpanel.md
+│   │   ├── 27-1-migrate-state-zustand-dexie-context.xml
+│   │   ├── 27-1-migrate-state-zustand-dexie.md
+│   │   ├── 27-1b-component-migration-zustand-dexie-context.xml
+│   │   ├── 27-1b-component-migration-zustand-dexie.md
+│   │   ├── 27-1c-persistence-migration-dexie-context.xml
+│   │   ├── 27-1c-persistence-migration-dexie.md
+│   │   ├── 27-2-event-bus-integration-context.xml
+│   │   ├── 27-2-event-bus-integration.md
+│   │   ├── 27-5a-refactor-idelayout-context.xml
+│   │   ├── 27-5a-refactor-idelayout.md
+│   │   ├── 27-I-complete-state-integration-context.xml
+│   │   ├── 27-I-complete-state-integration.md
+│   │   ├── 28-1-override-design-tokens.md
+│   │   ├── 28-13-full-ui-integration-audit.md
+│   │   ├── 28-14-wire-icon-sidebar.md
+│   │   ├── 28-16-agent-config-flow-context.xml
+│   │   ├── 28-16-agent-config-flow.md
+│   │   ├── 28-18-statusbar-connection-indicators-context.xml
+│   │   ├── 28-18-statusbar-connection-indicators.md
+│   │   ├── 28-19-chat-tool-call-badge-context.xml
+│   │   ├── 28-19-chat-tool-call-badge.md
+│   │   ├── 28-2-configure-8bit-typography.md
+│   │   ├── 28-20-chat-code-block-with-actions-context.xml
+│   │   ├── 28-20-chat-code-block-with-actions.md
+│   │   ├── 28-21-diff-preview-component-context.xml
+│   │   ├── 28-21-diff-preview-component.md
+│   │   ├── 28-22-approval-overlay-component-context.xml
+│   │   ├── 28-22-approval-overlay-component.md
+│   │   ├── 28-23-streaming-message-container-context.xml
+│   │   ├── 28-23-streaming-message-container.md
+│   │   ├── 28-24-filetree-event-subscriptions-context.xml
+│   │   ├── 28-24-filetree-event-subscriptions.md
+│   │   ├── 28-25-monaco-event-subscriptions-context.xml
+│   │   ├── 28-25-monaco-event-subscriptions.md
+│   │   ├── 28-26-terminal-event-subscriptions.md
+│   │   ├── 3-1-fsa-permission-lifecycle.md
+│   │   ├── 3-2-webcontainer-boot.md
+│   │   ├── 3-3-dual-write-sync.md
+│   │   ├── 3-4-terminal-integration.md
+│   │   ├── 4-1-system-prompt-composer-context.xml
+│   │   ├── 4-1-system-prompt-composer.md
+│   │   ├── 4-3-tool-permissions-context.xml
+│   │   ├── 4-3-tool-permissions.md
+│   │   ├── 4-4-tool-error-handling.md
+│   │   ├── 5-1-sync-queue-visualizer.md
+│   │   ├── 5-2-webcontainer-crash-recovery.md
+│   │   ├── 5-3-performance-telemetry.md
+│   │   ├── 5-4-robust-state-hydration.md
+│   │   ├── 6-1-source-import-pipeline-context.xml
+│   │   ├── 6-1-source-import-pipeline.md
+│   │   ├── 6-2-source-card-ui-context.xml
+│   │   ├── 6-2-source-card-ui.md
+│   │   ├── 6-3-source-management.md
+│   │   ├── 8-1-react-flow-canvas-setup-context.xml
+│   │   ├── 8-1-react-flow-canvas-setup.md
+│   │   ├── 8-2-source-node-creation-context.xml
+│   │   ├── 8-2-source-node-creation.md
+│   │   ├── 8-3-concept-node-creation-context.xml
+│   │   ├── 8-3-concept-node-creation.md
+│   │   ├── 8-4-connection-lines-context.xml
+│   │   ├── 8-4-connection-lines.md
+│   │   ├── 8-5-canvas-persistence-context.xml
+│   │   ├── 8-5-canvas-persistence.md
+│   │   ├── 9-1-flashcard-generator-context.xml
+│   │   ├── 9-1-flashcard-generator.md
+│   │   ├── 9-2-quiz-generator-context.xml
+│   │   ├── 9-2-quiz-generator.md
+│   │   ├── 9-3-flashcard-study-interface-context.xml
+│   │   ├── 9-3-flashcard-study-interface.md
+│   │   ├── 9-4-quiz-taking-interface-context.xml
+│   │   ├── 9-4-quiz-taking-interface.md
+│   │   ├── AI-25-1-migrate-provider-config-context.xml
+│   │   ├── AI-25-1-migrate-provider-config.md
+│   │   ├── AI-25-2-complete-crud-provider-configs-context.xml
+│   │   ├── AI-25-2-complete-crud-provider-configs.md
+│   │   ├── AI-25-3-hot-load-config-changes-context.xml
+│   │   ├── AI-25-3-hot-load-config-changes.md
+│   │   ├── course-correction-deliverables-2025-12-27.md
+│   │   ├── course-correction-mfa-2025-12-28.md
+│   │   ├── epic-1-retro-2025-12-28.md
+│   │   ├── epic-1-retrospective.md
+│   │   ├── epic-10-retrospective.md
+│   │   ├── epic-13-retrospective.md
+│   │   ├── EPIC-2-RETRO.md
+│   │   ├── epic-2-retrospective.md
+│   │   ├── epic-22-retrospective.md
+│   │   ├── epic-25-11-06-research-analysis-request.md
+│   │   ├── epic-25-12-06-multilingual-ai-agent-support.md
+│   │   ├── epic-25-12-06-openaicompatible-support.md
+│   │   ├── epic-25-12-28-master-implementation-plan.md
+│   │   ├── epic-25-12-28-readiness-analysis.md
+│   │   ├── epic-25-retrospective.md
+│   │   ├── epic-3-code-review.md
+│   │   ├── epic-3-retrospective.md
+│   │   ├── epic-4-retrospective.md
+│   │   ├── epic-5-retrospective.md
+│   │   ├── epic-AI-25-retro-phase-1.md
+│   │   ├── epic-MVP-ai-agent.md
+│   │   ├── epics-and-stories-completion-audit-2025-12-22.md
+│   │   ├── homepage-layout-redesign-sprint-plan-2025-12-27.md
+│   │   ├── MRT-4-filetree-mobile-adaptation-context.xml
+│   │   ├── MRT-4-filetree-mobile-adaptation.md
+│   │   ├── MRT-5-monaco-mobile-optimization.md
+│   │   ├── mvp-1-agent-configuration-context.xml
+│   │   ├── mvp-1-agent-configuration.md
+│   │   ├── MVP-1-E2E-agent-config-verification-context.xml
+│   │   ├── MVP-1-E2E-agent-config-verification.md
+│   │   ├── mvp-2-chat-interface-streaming-context.xml
+│   │   ├── mvp-2-chat-interface-streaming.md
+│   │   ├── MVP-2-E2E-chat-interface-verification-context.xml
+│   │   ├── MVP-2-E2E-chat-interface-verification.md
+│   │   ├── mvp-3-agentic-loop-basic-iteration-2025-12-25.md
+│   │   ├── mvp-3-tool-execution-files-context.xml
+│   │   ├── mvp-3-tool-execution-files-implementation-2025-12-25.md
+│   │   ├── mvp-3-tool-execution-files.md
+│   │   ├── mvp-4-tool-execution-terminal-context.xml
+│   │   ├── mvp-4-tool-execution-terminal.md
+│   │   ├── MVP-E2E-verification-checklist-2025-12-27.md
+│   │   ├── mvp-risk-register-2025-12-24.md
+│   │   ├── mvp-sprint-plan-2025-12-24.md
+│   │   ├── mvp-story-validation-2025-12-24.md
+│   │   ├── p0-governance-fixes-2025-12-26.md
+│   │   ├── production-readiness-epic-13-report.md
+│   │   ├── ralph-loop-revalidation-2025-12-29.md
+│   │   ├── rc-001-hook-violation-fix-2025-12-29.md
+│   │   ├── rc-002-file-size-validation-2025-12-29.md
+│   │   ├── refactored-sprint-plan-2025-12-27.md
+│   │   ├── sprint-status-enhanced-2025-12-29.yaml
+│   │   ├── sprint-status.yaml
+│   │   ├── stories
+│   │   │   ├── rc-005-sync-status-store-dexie.md
+│   │   │   ├── rc-006-epic4-story44-retry-queue.md
+│   │   │   ├── rc-007-epic42-file-ac-completes.md
+│   │   │   ├── rc-008-approval-overlay-ui.md
+│   │   │   ├── rc-009-chat-request-validation.md
+│   │   │   ├── rc-010-type-mismatch-fix.md
+│   │   │   ├── rc-011-dexie-migration-logic.md
+│   │   │   ├── rc-012-persistence-debounce.md
+│   │   │   ├── rc-013-sync-rollback.md
+│   │   │   ├── rc-014-abort-controller-wire.md
+│   │   │   └── rc-015-retry-classification.md
+│   │   ├── tech-spec-branding-overhaul-context.xml
+│   │   ├── tech-spec-branding-overhaul.md
+│   │   ├── tech-spec-mvp-completion-2025-12-27.md
+│   │   ├── ui-ux-overhaul-plan-2025-12-27.md
+│   │   └── workflow.yaml
+│   ├── sprint-change-proposal-2025-12-25.md
+│   ├── sprint-change-proposal-2025-12-27.md
+│   ├── sprint-change-proposal-2025-12-28.md
+│   ├── sprint-change-proposal-2025-12-29-v2.md
+│   ├── sprint-change-proposal-2025-12-29.md
+│   ├── sprint-change-proposal-v5-2025-12-20.md
+│   ├── sprint-change-proposal-v6-2025-12-20.md
+│   ├── sprint-change-proposal-v7-2025-12-21.md
+│   ├── sprint-change-proposal-v8-2025-12-24.md
+│   ├── state-management-audit-2025-12-24.md
+│   ├── state-management-audit-p1.10-2025-12-26.md
+│   ├── state-management.md
+│   ├── story-6-3-status.md
+│   ├── structure-map.md
+│   ├── team-b
+│   │   ├── epic-29-specifications-2025-12-27.md
+│   │   ├── state-management-requirements-2025-12-27.md
+│   │   └── team-b-coordination-plan-2025-12-27.md
+│   ├── tech-debt
+│   │   └── TODO-tracking-2025-12-26.md
+│   ├── technical-dead
+│   │   └── component-inventory-2025-12-26.md
+│   ├── technical-debt
+│   │   ├── architecture-conflicts-2025-12-26.md
+│   │   ├── component-inventory-2025-12-26.md
+│   │   ├── naming-violations-2025-12-26.md
+│   │   ├── state-refactoring-plan-2025-12-26.md
+│   │   └── tool-wiring-spec-2025-12-26.md
+│   ├── technical-roadmap-course-correction-2025-12-27.md
+│   ├── test-reports
+│   │   └── epic23-p1.13-hub-navigation-e2e-verification-2025-12-26.md
+│   ├── testing
+│   │   └── e2e-testing-foundation-2025-12-24.md
+│   ├── tree.txt
+│   ├── unified_ide_workspace_ux_ui
+│   │   └── stitch_unified_ide_workspace
+│   │       ├── ide_agent_management_panel
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_1
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_2
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_3
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_4
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_5
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_6
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_7
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_8
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       ├── unified_ide_workspace_9
+│   │       │   ├── code.html
+│   │       │   └── screen.png
+│   │       └── via-gent_unified_workspace_prototype
+│   │           └── code.html
+│   ├── unified_ide_workspace_ux_ui.zip
+│   ├── ux-design.md
+│   ├── ux-specification
+│   │   ├── 1-agent-management-dashboard.md
+│   │   ├── 2-enhanced-project-management-ui.md
+│   │   ├── 3-unified-ide-workspace-with-collapsible-sidebar.md
+│   │   ├── 4-robust-agent-chat-interface.md
+│   │   ├── 5-component-library-design-system.md
+│   │   ├── 6-responsive-layouts-navigation.md
+│   │   ├── 7-i18n-implementation.md
+│   │   ├── custom-assets-audit-2025-12-26.md
+│   │   ├── hub-based-navigation-vision-aligned-onboarding-2025-12-26.md
+│   │   ├── implementation-roadmap.md
+│   │   ├── index.md
+│   │   └── table-of-contents.md
+│   ├── ux-specification.md
+│   ├── ux-ui-audit-2025-12-25.md
+│   ├── validation
+│   │   ├── 12-level-framework-integration-2025-12-29.md
+│   │   ├── controlled-documents-validation-report-2025-12-29.md
+│   │   ├── course-correction-validation-2025-12-27.md
+│   │   └── e2e-testing-readiness-validation-2025-12-24.md
+│   ├── validation-reports
+│   │   ├── bidirectional-traceability-matrix-2025-12-29.md
+│   │   ├── cross-document-consistency-validation-2025-12-29.md
+│   │   ├── epic-24-validation-sweep-2025-12-29.md
+│   │   └── final-integration-validation-2025-12-29.md
+│   └── validation-sweep-2025-12-29.md
+├── _bmad-output.zip
+├── agent-os
+│   ├── commands
+│   │   ├── create-tasks
+│   │   │   ├── 1-get-spec-requirements.md
+│   │   │   ├── 2-create-tasks-list.md
+│   │   │   └── create-tasks.md
+│   │   ├── implement-tasks
+│   │   │   ├── 1-determine-tasks.md
+│   │   │   ├── 2-implement-tasks.md
+│   │   │   ├── 3-verify-implementation.md
+│   │   │   └── implement-tasks.md
+│   │   ├── orchestrate-tasks
+│   │   │   └── orchestrate-tasks.md
+│   │   ├── plan-product
+│   │   │   ├── 1-product-concept.md
+│   │   │   ├── 2-create-mission.md
+│   │   │   ├── 3-create-roadmap.md
+│   │   │   ├── 4-create-tech-stack.md
+│   │   │   └── plan-product.md
+│   │   ├── shape-spec
+│   │   │   ├── 1-initialize-spec.md
+│   │   │   ├── 2-shape-spec.md
+│   │   │   └── shape-spec.md
+│   │   └── write-spec
+│   │       └── write-spec.md
+│   ├── config.yml
+│   ├── product
+│   │   ├── mission.md
+│   │   ├── roadmap.md
+│   │   └── tech-stack.md
+│   └── standards
+│       ├── backend
+│       │   ├── api.md
+│       │   ├── migrations.md
+│       │   ├── models.md
+│       │   └── queries.md
+│       ├── frontend
+│       │   ├── accessibility.md
+│       │   ├── components.md
+│       │   ├── css.md
+│       │   └── responsive.md
+│       ├── global
+│       │   ├── coding-style.md
+│       │   ├── commenting.md
+│       │   ├── conventions.md
+│       │   ├── error-handling.md
+│       │   ├── mcp-research.md
+│       │   ├── tech-stack.md
+│       │   └── validation.md
+│       └── testing
+│           └── test-writing.md
+├── AGENTS.md
+├── bmm-workflow-status-enhanced-2025-12-29.yaml
+├── bmm-workflow-status.yaml
+├── chutes_bogus_model.txt
+├── chutes_response.txt
+├── CLAUDE.md
+├── codebase_analysis.md
+├── components.json
+├── dist
+│   ├── client
+│   │   ├── _headers
+│   │   ├── assets
+│   │   │   ├── _baseUniq-CU6R0459.js
+│   │   │   ├── _projectId-D3iqHXGj.js
+│   │   │   ├── agent-team.svg
+│   │   │   ├── AgentConfigDialog-BOO1lirq.js
+│   │   │   ├── agents-B_U8Zusj.js
+│   │   │   ├── AgentsPanel-QsajMYDS.js
+│   │   │   ├── arc-BmUzeu7K.js
+│   │   │   ├── architectureDiagram-VXUJARFQ-DSr6vBmM.js
+│   │   │   ├── arrow-left-CZhPcitX.js
+│   │   │   ├── blockDiagram-VD42YOAC-DohVO0AR.js
+│   │   │   ├── button-DSTqRQ_M.js
+│   │   │   ├── c4Diagram-YG6GDRKO-7Nujw3j6.js
+│   │   │   ├── channel-D8w_Yg2Z.js
+│   │   │   ├── chunk-4BX2VUAB-twzvcL-C.js
+│   │   │   ├── chunk-55IACEB6-C_xKEd8w.js
+│   │   │   ├── chunk-B4BG7PRW-B8fN1AYH.js
+│   │   │   ├── chunk-DI55MBZ5-BOgQeAxt.js
+│   │   │   ├── chunk-FMBD7UC4-DepuY9of.js
+│   │   │   ├── chunk-QN33PNHL-D-F2E78k.js
+│   │   │   ├── chunk-QZHKN3VN-K54K4xz3.js
+│   │   │   ├── chunk-TZMSLE5B-B-9zWVe7.js
+│   │   │   ├── classDiagram-2ON5EDUG-DNIHDddD.js
+│   │   │   ├── classDiagram-v2-WZHVMYZB-DNIHDddD.js
+│   │   │   ├── clone-CBkvUZUi.js
+│   │   │   ├── cose-bilkent-S5V4N54A-T4CenckB.js
+│   │   │   ├── createLucideIcon-uWL4PE6b.js
+│   │   │   ├── cytoscape.esm-5J0xJHOV.js
+│   │   │   ├── dagre-6UL2VRFP-v2HXgceb.js
+│   │   │   ├── defaultLocale-C4B-KCzX.js
+│   │   │   ├── dexie-react-hooks-B_iSRDVh.js
+│   │   │   ├── diagram-PSM6KHXK-CzuBmVIQ.js
+│   │   │   ├── diagram-QEK2KX5R-CGptLHcN.js
+│   │   │   ├── diagram-S2PKOQOG-BLhH1rHJ.js
+│   │   │   ├── empty-project.svg
+│   │   │   ├── EmptyState-BSo56WJi.js
+│   │   │   ├── erDiagram-Q2GNP2WA-CnLzojBP.js
+│   │   │   ├── flowDiagram-NV44I4VS-fRaFYs6L.js
+│   │   │   ├── ganttDiagram-JELNMOA3-DZAVV7jV.js
+│   │   │   ├── gitGraphDiagram-NY62KEGX-1MopVnDL.js
+│   │   │   ├── graph-sVPcwh_d.js
+│   │   │   ├── hub-B0P9Lt0P.js
+│   │   │   ├── icon-C7KkHmyX.js
+│   │   │   ├── ide-CVlqcYp9.js
+│   │   │   ├── IDELayout-StfhNzN9.js
+│   │   │   ├── index-CQBeYJQF.js
+│   │   │   ├── index-CZUPwWEt.js
+│   │   │   ├── infoDiagram-WHAUD3N6-cWh4N0TQ.js
+│   │   │   ├── init-Gi6I4Gst.js
+│   │   │   ├── journeyDiagram-XKPGCS4Q-EtgcoH2B.js
+│   │   │   ├── kanban-definition-3W4ZIXB7-szcJA8ds.js
+│   │   │   ├── katex-XbL3y5x-.js
+│   │   │   ├── knowledge-hub.svg
+│   │   │   ├── knowledge-XP455kKP.js
+│   │   │   ├── layout-RWEnSc1Q.js
+│   │   │   ├── linear-CCti9U39.js
+│   │   │   ├── main-D438dyB7.js
+│   │   │   ├── MainLayout-DX7QV2lz.js
+│   │   │   ├── mermaid.core-DIAV8zKD.js
+│   │   │   ├── min-CZbly0zB.js
+│   │   │   ├── mindmap-definition-VGOIOE7T-DM1b9GOh.js
+│   │   │   ├── ordinal-Cboi1Yqb.js
+│   │   │   ├── pieDiagram-ADFJNKIX-BAs5-ADM.js
+│   │   │   ├── quadrantDiagram-AYHSOK5B-Ckfeym_C.js
+│   │   │   ├── requirementDiagram-UZGBJVZJ-Kp2vsWWw.js
+│   │   │   ├── sankeyDiagram-TZEHDZUN-CRcom-eg.js
+│   │   │   ├── search-CESa22jQ.js
+│   │   │   ├── sequenceDiagram-WL72ISMW-C3QnqtPe.js
+│   │   │   ├── settings-BwGe7Cv2.js
+│   │   │   ├── SettingsIcon-5eI1YXi6.js
+│   │   │   ├── sparkles-CjAUZ6F3.js
+│   │   │   ├── stateDiagram-FKZM4ZOC-wpJXE-j-.js
+│   │   │   ├── stateDiagram-v2-4FDKWEC3-Oh3REg6K.js
+│   │   │   ├── styles-BKO3Zr4s.css
+│   │   │   ├── test-fs-adapter-DQsf4-DY.js
+│   │   │   ├── timeline-definition-IT6M3QCI-BOnZ3Gg5.js
+│   │   │   ├── treemap-KMMF4GRG-DFUwaGw4.js
+│   │   │   ├── triangle-alert-BrRAZFfs.js
+│   │   │   ├── truncated-text-BP2OBJpT.js
+│   │   │   ├── webcontainer._-A6Dv5VRD.js
+│   │   │   ├── XTerminal-DFuMZ0ql.css
+│   │   │   ├── XTerminal-sHvveiF8.js
+│   │   │   ├── xychartDiagram-PRI3JC2R-CZ7lf2Xu.js
+│   │   │   └── zap-uXhhbcDA.js
+│   │   ├── favicon.ico
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   ├── robots.txt
+│   │   ├── tanstack-circle-logo.png
+│   │   ├── tanstack-word-logo-white.svg
+│   │   └── via-gent-logo.svg
+│   └── server
+│       ├── assets
+│       │   ├── _baseUniq-DXk6vtwq.js
+│       │   ├── _projectId-xMYDbJSJ.js
+│       │   ├── _tanstack-start-manifest_v-BAYdVtoj.js
+│       │   ├── AgentConfigDialog-ChyPF7fb.js
+│       │   ├── agents-CxF8tNTs.js
+│       │   ├── AgentsPanel-BlNwz4wd.js
+│       │   ├── arc-8DqJzpCO.js
+│       │   ├── architectureDiagram-VXUJARFQ-KLnAstkp.js
+│       │   ├── arrow-left-DzMDqVLD.js
+│       │   ├── blockDiagram-VD42YOAC-6LpyebS8.js
+│       │   ├── button-CY62JKdz.js
+│       │   ├── c4Diagram-YG6GDRKO-CiCAPMFe.js
+│       │   ├── channel-Bj6tjsuW.js
+│       │   ├── chunk-4BX2VUAB-DDs3RE43.js
+│       │   ├── chunk-55IACEB6-BzVMgcl_.js
+│       │   ├── chunk-B4BG7PRW-DGMCUDNj.js
+│       │   ├── chunk-DI55MBZ5-c2c8TR8G.js
+│       │   ├── chunk-FMBD7UC4-NxruUORV.js
+│       │   ├── chunk-QN33PNHL-CNZ1DMyY.js
+│       │   ├── chunk-QZHKN3VN-CnWt8rnw.js
+│       │   ├── chunk-TZMSLE5B-DQHfYsUD.js
+│       │   ├── classDiagram-2ON5EDUG-DBiQxrfA.js
+│       │   ├── classDiagram-v2-WZHVMYZB-DBiQxrfA.js
+│       │   ├── clone-KvUJ_5Q6.js
+│       │   ├── cose-bilkent-S5V4N54A-C9kmHDCM.js
+│       │   ├── createLucideIcon-Cjhh4i9X.js
+│       │   ├── cytoscape.esm-Bm8DJGmZ.js
+│       │   ├── dagre-6UL2VRFP-BXEb17yA.js
+│       │   ├── defaultLocale-DVr69WTU.js
+│       │   ├── dexie-react-hooks-ClsbWUZb.js
+│       │   ├── diagram-PSM6KHXK-DN5Ph7hd.js
+│       │   ├── diagram-QEK2KX5R-B0CZNIvL.js
+│       │   ├── diagram-S2PKOQOG-CESaMjbJ.js
+│       │   ├── EmptyState-igg5jBFv.js
+│       │   ├── erDiagram-Q2GNP2WA-Cfb0u1Mj.js
+│       │   ├── flowDiagram-NV44I4VS-B-fTguzS.js
+│       │   ├── ganttDiagram-JELNMOA3-D7QnbIge.js
+│       │   ├── gitGraphDiagram-NY62KEGX-COJrb2Aq.js
+│       │   ├── graph-C-8gXPEX.js
+│       │   ├── hub-DQ-r9tA8.js
+│       │   ├── icon-lZixynG_.js
+│       │   ├── ide-DHuaTxYO.js
+│       │   ├── IDELayout-tnlxmXuf.js
+│       │   ├── index-Dn-Buspw.js
+│       │   ├── index-iPmWIx4P.js
+│       │   ├── infoDiagram-WHAUD3N6-wELGmdP9.js
+│       │   ├── init-ZxktEp_H.js
+│       │   ├── journeyDiagram-XKPGCS4Q-D32WwtJ-.js
+│       │   ├── kanban-definition-3W4ZIXB7-D3WGUhC1.js
+│       │   ├── katex-BCeciekE.js
+│       │   ├── knowledge-CS53JQSW.js
+│       │   ├── layout-Chi9Mw9c.js
+│       │   ├── linear-BDHgUMKT.js
+│       │   ├── MainLayout-D67P7wAL.js
+│       │   ├── mermaid.core-Bbt93AhY.js
+│       │   ├── min-Dha2mopE.js
+│       │   ├── mindmap-definition-VGOIOE7T-D5CMXFhL.js
+│       │   ├── ordinal-CxptdPJm.js
+│       │   ├── pieDiagram-ADFJNKIX-Wi0TtJDT.js
+│       │   ├── quadrantDiagram-AYHSOK5B-BiHB9w4y.js
+│       │   ├── requirementDiagram-UZGBJVZJ-DjAfkDhA.js
+│       │   ├── router-8SKBVu3B.js
+│       │   ├── sankeyDiagram-TZEHDZUN-DeLKfts9.js
+│       │   ├── search-D0Ov7tba.js
+│       │   ├── sequenceDiagram-WL72ISMW-14EOYvS4.js
+│       │   ├── settings-DqqdGDED.js
+│       │   ├── SettingsIcon-idQQTZQR.js
+│       │   ├── sparkles-S94JKEw3.js
+│       │   ├── start-HYkvq4Ni.js
+│       │   ├── stateDiagram-FKZM4ZOC-CWdJCCCE.js
+│       │   ├── stateDiagram-v2-4FDKWEC3-CaDsrAm5.js
+│       │   ├── styles-BKO3Zr4s.css
+│       │   ├── test-fs-adapter-B6YD5Eql.js
+│       │   ├── timeline-definition-IT6M3QCI-BkzaMxHH.js
+│       │   ├── treemap-KMMF4GRG-Dnw_ChcM.js
+│       │   ├── triangle-alert-BEYNU8kP.js
+│       │   ├── truncated-text-CUZvYmg5.js
+│       │   ├── webcontainer._-QQunX_jz.js
+│       │   ├── worker-entry-DKTYcP29.js
+│       │   ├── xychartDiagram-PRI3JC2R-CR6wK3Pe.js
+│       │   └── zap-5yjMD7rW.js
+│       ├── index.js
+│       └── wrangler.json
+├── docs
+│   ├── 2025-12-23
+│   │   ├── architecture.md
+│   │   ├── data-and-contracts.md
+│   │   ├── flows-and-workflows.md
+│   │   ├── improvement-opportunities.md
+│   │   ├── project-overview.md
+│   │   ├── roadmap-and-planning.md
+│   │   ├── structure-map.md
+│   │   ├── tech-context.md
+│   │   └── tech-debt.md
+│   ├── 2025-12-24
+│   │   └── chat-ui-components-usage.md
+│   ├── 2025-12-25
+│   │   └── roo-code-system-prompt.xml
+│   ├── 2025-12-26
+│   │   └── concept-for-knowledge-synthesis-station-2025-12-26.md
+│   ├── 2025-12-27
+│   │   ├── capturing-in-chat-responses-sample-2025-12-27.md
+│   │   ├── context-managing-go-beyond-2025-12-27.md
+│   │   ├── correct-course-mvp-agentic-master-plan-2025-12-27.md
+│   │   ├── initial-prompt-examples-use-cases-2025-12-27.md
+│   │   └── solo-dev-mode-2025-12-27.md
+│   ├── 2025-12-28
+│   │   ├── gemini-api-integration.md
+│   │   ├── investigation-report.md
+│   │   ├── rag-infrastructure.md
+│   │   ├── target-architecture.md
+│   │   └── version-2
+│   │       ├── domain-1-llm-provider-config-research.md
+│   │       ├── domain-2-agent-config-architecture-research.md
+│   │       ├── domain-3-rag-infrastructure-research.md
+│   │       ├── implementation-roadmap.md
+│   │       ├── remediation-epics.md
+│   │       └── technical-architecture-document.md
+│   ├── daily-report
+│   │   ├── ai-agent-foundational-phase-readiness-check-list-2025-12-23.md
+│   │   ├── coordination-story-25-6-2025-12-24.md
+│   │   ├── Fixing Chat API 404-24-12-2025.md
+│   │   ├── Fixing Chat API Adapter Error-24-12-2025.md
+│   │   ├── ux-ui-implementation-plan-2025-12-22.md
+│   │   └── walkthrough-report-2025-12-22.md
+│   ├── deployment
+│   │   ├── environment-variables.md
+│   │   ├── netlify-setup.md
+│   │   ├── README.md
+│   │   └── troubleshooting.md
+│   ├── Fix IDE Theming and Layout.md
+│   ├── performance
+│   │   └── benchmarks.md
+│   ├── project-context.md
+│   ├── specify.md
+│   └── system-instruction.md
+├── docs.zip
+├── eslint.config.mjs
+├── failure_output.txt
+├── i18next-scanner.config.cjs
+├── netlify
+│   └── edge-functions
+│       └── add-headers.ts
+├── netlify.toml
+├── package.json
+├── pnpm-lock.yaml
+├── public
+│   ├── _headers
+│   ├── assets
+│   │   ├── agent-team.svg
+│   │   ├── empty-project.svg
+│   │   └── knowledge-hub.svg
+│   ├── favicon.ico
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── robots.txt
+│   ├── tanstack-circle-logo.png
+│   ├── tanstack-word-logo-white.svg
+│   └── via-gent-logo.svg
+├── README.md
+├── server
+│   └── middleware
+│       └── security-headers.ts
+├── src
+│   ├── __tests__
+│   ├── components
+│   │   ├── __tests__
+│   │   │   ├── ThemeToggle.test.tsx
+│   │   │   └── workspace-i18n.test.tsx
+│   │   ├── agent
+│   │   │   ├── __tests__
+│   │   │   │   ├── AgentConfigDialog.test.tsx
+│   │   │   │   ├── AgentConfigDialogIntegration.test.tsx
+│   │   │   │   ├── ProviderConfigDialog.test.tsx
+│   │   │   │   ├── ProviderSettings.test.tsx
+│   │   │   │   └── ToolPermissionsConfig.test.tsx
+│   │   │   ├── AgentConfigDialog.tsx
+│   │   │   ├── ProviderConfigDialog.tsx
+│   │   │   ├── ProviderSettings.tsx
+│   │   │   └── ToolPermissionsConfig.tsx
+│   │   ├── canvas
+│   │   │   ├── __tests__
+│   │   │   │   └── Canvas.test.tsx
+│   │   │   ├── Canvas.tsx
+│   │   │   ├── edges
+│   │   │   │   ├── __tests__
+│   │   │   │   │   └── RelationshipEdge.test.tsx
+│   │   │   │   ├── edgeTypes.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   └── RelationshipEdge.tsx
+│   │   │   ├── index.ts
+│   │   │   └── nodes
+│   │   │       ├── __tests__
+│   │   │       │   ├── ConceptNode.test.tsx
+│   │   │       │   └── SourceNode.test.tsx
+│   │   │       ├── ConceptNode.tsx
+│   │   │       ├── index.ts
+│   │   │       ├── nodeTypes.ts
+│   │   │       └── SourceNode.tsx
+│   │   ├── chat
+│   │   │   ├── __tests__
+│   │   │   │   ├── ApprovalOverlay.test.tsx
+│   │   │   │   ├── CodeBlock.test.tsx
+│   │   │   │   ├── DiffPreview.test.tsx
+│   │   │   │   └── ToolCallBadge.test.tsx
+│   │   │   ├── AgentSelector.tsx
+│   │   │   ├── ApprovalOverlay.tsx
+│   │   │   ├── AutoApproveSettings.tsx
+│   │   │   ├── BatchApprovalBar.tsx
+│   │   │   ├── ChatConversation.tsx
+│   │   │   ├── ChatPanel.tsx
+│   │   │   ├── CodeBlock.tsx
+│   │   │   ├── DiffPreview.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── StreamdownRenderer.tsx
+│   │   │   ├── ThreadCard.tsx
+│   │   │   ├── ThreadsList.tsx
+│   │   │   └── ToolCallBadge.tsx
+│   │   ├── common
+│   │   │   ├── AppErrorBoundary.tsx
+│   │   │   ├── AppInitializer.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   └── index.ts
+│   │   ├── dashboard
+│   │   │   ├── __tests__
+│   │   │   │   └── Onboarding.test.tsx
+│   │   │   ├── Onboarding.tsx
+│   │   │   └── PitchDeck.tsx
+│   │   ├── debug
+│   │   │   └── AgentDiagnostic.tsx
+│   │   ├── Header.tsx
+│   │   ├── hub
+│   │   │   ├── __tests__
+│   │   │   │   ├── HubHomePage.test.tsx
+│   │   │   │   ├── NavigationBreadcrumbs.test.tsx
+│   │   │   │   ├── TopicCard.test.tsx
+│   │   │   │   └── TopicPortalCard.test.tsx
+│   │   │   ├── HubHomePage.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── MobileProjectSelector.tsx
+│   │   │   ├── NavigationBreadcrumbs.tsx
+│   │   │   ├── TopicCard.tsx
+│   │   │   └── TopicPortalCard.tsx
+│   │   ├── ide
+│   │   │   ├── __tests__
+│   │   │   │   ├── AgentChatPanel.test.tsx
+│   │   │   │   ├── StreamingMessage.test.tsx
+│   │   │   │   └── SyncStatusIndicator.test.tsx
+│   │   │   ├── AgentChatPanel.tsx
+│   │   │   ├── AgentsPanel.tsx
+│   │   │   ├── BentoCardPreview.tsx
+│   │   │   ├── BentoGrid.tsx
+│   │   │   ├── CommandPalette.tsx
+│   │   │   ├── EnhancedChatInterface.tsx
+│   │   │   ├── ExplorerPanel.tsx
+│   │   │   ├── FeatureSearch.tsx
+│   │   │   ├── FileTree
+│   │   │   │   ├── __tests__
+│   │   │   │   │   └── FileTree.test.ts
+│   │   │   │   ├── ContextMenu.tsx
+│   │   │   │   ├── FileTree.tsx
+│   │   │   │   ├── FileTreeItem.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── __tests__
+│   │   │   │   │   │   └── useFileTreeEventSubscriptions.test.ts
+│   │   │   │   │   ├── useContextMenuActions.ts
+│   │   │   │   │   ├── useFileTreeActions.ts
+│   │   │   │   │   ├── useFileTreeEventSubscriptions.ts
+│   │   │   │   │   ├── useFileTreeState.ts
+│   │   │   │   │   └── useKeyboardNavigation.ts
+│   │   │   │   ├── hooks.ts
+│   │   │   │   ├── icons.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils.ts
+│   │   │   ├── IconSidebar.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── MonacoEditor
+│   │   │   │   ├── EditorTabBar.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── __tests__
+│   │   │   │   │   │   └── useMonacoEventSubscriptions.test.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useMonacoEditorEventSubscriptions.ts
+│   │   │   │   │   └── useMonacoEventSubscriptions.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── MonacoEditor.tsx
+│   │   │   ├── PanelShell.tsx
+│   │   │   ├── PreviewPanel
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── PreviewPanel.tsx
+│   │   │   │   └── types.ts
+│   │   │   ├── QuickActionsMenu.tsx
+│   │   │   ├── SearchPanel.tsx
+│   │   │   ├── SettingsPanel.tsx
+│   │   │   ├── statusbar
+│   │   │   │   ├── AgentStatusSegment.tsx
+│   │   │   │   ├── CursorPosition.tsx
+│   │   │   │   ├── FileTypeIndicator.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── ProviderStatus.tsx
+│   │   │   │   ├── StatusBarSegment.tsx
+│   │   │   │   ├── SyncStatusSegment.tsx
+│   │   │   │   └── WebContainerStatus.tsx
+│   │   │   ├── StatusBar.tsx
+│   │   │   ├── StreamingMessage.tsx
+│   │   │   ├── SyncEditWarning.tsx
+│   │   │   ├── SyncStatusIndicator.tsx
+│   │   │   ├── XTerminal
+│   │   │   │   └── hooks
+│   │   │   │       ├── __tests__
+│   │   │   │       │   └── useTerminalEventSubscriptions.test.ts
+│   │   │   │       └── useTerminalEventSubscriptions.ts
+│   │   │   └── XTerminal.tsx
+│   │   ├── knowledge
+│   │   │   ├── __tests__
+│   │   │   │   ├── CollectionManager.test.tsx
+│   │   │   │   ├── CollectionSelector.test.tsx
+│   │   │   │   ├── RenameDialog.test.tsx
+│   │   │   │   ├── SourceCard.test.tsx
+│   │   │   │   ├── SourceCardGrid.test.tsx
+│   │   │   │   ├── SourceContextMenu.test.tsx
+│   │   │   │   ├── SourcePreviewPanel.test.tsx
+│   │   │   │   └── UndoToast.test.tsx
+│   │   │   ├── CollectionManager.tsx
+│   │   │   ├── CollectionSelector.tsx
+│   │   │   ├── CreateCollectionDialog.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── RenameDialog.tsx
+│   │   │   ├── SourceCard.tsx
+│   │   │   ├── SourceCardGrid.tsx
+│   │   │   ├── SourceContextMenu.tsx
+│   │   │   ├── SourcePreviewPanel.tsx
+│   │   │   └── UndoToast.tsx
+│   │   ├── LanguageSwitcher.tsx
+│   │   ├── layout
+│   │   │   ├── __tests__
+│   │   │   │   └── IDELayout.test.tsx
+│   │   │   ├── ChatPanelWrapper.tsx
+│   │   │   ├── hooks
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useIDEFileHandlers.ts
+│   │   │   │   ├── useIDEKeyboardShortcuts.ts
+│   │   │   │   ├── useIDEStateRestoration.ts
+│   │   │   │   └── useWebContainerBoot.ts
+│   │   │   ├── IDEHeaderBar.tsx
+│   │   │   ├── IDELayout.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── MainLayout.tsx
+│   │   │   ├── MainSidebar.tsx
+│   │   │   ├── MinViewportWarning.tsx
+│   │   │   ├── MobileIDELayout.tsx
+│   │   │   ├── MobileTabBar.tsx
+│   │   │   ├── PermissionOverlay.tsx
+│   │   │   └── TerminalPanel.tsx
+│   │   └── ui
+│   │       ├── ApprovalOverlay.css
+│   │       ├── ApprovalOverlay.tsx
+│   │       ├── brand-logo.tsx
+│   │       ├── breadcrumbs.tsx
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── checkbox.tsx
+│   │       ├── collapsible-section.tsx
+│   │       ├── context-tooltip.tsx
+│   │       ├── dialog.tsx
+│   │       ├── dropdown-menu.tsx
+│   │       ├── EmptyState.tsx
+│   │       ├── ErrorState.tsx
+│   │       ├── icons
+│   │       │   ├── __tests__
+│   │       │   │   └── source-icons.test.tsx
+│   │       │   ├── AIIcon.tsx
+│   │       │   ├── ChatIcon.tsx
+│   │       │   ├── CloseIcon.tsx
+│   │       │   ├── FileIcon.tsx
+│   │       │   ├── icon.tsx
+│   │       │   ├── index.ts
+│   │       │   ├── MaximizeIcon.tsx
+│   │       │   ├── MenuIcon.tsx
+│   │       │   ├── MinusIcon.tsx
+│   │       │   ├── PlusIcon.tsx
+│   │       │   ├── RefreshIcon.tsx
+│   │       │   ├── SearchIcon.tsx
+│   │       │   ├── SettingsIcon.tsx
+│   │       │   ├── source-icons.tsx
+│   │       │   └── TerminalIcon.tsx
+│   │       ├── index.ts
+│   │       ├── input.tsx
+│   │       ├── keyboard-shortcuts-overlay.tsx
+│   │       ├── label.tsx
+│   │       ├── LoadingState.tsx
+│   │       ├── MobileCapabilityBanner.tsx
+│   │       ├── pixel-badge.tsx
+│   │       ├── progress-indicator.tsx
+│   │       ├── resizable.tsx
+│   │       ├── select.tsx
+│   │       ├── separator.tsx
+│   │       ├── sheet.tsx
+│   │       ├── skeleton.tsx
+│   │       ├── SkeletonLoader.tsx
+│   │       ├── SkipLinks.tsx
+│   │       ├── sonner.tsx
+│   │       ├── status-dot.tsx
+│   │       ├── StatusAnnouncer.tsx
+│   │       ├── switch.tsx
+│   │       ├── tabs.tsx
+│   │       ├── textarea.tsx
+│   │       ├── ThemeProvider.tsx
+│   │       ├── ThemeToggle.tsx
+│   │       ├── Toast
+│   │       │   ├── index.ts
+│   │       │   ├── Toast.tsx
+│   │       │   └── ToastContext.tsx
+│   │       ├── tooltip.tsx
+│   │       └── truncated-text.tsx
+│   ├── data
+│   │   ├── demo.punk-songs.ts
+│   │   └── mock-sources.json
+│   ├── hooks
+│   │   ├── __tests__
+│   │   │   ├── useCanvasDrop.test.ts
+│   │   │   └── useResponsive.test.ts
+│   │   ├── useAgents.ts
+│   │   ├── useCanvasDrop.ts
+│   │   ├── useCapabilityDetection.test.ts
+│   │   ├── useCapabilityDetection.ts
+│   │   ├── useIdeStatePersistence.ts
+│   │   ├── useMediaQuery.ts
+│   │   ├── useProcessManager.ts
+│   │   ├── useResponsive.ts
+│   │   └── useUnsavedWorkPreservation.ts
+│   ├── i18n
+│   │   ├── __tests__
+│   │   │   └── config.test.ts
+│   │   ├── config.ts
+│   │   ├── en.json
+│   │   ├── LocaleProvider.tsx
+│   │   └── vi.json
+│   ├── lib
+│   │   ├── agent
+│   │   │   ├── __tests__
+│   │   │   │   ├── factory.test.ts
+│   │   │   │   ├── prompt-composer.test.ts
+│   │   │   │   └── tool-permission-manager.test.ts
+│   │   │   ├── facades
+│   │   │   │   ├── __tests__
+│   │   │   │   │   ├── command-sanitizer.test.ts
+│   │   │   │   │   ├── file-lock.test.ts
+│   │   │   │   │   ├── file-tools.test.ts
+│   │   │   │   │   └── terminal-tools.test.ts
+│   │   │   │   ├── command-sanitizer.ts
+│   │   │   │   ├── file-lock.ts
+│   │   │   │   ├── file-tools-impl.ts
+│   │   │   │   ├── file-tools.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── terminal-tools-impl.ts
+│   │   │   │   └── terminal-tools.ts
+│   │   │   ├── factory.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── __tests__
+│   │   │   │   │   ├── use-agent-chat-with-tools.test.ts
+│   │   │   │   │   └── use-agent-chat.test.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── use-agent-chat-with-tools.ts
+│   │   │   │   └── use-prompt-enhancer.ts
+│   │   │   ├── prompt-composer.ts
+│   │   │   ├── providers
+│   │   │   │   ├── __tests__
+│   │   │   │   │   ├── credential-vault.test.ts
+│   │   │   │   │   ├── model-registry.test.ts
+│   │   │   │   │   └── provider-adapter.test.ts
+│   │   │   │   ├── credential-vault.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── model-registry.ts
+│   │   │   │   ├── provider-adapter.ts
+│   │   │   │   └── types.ts
+│   │   │   ├── routes
+│   │   │   │   └── __tests__
+│   │   │   │       ├── chat-api.test.ts
+│   │   │   │       └── sse-streaming.test.ts
+│   │   │   ├── system-prompt.ts
+│   │   │   ├── tool-permission-manager.ts
+│   │   │   └── tools
+│   │   │       ├── __tests__
+│   │   │       │   ├── execute-command-tool.test.ts
+│   │   │       │   ├── list-files-tool.test.ts
+│   │   │       │   ├── permission-check.test.ts
+│   │   │       │   ├── read-file-tool.test.ts
+│   │   │       │   ├── retry-queue.test.ts
+│   │   │       │   ├── tool-error.test.ts
+│   │   │       │   ├── tool-execution-context.test.ts
+│   │   │       │   ├── tool-execution-logger.test.ts
+│   │   │       │   ├── tool-parser.test.ts
+│   │   │       │   ├── types.test.ts
+│   │   │       │   └── write-file-tool.test.ts
+│   │   │       ├── execute-command-tool.ts
+│   │   │       ├── index.ts
+│   │   │       ├── list-files-tool.ts
+│   │   │       ├── permission-check.ts
+│   │   │       ├── read-file-tool.ts
+│   │   │       ├── retry-queue.ts
+│   │   │       ├── tool-error.ts
+│   │   │       ├── tool-execution-logger.ts
+│   │   │       ├── tool-parser.ts
+│   │   │       ├── types.ts
+│   │   │       └── write-file-tool.ts
+│   │   ├── canvas
+│   │   │   ├── index.ts
+│   │   │   └── types.ts
+│   │   ├── demo
+│   │   │   └── sample-conversations.json
+│   │   ├── editor
+│   │   │   ├── __tests__
+│   │   │   │   └── language-utils.test.ts
+│   │   │   ├── index.ts
+│   │   │   └── language-utils.ts
+│   │   ├── events
+│   │   │   ├── __tests__
+│   │   │   │   ├── use-workspace-event.test.tsx
+│   │   │   │   └── workspace-events.test.ts
+│   │   │   ├── index.ts
+│   │   │   ├── use-workspace-event.ts
+│   │   │   └── workspace-events.ts
+│   │   ├── filesystem
+│   │   │   ├── __tests__
+│   │   │   │   ├── directory-walker.test.ts
+│   │   │   │   ├── exclusion-config.test.ts
+│   │   │   │   ├── fsa-handle-manager.test.ts
+│   │   │   │   ├── local-fs-adapter.integration.test.ts
+│   │   │   │   ├── local-fs-adapter.test.ts
+│   │   │   │   ├── path-guard.test.ts
+│   │   │   │   ├── sync-executor.test.ts
+│   │   │   │   ├── sync-manager.test.ts
+│   │   │   │   ├── sync-planner.test.ts
+│   │   │   │   ├── sync-rollback.test.ts
+│   │   │   │   └── validation.test.ts
+│   │   │   ├── constants.ts
+│   │   │   ├── dir-ops.ts
+│   │   │   ├── directory-walker.ts
+│   │   │   ├── exclusion-config.ts
+│   │   │   ├── file-ops.ts
+│   │   │   ├── fs-errors.ts
+│   │   │   ├── fs-types.ts
+│   │   │   ├── fsa-handle-manager.ts
+│   │   │   ├── handle-utils.ts
+│   │   │   ├── index.ts
+│   │   │   ├── local-fs-adapter.ts
+│   │   │   ├── path-guard.ts
+│   │   │   ├── path-utils.ts
+│   │   │   ├── permission-lifecycle.test.ts
+│   │   │   ├── permission-lifecycle.ts
+│   │   │   ├── sync-executor.ts
+│   │   │   ├── sync-manager.test.ts
+│   │   │   ├── sync-manager.ts
+│   │   │   ├── sync-operations.ts
+│   │   │   ├── sync-planner.ts
+│   │   │   ├── sync-transaction-log.ts
+│   │   │   ├── sync-types.ts
+│   │   │   ├── sync-utils.ts
+│   │   │   └── validation.ts
+│   │   ├── knowledge
+│   │   │   ├── __tests__
+│   │   │   │   └── source-import.test.ts
+│   │   │   ├── index.ts
+│   │   │   ├── pdf-parser.ts
+│   │   │   ├── source-import.ts
+│   │   │   └── url-fetcher.ts
+│   │   ├── monitoring
+│   │   │   ├── __tests__
+│   │   │   │   └── performance-monitor.test.ts
+│   │   │   ├── performance-monitor.ts
+│   │   │   └── sentry.ts
+│   │   ├── persistence
+│   │   │   ├── __tests__
+│   │   │   │   └── db.test.ts
+│   │   │   ├── db.ts
+│   │   │   └── index.ts
+│   │   ├── rag
+│   │   │   ├── embedding-service.ts
+│   │   │   └── transformers-loader.ts
+│   │   ├── state
+│   │   │   ├── __tests__
+│   │   │   │   ├── canvas-store.test.ts
+│   │   │   │   ├── conversation-auto-restore.test.ts
+│   │   │   │   ├── dexie-migrations.test.ts
+│   │   │   │   ├── hydration-manager.test.ts
+│   │   │   │   ├── knowledge-store.test.ts
+│   │   │   │   └── sync-status-store.test.ts
+│   │   │   ├── canvas-store.ts
+│   │   │   ├── conversation-auto-restore.ts
+│   │   │   ├── conversation-store.test.ts
+│   │   │   ├── conversation-store.ts
+│   │   │   ├── dexie-db.ts
+│   │   │   ├── dexie-storage.ts
+│   │   │   ├── hub-store.ts
+│   │   │   ├── hydration-manager.ts
+│   │   │   ├── ide-store.ts
+│   │   │   ├── index.ts
+│   │   │   ├── knowledge-store.ts
+│   │   │   ├── layout-store.ts
+│   │   │   ├── migrations
+│   │   │   │   ├── index.ts
+│   │   │   │   └── local-storage-migrator.ts
+│   │   │   ├── navigation-store.ts
+│   │   │   ├── provider-store.test.ts
+│   │   │   ├── provider-store.ts
+│   │   │   ├── statusbar-store.ts
+│   │   │   └── sync-status-store.ts
+│   │   ├── sync
+│   │   │   ├── __tests__
+│   │   │   │   └── file-metadata-cache.test.ts
+│   │   │   ├── file-metadata-cache.ts
+│   │   │   └── index.ts
+│   │   ├── utils
+│   │   │   ├── __tests__
+│   │   │   │   └── error-classification.test.ts
+│   │   │   ├── error-classification.ts
+│   │   │   ├── error-handling.ts
+│   │   │   ├── mobile-error-handling.ts
+│   │   │   └── security.ts
+│   │   ├── utils.ts
+│   │   ├── validation
+│   │   │   └── chat-request.ts
+│   │   ├── webcontainer
+│   │   │   ├── __tests__
+│   │   │   │   ├── crash-recovery.test.ts
+│   │   │   │   ├── manager.test.ts
+│   │   │   │   ├── terminal-adapter.test.ts
+│   │   │   │   └── webcontainer.mock.ts
+│   │   │   ├── crash-recovery.ts
+│   │   │   ├── index.ts
+│   │   │   ├── manager.ts
+│   │   │   ├── process-manager.ts
+│   │   │   ├── terminal-adapter.ts
+│   │   │   └── types.ts
+│   │   └── workspace
+│   │       ├── conversation-store.test.ts
+│   │       ├── conversation-store.ts
+│   │       ├── file-sync-status-store.ts
+│   │       ├── hooks
+│   │       │   ├── useEventBusEffects.ts
+│   │       │   ├── useInitialSync.ts
+│   │       │   ├── useSyncOperations.ts
+│   │       │   ├── useWorkspaceActions.ts
+│   │       │   └── useWorkspaceState.ts
+│   │       ├── ide-state-store.test.ts
+│   │       ├── ide-state-store.ts
+│   │       ├── index.ts
+│   │       ├── project-store.test.ts
+│   │       ├── project-store.ts
+│   │       ├── threads-store.ts
+│   │       ├── workspace-types.ts
+│   │       ├── WorkspaceContext.test.tsx
+│   │       └── WorkspaceContext.tsx
+│   ├── logo.svg
+│   ├── mocks
+│   │   └── agents.ts
+│   ├── router.tsx
+│   ├── routes
+│   │   ├── __root.tsx
+│   │   ├── agents.tsx
+│   │   ├── api
+│   │   │   ├── __tests__
+│   │   │   │   └── chat.test.ts
+│   │   │   └── chat.ts
+│   │   ├── hub.tsx
+│   │   ├── ide.tsx
+│   │   ├── index.tsx
+│   │   ├── knowledge.tsx
+│   │   ├── settings.tsx
+│   │   ├── test-fs-adapter.tsx
+│   │   ├── webcontainer.$.tsx
+│   │   └── workspace
+│   │       ├── $projectId.tsx
+│   │       └── index.tsx
+│   ├── routeTree.gen.ts
+│   ├── server.ts
+│   ├── src-tree.md
+│   ├── stores
+│   │   ├── agent-selection-store.ts
+│   │   ├── agents-store.test.ts
+│   │   ├── agents-store.ts
+│   │   ├── auto-approve-store.ts
+│   │   ├── conversation-threads-store.ts
+│   │   ├── openai-compatible-store.ts
+│   │   ├── prompt-enhancement-store.ts
+│   │   └── provider-models-store.ts
+│   ├── styles
+│   │   ├── animations.css
+│   │   ├── design-tokens.css
+│   │   └── design-tokens.ts
+│   ├── styles.css
+│   ├── test
+│   │   └── setup.ts
+│   ├── tree-2025-12-24.md
+│   ├── tree.txt
+│   └── types
+│       ├── tool-call.ts
+│       └── vitest-axe.d.ts
+├── test_capture.txt
+├── test_debug.txt
+├── test_output.txt
+├── test_plain_2.txt
+├── test_plain.txt
+├── test-output.txt
+├── test-output2.txt
+├── test-result.json
+├── test-result.txt
+├── tree.txt
+├── tsconfig.json
+├── vite.config.ts
+├── vitest.config.ts
+└── wrangler.jsonc
+
+392 directories, 2459 files

@@ -1,0 +1,172 @@
+{
+  "welcome": "Chào mừng đến với Via-Gent",
+  "actions.toggleLanguage": "Chuyển ngôn ngữ",
+  "navigation.title": "Menu",
+  "navigation.home": "Trang chủ",
+  "navigation.startServerFunctions": "Hàm máy chủ",
+  "navigation.startApiRequest": "Yêu cầu API",
+  "navigation.startSsrDemos": "Demo SSR",
+  "navigation.startSpaMode": "Chế độ SPA",
+  "navigation.startFullSsr": "SSR đầy đủ",
+  "navigation.startDataOnly": "Chỉ dữ liệu",
+  "ide.noFileOpen": "Chưa mở tập tin",
+  "ide.selectFile": "Chọn tập tin cấu hình để chỉnh sửa",
+  "preview.newTabInfo": "Đã mở xem trước trong tab mới",
+  "preview.focusMode": "Chế độ tập trung",
+  "preview.exitFocusMode": "Thoát chế độ tập trung",
+  "preview.focusModeHint": "Nhấn ESC để thoát chế độ tập trung",
+  "ide.preview": "Xem trước",
+  "ide.deviceDesktop": "Máy tính",
+  "ide.deviceTablet": "Máy tính bảng",
+  "ide.deviceMobile": "Điện thoại",
+  "ide.refreshPreview": "Tải lại",
+  "ide.openInNewTab": "Mở tab mới",
+  "ide.waitingDevServer": "Đang chờ máy chủ dev...",
+  "ide.runDevCommand": "Chạy npm run dev để khởi động máy chủ",
+  "ide.reAuthorize": "Cấp quyền lại",
+  "ide.fsDenied": "Từ chối truy cập tập tin",
+  "ide.syncError": "Lỗi đồng bộ",
+  "ide.toggleChatShortcut": "Bật/Tắt Chat (Cmd+J)",
+  "ide.hideChat": "Ẩn Chat",
+  "ide.showChat": "Hiện Chat",
+  "ide.autoSync": "Tự động đồng bộ: Bật",
+  "ide.autoSyncOff": "Tự động đồng bộ: Tắt",
+  "ide.syncNow": "Đồng bộ ngay",
+  "ide.switchFolder": "Đổi thư mục",
+  "ide.openFolder": "Mở thư mục",
+  "ide.terminal": "Terminal",
+  "ide.output": "Đầu ra",
+  "ide.problems": "Vấn đề",
+  "ide.outputSoon": "Đầu ra sắp có...",
+  "ide.problemsSoon": "Vấn đề sắp có...",
+  "errors.loadProjects": "Không tải được dự án",
+  "errors.permissionDenied": "Từ chối quyền",
+  "errors.generic": "Đã xảy ra lỗi",
+  "errors.accessDenied": "Truy cập bị từ chối",
+  "errors.fsNotSupported": "Trình duyệt không hỗ trợ File System Access API",
+  "errors.openFolder": "Không mở được thư mục",
+  "badges.clickToReauthorize": "Bấm để cấp lại quyền",
+  "badges.accessDenied": "Truy cập bị từ chối",
+  "dashboard.title": "Bảng điều khiển",
+  "actions.openLocalFolder": "Mở thư mục cục bộ",
+  "actions.dismiss": "Bỏ qua",
+  "dashboard.loading": "Đang tải bảng điều khiển...",
+  "status.lastOpened": "Mở lần cuối",
+  "dashboard.removeTooltip": "Xóa khỏi lịch sử",
+  "status.authorizing": "Đang xác thực...",
+  "status.opening": "Đang mở...",
+  "actions.openWorkspace": "Mở không gian làm việc",
+  "dashboard.emptyTitle": "Không có dự án gần đây",
+  "dashboard.emptySubtitle": "Mở một thư mục cục bộ để bắt đầu với Via-Gent.",
+  "time.justNow": "Vừa xong",
+  "time.yesterday": "Hôm qua",
+  "ide.noFolderSelected": "Chưa chọn thư mục",
+  "ide.openFolderToView": "Mở thư mục để xem tập tin",
+  "ide.loading": "Đang tải...",
+  "status.pendingFiles": "Tập tin đang chờ",
+  "status.pending": "đang chờ",
+  "status.errorFiles": "Tập tin lỗi",
+  "status.error": "lỗi",
+  "status.syncedFiles": "Tập tin đã đồng bộ",
+  "status.synced": "đã đồng bộ",
+  "ide.fileExplorer": "Trình duyệt tập tin",
+  "time.agoSeconds": "{{count}} giây trước",
+  "time.agoSeconds_plural": "{{count}} giây trước",
+  "time.agoMinutes": "{{count}} phút trước",
+  "time.agoMinutes_plural": "{{count}} phút trước",
+  "time.agoHours": "{{count}} giờ trước",
+  "time.agoHours_plural": "{{count}} giờ trước",
+  "status.syncingFile": "Đang đồng bộ: {{file}}",
+  "status.syncing": "Đang đồng bộ",
+  "errors.syncRetry": "Lỗi đồng bộ - bấm để thử lại",
+  "status.notSynced": "Chưa đồng bộ",
+  "status.lastSynced": "Đồng bộ lần cuối",
+  "contextMenu.newFile": "Tập tin mới",
+  "contextMenu.newFolder": "Thư mục mới",
+  "contextMenu.rename": "Đổi tên",
+  "contextMenu.delete": "Xóa",
+  "common": {
+    "dismiss": "Bỏ qua"
+  },
+  "agent": {
+    "title": "Trợ lý AI",
+    "clear": "Xóa trắng",
+    "welcome": {
+      "title": "Chào mừng đến với Trợ lý AI!",
+      "subtitle": "Hỏi tôi bất cứ điều gì về dự án của bạn..."
+    },
+    "welcome_message": "Xin chào! Tôi là trợ lý AI cho dự án {{projectName}}. Bạn muốn làm gì hôm nay?",
+    "demo_response": "Tôi là trợ lý demo. Hãy kết nối tôi với TanStack AI trong Epic 6 để có phản hồi thực tế.",
+    "placeholder": "Hỏi trợ lý… (⌘K)",
+    "status": {
+      "thinking": "Trợ lý đang suy nghĩ..."
+    }
+  },
+  "editor": {
+    "loading": "Đang tải bộ soạn thảo...",
+    "noFile": {
+      "title": "Chưa mở tệp tin",
+      "subtitle": "Chọn một tệp tin để chỉnh sửa"
+    },
+    "input": {
+      "syncWarning": "Chỉnh sửa trong khi đồng bộ hóa có thể gây xung đột"
+    }
+  },
+  "terminal": {
+    "ariaLabel": "Terminal",
+    "shellExited": "Shell đã thoát với mã {{code}}",
+    "error": "Lỗi Terminal: {{error}}",
+    "bootFailed": "Không thể khởi động WebContainer: {{error}}"
+  },
+  "onboarding": {
+    "launch": "Khám phá Tour Tương tác",
+    "slides": {
+      "intro": {
+        "title": "Via-gent",
+        "subtitle": "Môi trường phát triển cục bộ thông minh của bạn",
+        "desc": "Trải nghiệm tương lai của lập trình trên trình duyệt. Không cần cài đặt. Bảo mật 100%."
+      },
+      "privacy": {
+        "title": "Bảo mật Tuyệt đối",
+        "subtitle": "100% Client-Side",
+        "desc": "Không máy chủ. Không theo dõi dữ liệu. Mã nguồn của bạn không bao giờ rời khỏi trình duyệt."
+      },
+      "agents": {
+        "title": "Đội ngũ AI Hùng hậu",
+        "subtitle": "Điều phối Đa tác vụ",
+        "desc": "Các agent Điều phối, Lên kế hoạch, Lập trình và Kiểm thử cùng làm việc để hiện thực hóa ý tưởng của bạn."
+      },
+      "workflows": {
+        "title": "Quy trình cho Mọi phòng ban",
+        "subtitle": "Quy trình Thống nhất",
+        "desc": "Kết nối liền mạch các khâu Nghiên cứu, Thiết kế, Lập trình và Triển khai trong một không gian làm việc."
+      },
+      "roadmap": {
+        "title": "Tương lai",
+        "subtitle": "Lộ trình phát triển",
+        "desc": "Chỉnh sửa cộng tác, Hỗ trợ di động và Kiến trúc Plugin sắp ra mắt."
+      },
+      "contact": {
+        "title": "Tham gia Cách mạng",
+        "subtitle": "Kết nối với Tác giả",
+        "roles": "Tác giả & Duy trì",
+        "name": "Linh Nguyễn"
+      }
+    },
+    "controls": {
+      "next": "Tiếp theo",
+      "prev": "Quay lại",
+      "close": "Đóng Pitch",
+      "restart": "Xem lại"
+    }
+  },
+  "webcontainer": {
+    "notSupported": {
+      "title": "Xem trước không khả dụng",
+      "subtitle": "Giới hạn của WebContainer",
+      "description": "Phần xem trước này được liên kết với tab IDE nơi WebContainer được khởi tạo. Không thể xem trong tab trình duyệt riêng.",
+      "explanation": "WebContainer chạy môi trường Node.js đầy đủ trong trình duyệt của bạn. Vì lý do bảo mật và quản lý tài nguyên, phần xem trước phải nằm trong phiên IDE.",
+      "backToDashboard": "Quay lại Bảng điều khiển"
+    }
+  }
+}

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent Notes - Zen Mode (2 Interfaces)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --primary: #fafafa;
+      --action: #f97316;
+      --border: #3f3f46;
+      --border-light: #52525b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+    }
+
+    body {
+      font-family: 'Geist Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .notes-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 0;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s;
+      box-shadow: 0 0 0 0 #000;
+    }
+
+    .btn-primary {
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+    }
+
+    .btn-primary:hover {
+      background: var(--action-hover);
+      box-shadow: 2px 2px 0 0 #000;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .note-item {
+      padding: 12px;
+      margin-bottom: 4px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .note-item:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-light);
+    }
+
+    .note-item.active {
+      background: var(--surface-hover);
+      border-color: var(--action);
+      border-left: 3px solid var(--action);
+    }
+
+    .note-item-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .note-item-preview {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .note-item-meta {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+    }
+
+    .editor-toolbar {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-title {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Geist Sans', sans-serif;
+      color: var(--text-primary);
+      padding: 8px 0;
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      transition: all 0.1s;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+      border-color: var(--border-light);
+    }
+
+    .icon-btn.active {
+      background: var(--surface-hover);
+      border-color: var(--action);
+      box-shadow: inset 2px 2px 0 0 #000;
+    }
+
+    .editor-content {
+      flex: 1;
+      padding: 32px 48px;
+      overflow-y: auto;
+      font-family: 'Geist Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .editor-content h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .editor-content h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 24px 0 12px 0;
+      color: var(--text-primary);
+    }
+
+    .editor-content p {
+      margin-bottom: 16px;
+    }
+
+    .editor-content ul {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    .editor-content li {
+      margin-bottom: 8px;
+    }
+
+    .editor-content code {
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+
+    .editor-content pre {
+      background: var(--surface);
+      padding: 16px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+
+    .editor-content pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--canvas);
+    }
+
+    .status-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-right {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+
+    .status-item:hover {
+      opacity: 0.8;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 240px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      .editor-content {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="notes-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <span>📝</span>
+          <span>Notes</span>
+        </div>
+        <div class="sidebar-actions">
+          <button class="btn btn-primary">+ New Note</button>
+        </div>
+      </div>
+      <div class="note-list">
+        <div class="note-item active">
+          <div class="note-item-title">Progressive Disclosure</div>
+          <div class="note-item-preview">
+            Progressive disclosure is a design pattern where only essential information is shown initially...
+          </div>
+          <div class="note-item-meta">
+            <span>📅 Jan 18, 2026</span>
+            <span>⏱ 5 min ago</span>
+          </div>
+        </div>
+        <div class="note-item">
+          <div class="note-item-title">8-bit Design System</div>
+          <div class="note-item-preview">
+            The 8-bit aesthetic requires zero rounded corners, hard shadows, and pixel-perfect alignment...
+          </div>
+          <div class="note-item-meta">
+            <span>📅 Jan 17, 2026</span>
+            <span>⏱ 1 day ago</span>
+          </div>
+        </div>
+        <div class="note-item">
+          <div class="note-item-title">Project Planning</div>
+          <div class="note-item-preview">
+            Epic breakdown: 1. Foundation 2. UI Components 3. Integration 4. Testing...
+          </div>
+          <div class="note-item-meta">
+            <span>📅 Jan 15, 2026</span>
+            <span>⏱ 3 days ago</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="editor-toolbar">
+        <input type="text" class="editor-title" value="Progressive Disclosure" placeholder="Note title...">
+        <div class="editor-actions">
+          <button class="icon-btn" title="Bold">B</button>
+          <button class="icon-btn" title="Italic">I</button>
+          <button class="icon-btn" title="Code">{"</>"}</button>
+          <button class="icon-btn" title="List">≡</button>
+        </div>
+      </div>
+
+      <div class="editor-content" contenteditable="true" spellcheck="false">
+        <h1>Progressive Disclosure</h1>
+
+        <p>Progressive disclosure is a design pattern where only essential information is shown initially, with additional information revealed through user interaction. This approach reduces cognitive load and improves usability.</p>
+
+        <h2>Key Principles</h2>
+
+        <ul>
+          <li>Show only what users need right now</li>
+          <li>Make additional features discoverable</li>
+          <li>Provide clear visual hierarchy</li>
+          <li>Use familiar interaction patterns</li>
+        </ul>
+
+        <h2>Implementation in Via-Gent</h2>
+
+        <p>Via-Gent applies progressive disclosure across all workspaces:</p>
+
+        <ul>
+          <li><strong>IDE:</strong> Tree + Editor (minimal) → Add Preview/Terminal/Chat as needed</li>
+          <li><strong>Notes:</strong> List + Editor (zen mode) → Add Preview/Chat for research</li>
+          <li><strong>Mobile:</strong> Single panel focus → Swipe navigation</li>
+        </ul>
+
+        <p>This approach ensures that beginners aren't overwhelmed while power users have quick access to all features.</p>
+
+        <h2>Code Example</h2>
+
+        <pre><code>// Progressive disclosure in React
+const [showAdvanced, setShowAdvanced] = useState(false);
+
+return (
+  &lt;div&gt;
+    &lt;Button onClick={() =&gt; setShowAdvanced(!showAdvanced)}&gt;
+      {showAdvanced ? 'Hide Advanced' : 'Show Advanced'}
+    &lt;/Button&gt;
+    {showAdvanced && &lt;AdvancedOptions /&gt;}
+  &lt;/div&gt;
+);</code></pre>
+
+        <p>The key is to <em>start simple</em> and reveal complexity only when users explicitly request it.</p>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-left">
+          <div class="status-item">
+            <span>💾</span>
+            <span>Auto-saved</span>
+          </div>
+          <div class="status-item">
+            <span>📝</span>
+            <span>Markdown</span>
+          </div>
+        </div>
+        <div class="status-right">
+          <div class="status-item">
+            <span>📄</span>
+            <span>progressive-disclosure.md</span>
+          </div>
+          <div class="status-item">
+            <span>📊</span>
+            <span>247 words</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.note-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.icon-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+
+    // Auto-save indicator
+    const editorContent = document.querySelector('.editor-content');
+    editorContent.addEventListener('input', function() {
+      const statusItem = document.querySelector('.status-item span:first-child');
+      statusItem.textContent = '⏳ Saving...';
+      
+      setTimeout(() => {
+        statusItem.textContent = '💾 Auto-saved';
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

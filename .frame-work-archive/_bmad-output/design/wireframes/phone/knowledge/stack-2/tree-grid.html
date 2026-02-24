@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Via-Gent | Knowledge - Grid (Phone)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        :root {
+            --header-height: 44px;
+            --bottom-nav-height: 56px;
+        }
+
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--knowledge-bg);
+        }
+
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active {
+            display: flex;
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        .grid-panel {
+            background: var(--knowledge-bg);
+        }
+
+        .grid-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 12px;
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            font-size: var(--text-sm);
+            color: var(--primary);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--action);
+        }
+
+        .filter-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .grid-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .grid-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .grid-sort {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sort-btn {
+            padding: 6px 10px;
+            background: transparent;
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            font-size: var(--text-xs);
+            color: var(--secondary);
+            cursor: pointer;
+        }
+
+        .sort-btn.active {
+            background: var(--surface-active);
+            color: var(--action);
+            border-color: var(--action);
+        }
+
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .knowledge-card {
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .knowledge-card:hover {
+            border-color: var(--action);
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-pixel);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--surface-hover);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .card-type {
+            font-size: var(--text-xs);
+            color: var(--muted);
+            padding: 2px 6px;
+            background: var(--canvas);
+            border: 1px solid var(--structural);
+            border-radius: 0;
+        }
+
+        .card-preview {
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .card-tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: var(--bottom-nav-height);
+            width: 280px;
+            background: var(--surface);
+            border-right: 2px solid var(--structural);
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+            z-index: 100;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .drawer-content {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .collection-section {
+            padding: 8px 0;
+        }
+
+        .collection-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .collection-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px 10px 24px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+
+        .collection-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .collection-item.selected {
+            background: var(--surface-active);
+            color: var(--action);
+        }
+
+        .collection-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .collection-name {
+            flex: 1;
+            font-size: var(--text-sm);
+            color: var(--primary);
+        }
+
+        .collection-count {
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .bottom-nav {
+            height: var(--bottom-nav-height);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            padding-bottom: env(safe-area-inset-bottom);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: var(--font-medium);
+        }
+
+        .grid-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .grid-content::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .grid-content::-webkit-scrollbar-thumb {
+            background: var(--structural);
+            border-radius: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleDrawer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <span class="header-title">Knowledge</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="panel grid-panel active">
+                <div class="grid-content">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Search knowledge base...">
+                        <button class="filter-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid-header">
+                        <span class="grid-title">All Articles</span>
+                        <div class="grid-sort">
+                            <button class="sort-btn active">Newest</button>
+                            <button class="sort-btn">Popular</button>
+                        </div>
+                    </div>
+                    <div class="knowledge-grid">
+                        <div class="knowledge-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="card-title">React Hooks Guide</div>
+                                    <span class="card-type">Documentation</span>
+                                </div>
+                            </div>
+                            <p class="card-preview">Complete guide to using React hooks including useState, useEffect, useContext, and custom hooks.</p>
+                            <div class="card-meta">
+                                <span class="card-tag">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                    </svg>
+                                    React
+                                </span>
+                                <span>5 min read</span>
+                            </div>
+                        </div>
+                        <div class="knowledge-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="card-title">TypeScript Best Practices</div>
+                                    <span class="card-type">Guide</span>
+                                </div>
+                            </div>
+                            <p class="card-preview">Best practices for writing type-safe TypeScript code with advanced types and generics.</p>
+                            <div class="card-meta">
+                                <span class="card-tag">TypeScript</span>
+                                <span>8 min read</span>
+                            </div>
+                        </div>
+                        <div class="knowledge-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="card-title">API Design Patterns</div>
+                                    <span class="card-type">Architecture</span>
+                                </div>
+                            </div>
+                            <p class="card-preview">RESTful and GraphQL API design patterns for building scalable applications.</p>
+                            <div class="card-meta">
+                                <span class="card-tag">API</span>
+                                <span>12 min read</span>
+                            </div>
+                        </div>
+                        <div class="knowledge-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="card-title">Database Schema Design</div>
+                                    <span class="card-type">Tutorial</span>
+                                </div>
+                            </div>
+                            <p class="card-preview">How to design efficient database schemas for relational databases.</p>
+                            <div class="card-meta">
+                                <span class="card-tag">Database</span>
+                                <span>10 min read</span>
+                            </div>
+                        </div>
+                        <div class="knowledge-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="card-title">Security Best Practices</div>
+                                    <span class="card-type">Security</span>
+                                </div>
+                            </div>
+                            <p class="card-preview">Security guidelines for protecting your application from common vulnerabilities.</p>
+                            <div class="card-meta">
+                                <span class="card-tag">Security</span>
+                                <span>15 min read</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar-drawer" id="sidebar">
+            <div class="drawer-header">
+                <span class="drawer-title">Collections</span>
+                <button class="close-btn" onclick="toggleDrawer()">×</button>
+            </div>
+            <div class="drawer-content">
+                <div class="collection-section">
+                    <div class="collection-header">
+                        <span>My Collections</span>
+                    </div>
+                    <div class="collection-item selected">
+                        <span class="collection-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                            </svg>
+                        </span>
+                        <span class="collection-name">All Articles</span>
+                        <span class="collection-count">42</span>
+                    </div>
+                    <div class="collection-item">
+                        <span class="collection-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                            </svg>
+                        </span>
+                        <span class="collection-name">Frontend</span>
+                        <span class="collection-count">18</span>
+                    </div>
+                    <div class="collection-item">
+                        <span class="collection-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            </svg>
+                        </span>
+                        <span class="collection-name">Backend</span>
+                        <span class="collection-count">12</span>
+                    </div>
+                    <div class="collection-item">
+                        <span class="collection-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </span>
+                        <span class="collection-name">Security</span>
+                        <span class="collection-count">8</span>
+                    </div>
+                    <div class="collection-item">
+                        <span class="collection-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </span>
+                        <span class="collection-name">Favorites</span>
+                        <span class="collection-count">7</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </span>
+                <span class="nav-label">Grid</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+                <span class="nav-label">Preview</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Chat</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Search</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('visible');
+        }
+
+        function switchPanel(panelName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Switch to panel:', panelName);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-17T00:00:00Z",
+    "track": "1.5",
+    "agent": "dev-ext",
+    "workspace": "notes"
+  },
+  "features": [
+    {
+      "name": "Create New Note",
+      "description": "User creates a new markdown note",
+      "user_journey": "Project → Notes → Click 'New Note'",
+      "components": ["NoteSidebar", "NoteEditor"],
+      "stores": ["useNoteStore"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NotesPage.tsx",
+        "src/presentation/components/notes/NoteSidebar.tsx",
+        "src/presentation/components/notes/NoteEditor.tsx"
+      ]
+    },
+    {
+      "name": "Edit Note with BlockNote",
+      "description": "User edits note content using Notion-like block editor",
+      "user_journey": "Notes → Click note → Edit content",
+      "components": ["NoteEditor", "BlockNoteView"],
+      "stores": ["useNoteStore", "useNoteSaveStatus"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteEditor.tsx",
+        "src/presentation/components/notes/blocks/*"
+      ]
+    },
+    {
+      "name": "Delete Note",
+      "description": "User deletes a note from project",
+      "user_journey": "Notes → Right-click note → Delete",
+      "components": ["NoteSidebar", "NoteContextMenu"],
+      "stores": ["useNoteStore"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteContextMenu.tsx",
+        "src/presentation/components/notes/NoteSidebar.tsx"
+      ]
+    },
+    {
+      "name": "Auto-Save Note",
+      "description": "Note content auto-saves with 500ms debounce",
+      "user_journey": "Notes → Edit content → Auto-saves",
+      "components": ["NoteEditor"],
+      "stores": ["useNoteSaveStatus"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteEditor.tsx"
+      ]
+    },
+    {
+      "name": "Markdown Import",
+      "description": "Import markdown files into notes",
+      "user_journey": "Notes → Click Import → Select .md file",
+      "components": ["MarkdownImportDialog", "NoteSidebar"],
+      "stores": ["useNoteStore"],
+      "services": ["NotesFileSyncService", "MarkdownSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/MarkdownImportDialog.tsx",
+        "src/infrastructure/filesystem/markdown-sync-service.ts"
+      ]
+    },
+    {
+      "name": "Markdown Export",
+      "description": "Export notes as markdown files",
+      "user_journey": "Notes → Click Export → Save .md file",
+      "components": ["MarkdownExportDialog", "NoteSidebar"],
+      "stores": ["useNoteStore"],
+      "services": ["NotesFileSyncService", "MarkdownSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/MarkdownExportDialog.tsx"
+      ]
+    },
+    {
+      "name": "File Sync (FSA ↔ IndexedDB)",
+      "description": "Bidirectional sync between FSA and IndexedDB with conflict resolution",
+      "user_journey": "Notes → Select project → Sync initializes",
+      "components": ["NotesFilePicker", "SyncStatusIndicator"],
+      "stores": ["useFileSyncStatusStore"],
+      "services": ["NotesFileSyncService", "StorageAdapterFactory"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NotesFilePicker.tsx",
+        "src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts",
+        "src/infrastructure/filesystem/StorageAdapterFactory.ts"
+      ]
+    },
+    {
+      "name": "RAG Indexing",
+      "description": "Index notes for Knowledge workspace search",
+      "user_journey": "Notes → Click Index button",
+      "components": ["NotesIndexingButton", "ProjectFilesPanel"],
+      "stores": ["useNoteStore"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NotesIndexingButton.tsx",
+        "src/presentation/components/notes/ProjectFilesPanel.tsx"
+      ]
+    },
+    {
+      "name": "Note Search",
+      "description": "Search notes by title/content with debouncing",
+      "user_journey": "Notes → Type in search box → Results appear",
+      "components": ["NoteSidebar"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteSidebar.tsx"
+      ]
+    },
+    {
+      "name": "Note Favorites",
+      "description": "Mark notes as favorites for quick access",
+      "user_journey": "Notes → Click star icon on note",
+      "components": ["NoteSidebar", "NoteTreeItem"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteSidebar.tsx",
+        "src/presentation/components/notes/NoteTreeItem.tsx"
+      ]
+    },
+    {
+      "name": "AI Image Generation",
+      "description": "Generate images with AI prompts inside notes",
+      "user_journey": "Notes → Type /ai image → Enter prompt → Image generated",
+      "components": ["AIImageBlock", "AISlashCommand"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/AIImageBlock.tsx",
+        "src/presentation/components/notes/AISlashCommand.tsx"
+      ]
+    },
+    {
+      "name": "AI Vision Analysis",
+      "description": "Analyze images with AI (describe, OCR, custom questions)",
+      "user_journey": "Notes → Insert image → AI Vision block analyzes",
+      "components": ["AIVisionBlock", "MultiModalImport"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/AIVisionBlock.tsx",
+        "src/presentation/components/notes/MultiModalImport.tsx"
+      ]
+    },
+    {
+      "name": "Storyboard Generation",
+      "description": "Generate sequential multi-image storyboards with AI",
+      "user_journey": "Notes → Type /ai storyboard → Enter frames → Storyboard generated",
+      "components": ["StoryboardBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/StoryboardBlock.tsx"
+      ]
+    },
+    {
+      "name": "Video Analysis",
+      "description": "Analyze uploaded videos (transcribe, describe, key scenes)",
+      "user_journey": "Notes → Insert video → Video block analyzes",
+      "components": ["VideoBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/VideoBlock.tsx"
+      ]
+    },
+    {
+      "name": "Text-to-Speech",
+      "description": "Convert text to speech with customizable voices",
+      "user_journey": "Notes → Insert TTS block → Enter text → Audio plays",
+      "components": ["TTSBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/TTSBlock.tsx"
+      ]
+    },
+    {
+      "name": "Interactive HTML Artifacts",
+      "description": "Embed interactive HTML/CSS/JS artifacts in notes",
+      "user_journey": "Notes → Insert artifact block → Edit code → Interactive preview",
+      "components": ["ArtifactBlock", "ArtifactGalleryBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/ArtifactBlock.tsx",
+        "src/presentation/components/notes/blocks/ArtifactGalleryBlock.tsx"
+      ]
+    },
+    {
+      "name": "Video Generation",
+      "description": "Generate videos from text prompts",
+      "user_journey": "Notes → Type /ai video → Enter prompt → Video generates",
+      "components": ["VideoGenerationBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/VideoGenerationBlock.tsx"
+      ]
+    },
+    {
+      "name": "Slides Export",
+      "description": "Export note content as PowerPoint slides",
+      "user_journey": "Notes → Insert slides block → Define slides → Download PPTX",
+      "components": ["SlidesExportBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/SlidesExportBlock.tsx"
+      ]
+    },
+    {
+      "name": "Chart/Diagram Generation",
+      "description": "Generate charts (bar, line, pie) and diagrams (flowchart, sequence)",
+      "user_journey": "Notes → Insert chart block → Enter data → Chart renders",
+      "components": ["ChartDiagramBlock"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/ChartDiagramBlock.tsx"
+      ]
+    },
+    {
+      "name": "Study Mode Integration",
+      "description": "Create flashcards and quizzes from notes",
+      "user_journey": "Notes → Click Study menu → Generate flashcard/quiz",
+      "components": ["NoteStudyMenu"],
+      "stores": ["useNoteStore"],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteStudyMenu.tsx"
+      ]
+    },
+    {
+      "name": "Slash Commands",
+      "description": "Command palette for quick actions and AI prompts",
+      "user_journey": "Notes → Type / → Command list appears",
+      "components": ["SlashCommandsDialog", "AISlashCommand"],
+      "stores": [],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/SlashCommandsDialog.tsx",
+        "src/presentation/components/notes/AISlashCommand.tsx"
+      ]
+    },
+    {
+      "name": "Block References",
+      "description": "Reference content from other notes with live sync",
+      "user_journey": "Notes → Insert reference block → Select note → Reference updates automatically",
+      "components": ["ReferenceBlock", "SyncedBlock"],
+      "stores": ["useNoteStore"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/ReferenceBlock.tsx",
+        "src/presentation/components/notes/blocks/SyncedBlock.tsx"
+      ]
+    },
+    {
+      "name": "Column Layouts",
+      "description": "Split content into 2-3 columns",
+      "user_journey": "Notes → Insert column block → Select columns → Content arranged",
+      "components": ["ColumnBlock"],
+      "stores": [],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/blocks/ColumnBlock.tsx"
+      ]
+    },
+    {
+      "name": "Voice Recording",
+      "description": "Record speech and convert to text with Gemini transcription",
+      "user_journey": "Notes → Click mic → Record → Transcript inserted",
+      "components": ["VoiceRecordButton"],
+      "stores": [],
+      "services": [],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/VoiceRecordButton.tsx"
+      ]
+    },
+    {
+      "name": "Note Tree Navigation",
+      "description": "Hierarchical note tree with folder structure",
+      "user_journey": "Notes → Browse note tree → Click note",
+      "components": ["NoteTree", "NoteTreeItem"],
+      "stores": ["useNoteStore", "useNoteNavigationStore"],
+      "services": ["NotesFileSyncService"],
+      "routes": ["/notes/$projectId"],
+      "files": [
+        "src/presentation/components/notes/NoteTree.tsx",
+        "src/presentation/components/notes/NoteTreeItem.tsx"
+      ]
+    }
+  ],
+  "overlaps": [
+    {
+      "feature": "File Sync",
+      "overlapping_features": ["Auto-save in IDE", "Manual save in Notes"],
+      "shared_code": ["NotesFileSyncService", "StorageAdapterFactory"],
+      "conflict_description": "Different sync patterns - Notes uses auto-save (500ms debounce), IDE uses auto-save (2000ms debounce). Should unify to single sync service pattern."
+    },
+    {
+      "feature": "Storage Access",
+      "overlapping_features": ["FSA access in IDE", "IndexedDB access in Notes"],
+      "shared_code": ["StorageAdapterFactory", "platform-detection.ts"],
+      "conflict_description": "Both workspaces use storage adapters but with different patterns. Notes uses NotesFileSyncService wrapper, IDE uses direct adapter access. Consolidation opportunity."
+    },
+    {
+      "feature": "AI Integration",
+      "overlapping_features": ["AI Chat in Notes", "AI Chat in IDE"],
+      "shared_code": ["UnifiedChatPanel"],
+      "conflict_description": "Both workspaces use UnifiedChatPanel but with different contexts. Notes has AIPromptDialog, IDE has AgentChatPanel. Should unify AI interface."
+    },
+    {
+      "feature": "Sync Status Display",
+      "overlapping_features": ["SyncStatusIndicator in Notes", "SyncStatusIndicator in IDE"],
+      "shared_code": ["SyncStatusIndicator component"],
+      "conflict_description": "Same component used in both workspaces but with different data sources. Should use unified sync store."
+    }
+  ]
+}

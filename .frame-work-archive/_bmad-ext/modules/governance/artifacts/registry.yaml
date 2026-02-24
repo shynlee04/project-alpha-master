@@ -1,0 +1,204 @@
+---
+name: "artifact-registry"
+type: "governance-registry"
+purpose: "Central registry of all governance artifacts"
+version: "1.0.0"
+last_updated: "2026-01-11"
+---
+
+# Artifact Registry
+
+**Purpose**: Central tracking of all governance artifacts to prevent staleness, duplication, and orphaned files.
+
+## Registry Format
+
+```yaml
+artifacts:
+  - id: "{artifact_uuid}"
+    name: "{artifact_name}"
+    type: "{planning|execution|governance|reference}"
+    category: "{subcategory}"
+
+    path: "{relative_path_from_project_root}"
+    created_at: "{timestamp}"
+    updated_at: "{timestamp}"
+    size_bytes: {number}
+
+    status: "{active|stale|archived|deprecated}"
+
+    metadata:
+      workflow: "{associated_workflow}"
+      epic: "{if_applicable}"
+      story: "{if_applicable}"
+      dependencies: [artifact_ids]
+      dependents: [artifact_ids]
+
+    lifecycle:
+      freshness_threshold: "{hours}"
+      last_reviewed: "{timestamp}"
+      next_review: "{timestamp}"
+      auto_archive_after: "{hours}"
+```
+
+## Current Registry
+
+```yaml
+# Planning Artifacts
+planning:
+  - id: "artifact-001"
+    name: "product-brief-2026-01-11"
+    path: "_bmad-output/planning-artifacts/product-brief-2026-01-11.md"
+    status: "active"
+    category: "product"
+
+  - id: "artifact-002"
+    name: "module-plan-governance"
+    path: "_bmad-output/planning-artifacts/module-plan-governance.md"
+    status: "active"
+    category: "architecture"
+
+# Execution Artifacts
+execution:
+  - id: "artifact-101"
+    name: "governance-report-latest"
+    path: "_bmad-output/governance-reports/governance-report-{date}.md"
+    status: "auto_generated"
+    category: "report"
+
+  - id: "artifact-102"
+    name: "sprint-status"
+    path: "sprint-status.yaml"
+    status: "active"
+    category: "tracking"
+
+  - id: "artifact-103"
+    name: "workflow-status"
+    path: "bmm-workflow-status.yaml"
+    status: "active"
+    category: "tracking"
+
+# Governance Artifacts
+governance:
+  - id: "artifact-201"
+    name: "context-first-workflow"
+    path: "_bmad-ext/modules/governance/workflows/context-first/"
+    status: "active"
+    category: "workflow"
+
+  - id: "artifact-202"
+    name: "expert-analysis-workflow"
+    path: "_bmad-ext/modules/governance/workflows/expert-analysis/"
+    status: "active"
+    category: "workflow"
+
+  - id: "artifact-203"
+    name: "research-trigger-workflow"
+    path: "_bmad-ext/modules/governance/workflows/research-trigger/"
+    status: "active"
+    category: "workflow"
+
+# Reference Artifacts
+reference:
+  - id: "artifact-301"
+    name: "CLAUDE"
+    path: "CLAUDE.md"
+    status: "active"
+    category: "instructions"
+
+  - id: "artifact-302"
+    name: "AGENTS"
+    path: "AGENTS.md"
+    status: "active"
+    category: "instructions"
+```
+
+## Artifact Categories
+
+```yaml
+categories:
+  planning:
+    - product_brief
+    - module_plan
+    - architecture
+    - ux_specification
+    - research_notes
+
+  execution:
+    - story_context
+    - epic_status
+    - sprint_status
+    - governance_report
+    - test_results
+
+  governance:
+    - workflow_definition
+    - scanner_definition
+    - policy_document
+    - checklist
+    - gate_definition
+
+  reference:
+    - instructions
+    - standards
+    - templates
+    - examples
+```
+
+## Lifecycle Rules
+
+```yaml
+lifecycle:
+  active:
+    condition: "updated_at < 48 hours ago"
+    action: "keep in active location"
+
+  stale:
+    condition: "updated_at >= 48 hours ago AND < 30 days ago"
+    action: "flag for review, consider archival"
+
+  archive_candidate:
+    condition: "updated_at >= 30 days ago"
+    action: "move to archive with date stamp"
+
+  deprecated:
+    condition: "superseded by newer version"
+    action: "mark as deprecated, reference replacement"
+```
+
+## Update Protocol
+
+```yaml
+on_create:
+  - generate_uuid
+  - assign_category
+  - register_in_yaml
+  - set_review_date
+
+on_update:
+  - update_timestamp
+  - increment_version
+  - check_staleness
+  - update_registry
+
+on_archive:
+  - move_to_archive_folder
+  - update_status_to_archived
+  - create_index_entry
+  - remove_from_active_registry
+```
+
+## Integration
+
+**Updated By**: All workflows that create artifacts
+
+**Read By**: artifact-scanner
+
+**Location**: `_bmad-ext/modules/governance/artifacts/registry.yaml`
+
+---
+
+`★ Insight ─────────────────────────────────────`
+1. Central registry prevents duplicate and orphaned artifacts
+2. Timestamp-based staleness detection automates cleanup
+3. Dependency tracking ensures safe archival
+`─────────────────────────────────────────────────`

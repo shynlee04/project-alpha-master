@@ -1,0 +1,264 @@
+# Cohesion Patterns
+# Sprint-Planning Wrapper - Configuration
+# Purpose: Known anti-patterns to detect during cohesion validation
+
+version: "1.0.0"
+last_updated: "2026-01-11"
+
+# Anti-pattern catalog
+anti_patterns:
+  split_brain:
+    name: "Split Brain"
+    category: "fragmentation"
+    severity: "critical"
+    description: "Dual/fragmented workflows for same goal"
+
+    detection:
+      patterns:
+        - "Multiple stories with similar goals"
+        - "Same feature keyword in different contexts"
+        - "Conflicting UX patterns"
+
+      example_stories:
+        - "Story A: 'Implement chat sidebar'"
+        - "Story B: 'Add chat modal dialog'"
+        result: "Users confused about which chat to use, history not shared"
+
+    detection_heuristics:
+      keywords:
+        - "chat|conversation|message"
+        - "sidebar|modal|dialog"
+        - "create|add|new"
+
+      tests:
+        - name: "Keyword Overlap"
+          check: "Do stories share 3+ action keywords?"
+          threshold: 3
+
+        - name: "Entity Overlap"
+          check: "Do stories modify same entity type?"
+          threshold: "Yes"
+
+        - name: "UX Conflict"
+          check: "Are UX approaches contradictory?"
+          threshold: "Yes"
+
+    impact:
+      user_confusion: "High"
+      development_waste: "High"
+      maintenance_burden: "High"
+
+    resolution:
+      - "Consolidate into single workflow"
+      - "Choose primary approach, deprecate other"
+      - "Clear differentiation if both needed"
+
+  island_parade:
+    name: "Island Parade"
+    category: "discoverability"
+    severity: "medium"
+    description: "Features with no clear connection to main user journey"
+
+    detection:
+      patterns:
+        - "Story with no clear entry point"
+        - "Feature not integrated with main flow"
+        - "No narrative connection to other stories"
+
+      example_stories:
+        - "Story A: 'Advanced search panel'"
+        - result: "Accessible only via deep navigation or URL"
+
+    detection_heuristics:
+      keywords:
+        - "settings|preferences|advanced"
+        - "panel|config|options"
+
+      tests:
+        - name: "Entry Point Check"
+          check: "Is entry point clearly defined?"
+          threshold: "No"
+
+        - name: "Navigation Check"
+          check: "Is feature reachable via main navigation?"
+          threshold: "No"
+
+        - name: "Integration Check"
+          check: "Is feature referenced by other stories?"
+          threshold: "No"
+
+    impact:
+      discoverability: "Low"
+      usage_rate: "Low"
+      support_burden: "Medium"
+
+    resolution:
+      - "Add clear entry point (menu item, button)"
+      - "Include in feature onboarding"
+      - "Integrate into main workflow"
+
+  carousel_chaos:
+    name: "Carousel Chaos"
+    category: "context_loss"
+    severity: "high"
+    description: "User must navigate away and back, losing context"
+
+    detection:
+      patterns:
+        - "Story requires navigation away mid-task"
+        - "Modal opens different page, closes original"
+        - "Multiple tabs/pages for related tasks"
+
+      example_stories:
+        - "Story A: 'View note details (opens new page)'"
+        - "Story B: 'Edit note (opens modal, then new page)'"
+        - result: "Users lose place, confusing navigation"
+
+    detection_heuristics:
+      keywords:
+        - "opens|navigates|switches"
+        - "modal|dialog|page"
+        - "new|separate|different"
+
+      tests:
+        - name: "Context Loss Check"
+          check: "Does user lose place during workflow?"
+          threshold: "Yes"
+
+        - name: "Navigation Count"
+          check: "Are there multiple navigation steps in single workflow?"
+          threshold: "> 2"
+
+        - name: "Tab Switching"
+          check: "Does workflow require switching between major sections?"
+          threshold: "Yes"
+
+    impact:
+      user_friction: "High"
+      error_rate: "Medium"
+      completion_rate: "Low"
+
+    resolution:
+      - "Keep user in context (single page, inline actions)"
+      - "Use modals for secondary actions"
+      - "Minimize navigation during workflows"
+
+  ghost_result:
+    name: "Ghost Result"
+    category: "feedback"
+    severity: "high"
+    description: "Action with no visible result or result appears in unexpected location"
+
+    detection:
+      patterns:
+        - "Story acceptance criteria missing result location"
+        - "No visual feedback specified"
+        - "Result appears off-screen"
+
+      example_stories:
+        - "Story A: 'User clicks save button'"
+        - acceptance_criteria:
+          - "Note is saved"
+          missing: "Where does confirmation appear?"
+
+    detection_heuristics:
+      keywords:
+        - "save|create|update|delete"
+        - "result|feedback|confirm"
+
+      tests:
+        - name: "Result Location"
+          check: "Is result location clearly specified?"
+          threshold: "No"
+
+        - name: "Visual Feedback"
+          check: "Is visual feedback specified?"
+          threshold: "No"
+
+        - name: "Immediate Response"
+          check: "Is immediate feedback mentioned?"
+          threshold: "No"
+
+    impact:
+      user_confusion: "High"
+      perceived_brokenness: "High"
+      support_tickets: "Medium"
+
+    resolution:
+      - "Always specify result location"
+      - "Include visual feedback in acceptance criteria"
+      - "Design inline actions when possible"
+
+  loading_vacuum:
+    name: "Loading Vacuum"
+    category: "feedback"
+    severity: "medium"
+    description: "No feedback during processing; user doesn't know if system is working"
+
+    detection:
+      patterns:
+        - "No loading state specified"
+        - "No progress indication"
+        - "No timeout handling mentioned"
+
+      example_stories:
+        - "Story A: 'AI generates summary'"
+        - acceptance_criteria:
+          - "Summary is displayed"
+          missing: "Loading state while generating"
+
+    detection_heuristics:
+      keywords:
+        - "generate|process|calculate|fetch"
+        - "loading|spinner|progress|skeleton"
+
+      tests:
+        - name: "Loading State"
+          check: "Is loading state specified?"
+          threshold: "No"
+
+        - name: "Progress Indication"
+          check: "Is progress feedback mentioned?"
+          threshold: "No"
+
+        - name: "Timeout Handling"
+          check: "Is timeout/error handling specified?"
+          threshold: "No"
+
+    impact:
+      perceived_slowness: "High"
+      user_abandonment: "Medium"
+      perceived_brokenness: "Low"
+
+    resolution:
+      - "Always specify loading state"
+      - "Include progress indication for >3s operations"
+      - "Design error/timeout handling"
+
+# State coverage patterns
+state_coverage:
+  required_states:
+    happy_path:
+      description: "Everything works perfectly"
+      required: true
+      acceptance_criteria: "{action} succeeds"
+
+    loading_state:
+      description: "User sees feedback during processing"
+      required: true
+      acceptance_criteria: "Shows {spinner|progress|skeleton}"
+
+    empty_state:
+      description: "No data to display"
+      required: true
+      acceptance_criteria: "Shows {empty message|illustration|cta}"
+
+    error_state:
+      description: "Something went wrong"
+      required: true
+      acceptance_criteria: "Shows {error message|recovery action}"
+
+  coverage_threshold:
+    min_states: 4
+    blocking: false
+    description: "All four states must be covered for optimal UX"

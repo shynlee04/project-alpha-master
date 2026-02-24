@@ -1,0 +1,229 @@
+spike_domain_analysis:
+  domains_identified:
+    - name: "project-management"
+      files:
+        - "src/spike/stores/project-crud-slice.ts"
+        - "src/spike/stores/project-bindings-slice.ts"
+        - "src/spike/stores/project-permissions-slice.ts"
+        - "src/spike/stores/project-layout-slice.ts"
+        - "src/spike/stores/project-utils-slice.ts"
+        - "src/spike/infrastructure/persistence/stores/project/project-*.ts"
+        - "src/spike/domain/services/ProjectRegistry.ts"
+        - "src/spike/domain/services/project-registry-types.ts"
+      responsibility: "Project lifecycle, bindings, permissions, layout management, registry tracking"
+    
+    - name: "file-system"
+      files:
+        - "src/spike/infrastructure/filesystem/fsa-storage-adapter.ts"
+        - "src/spike/infrastructure/filesystem/idb-gateway.ts"
+        - "src/spike/infrastructure/filesystem/fsa-gateway.ts"
+        - "src/spike/infrastructure/filesystem/platform-contract.ts"
+        - "src/spike/infrastructure/filesystem/platform-detection.ts"
+        - "src/spike/infrastructure/filesystem/handle-persistence.ts"
+        - "src/spike/infrastructure/filesystem/StorageAdapterFactory.ts"
+        - "src/spike/infrastructure/filesystem/storage-gateway-factory.ts"
+        - "src/spike/infrastructure/filesystem/storage-types.ts"
+      responsibility: "File System Access API, IndexedDB storage, platform detection, handle persistence"
+    
+    - name: "workspace"
+      files:
+        - "src/spike/stores/workspace-store.ts"
+        - "src/spike/stores/workspace-context.ts"
+        - "src/spike/stores/useWorkspaceSwitching.ts"
+        - "src/spike/stores/useCornerstoneStores.ts"
+        - "src/spike/stores/unified-workspace-context.ts"
+        - "src/spike/stores/workspace-types.ts"
+        - "src/spike/lib/ProjectContext.tsx"
+        - "src/spike/lib/workspace/ProjectContext.tsx"
+        - "src/spike/components/common/WorkspaceSwitcher.tsx"
+      responsibility: "Workspace state, switching, cross-workspace event coordination, project context"
+    
+    - name: "notes"
+      files:
+        - "src/spike/components/notes/NoteEditor.tsx"
+        - "src/spike/components/notes/NoteTree.tsx"
+        - "src/spike/components/notes/NoteTreeItem.tsx"
+        - "src/spike/components/notes/NoteSidebar.tsx"
+        - "src/spike/components/notes/NoteContextMenu.tsx"
+        - "src/spike/components/notes/NotesPage.tsx"
+        - "src/spike/lib/notes/note-store.ts"
+      responsibility: "Markdown note editing, tree navigation, sidebar, context menu"
+    
+    - name: "ide"
+      files:
+        - "src/spike/components/ide/FileTree/FileTree.tsx"
+        - "src/spike/components/ide/FileTree/FileTreeItem.tsx"
+        - "src/spike/components/ide/FileTree/ContextMenu.tsx"
+        - "src/spike/components/ide/FileTree/hooks/*.ts"
+        - "src/spike/components/ide/MonacoEditor.tsx"
+        - "src/spike/components/ide/IDELayout.tsx"
+        - "src/spike/components/ide/SyncStatusPanel.tsx"
+        - "src/spike/components/ide/XTerminal/hooks/*.ts"
+      responsibility: "File explorer, code editor, terminal, sync status UI"
+    
+    - name: "file-operations"
+      files:
+        - "src/spike/domain/services/file-crud/file-crud-service.ts"
+        - "src/spike/domain/services/file-crud/file-crud-types.ts"
+        - "src/spike/domain/services/file-crud/unified-file-crud.ts"
+        - "src/spike/domain/services/file-crud/index.ts"
+        - "src/spike/stores/use-file-ops-slice.ts"
+        - "src/spike/stores/use-file-loader-slice.ts"
+        - "src/spike/stores/use-storage-adapter-slice.ts"
+        - "src/spike/stores/use-vfs-sync-slice.ts"
+      responsibility: "Unified CRUD interface, file operations, sync management, adapter selection"
+    
+    - name: "agent-orchestration"
+      files:
+        - "src/spike/domain/services/agent-orchestration-service.ts"
+        - "src/spike/domain/services/agent-workspace-utils.ts"
+        - "src/spike/domain/services/workspace-transition-service.ts"
+        - "src/spike/domain/services/AgentProviderValidator.ts"
+        - "src/spike/domain/services/universal-adapter-factory.ts"
+        - "src/spike/domain/services/universal-provider-registry.ts"
+      responsibility: "Agent lifecycle, workspace transitions, provider registry, adapter factory"
+    
+    - name: "persistence"
+      files:
+        - "src/spike/infrastructure/persistence/dexie-db.ts"
+        - "src/spike/infrastructure/persistence/stores/project/index.ts"
+        - "src/spike/stores/use-fsa-projects.ts"
+        - "src/spike/stores/useProjectStore.ts"
+        - "src/spike/stores/useWorkspaceProjects.ts"
+        - "src/spike/stores/migrate-bindings.ts"
+      responsibility: "IndexedDB persistence, project store management, Dexie database"
+
+  layer_violations:
+    - severity: "P0"
+      location: "src/spike/components/ide/FileTree/hooks/useFileTreeState.ts:2"
+      violation: "Presentation layer importing from lib (infrastructure)"
+      pattern: "import { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter'"
+      impact: "Tight coupling between UI components and storage implementation"
+    
+    - severity: "P0"
+      location: "src/spike/components/ide/FileTree/hooks/useContextMenuActions.ts:3"
+      violation: "Presentation layer importing infrastructure implementation"
+      pattern: "import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter'"
+      impact: "UI depends on concrete storage adapter instead of abstraction"
+    
+    - severity: "P1"
+      location: "src/spike/components/ide/FileTree/hooks/useFileTreeActions.ts:8"
+      violation: "Presentation importing infrastructure implementation"
+      pattern: "import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter'"
+      impact: "Components know about storage adapter details"
+    
+    - severity: "P1"
+      location: "src/spike/domain/services/file-crud/unified-file-crud.ts:32"
+      violation: "Domain layer importing from lib (infrastructure)"
+      pattern: "import type { FileLock } from '@/lib/agent/facades/file-lock'"
+      impact: "Business logic depends on infrastructure implementation"
+    
+    - severity: "P1"
+      location: "src/spike/stores/use-storage-adapter-slice.ts:29"
+      violation: "Store (presentation/state) importing from lib"
+      pattern: "import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter'"
+      impact: "State management depends on concrete implementation"
+    
+    - severity: "P2"
+      location: "src/spike/components/ide/FileTree/FileTree.tsx:54"
+      violation: "Presentation importing infrastructure store"
+      pattern: "import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace'"
+      impact: "UI components directly access infrastructure persistence stores"
+    
+    - severity: "P2"
+      location: "src/spike/components/notes/NoteEditor.tsx:68-69"
+      violation: "Presentation importing multiple lib modules"
+      pattern: "import { useNoteStore } from '@/lib/notes/note-store'; import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store'"
+      impact: "Notes UI depends on lib-level state stores"
+    
+    - severity: "P2"
+      location: "src/spike/lib/ProjectContext.tsx:18-20"
+      violation: "Lib (infrastructure) importing infrastructure"
+      pattern: "import type { Project } from '@/infrastructure/persistence/stores/project/project-types'"
+      impact: "Indirect coupling through multiple layers"
+
+  dependencies:
+    presentation:
+      - "src/lib/filesystem/**" (violation: importing infrastructure)
+      - "src/lib/notes/**" (violation: importing infrastructure)
+      - "src/lib/workspace/**" (violation: importing infrastructure)
+      - "@/infrastructure/persistence/stores/**" (allowed)
+      - "@/infrastructure/filesystem/**" (allowed)
+    
+    stores:
+      - "src/lib/events/**" (infrastructure)
+      - "src/lib/filesystem/**" (violation: infrastructure)
+      - "@/infrastructure/persistence/**" (allowed)
+      - "@/infrastructure/filesystem/**" (allowed)
+      - "@/domain/**" (allowed)
+    
+    domain:
+      - "@/domain/**" (allowed)
+      - "@/infrastructure/**" (allowed)
+      - "src/lib/**" (violation: should use domain interfaces)
+    
+    infrastructure:
+      - "@/infrastructure/**" (allowed)
+      - "@/domain/interfaces/**" (allowed)
+      - No external dependencies (correct)
+
+  patterns:
+    - pattern: "Singleton"
+      occurrences:
+        - "ProjectRegistry.ts:562 - ProjectRegistry singleton"
+        - "universal-provider-registry.ts:682 - universalProviderRegistry singleton"
+        - "handle-persistence.ts:564 - handlePersistenceService singleton"
+        - "StorageAdapterFactory.ts:236 - storageAdapterFactory singleton"
+        - "storage-gateway-factory.ts:165 - storageGatewayFactory singleton"
+        - "dexie-db.ts:420 - db proxy singleton"
+      analysis: "Heavy reliance on singleton pattern for global services. Proper for registry-style services, but creates tight coupling and testing difficulties."
+    
+    - pattern: "Event Bus"
+      occurrences:
+        - "crossWorkspaceEventBus (workspace-store.ts:25, useWorkspaceSwitching.ts:14)"
+        - "WorkspaceEventEmitter (unified-file-crud.ts:34, useTerminalEventSubscriptions.ts:12)"
+        - "eventBus parameter injection (useContextMenuActions.ts)"
+      analysis: "Event-driven architecture for cross-workspace communication. Uses both singleton event bus and injected emitters for flexibility."
+    
+    - pattern: "Zustand Store with Slices"
+      occurrences:
+        - "useProjectStore.ts - 5 slices (crud, bindings, permissions, layout, utils)"
+        - "useFileLoaderSlice.ts - File loading slice"
+        - "useFileOpsSlice.ts - File operations slice"
+        - "useStorageAdapterSlice.ts - Storage adapter slice"
+        - "useVFSSyncSlice.ts - VFS sync slice"
+      analysis: "Clean pattern following Zustand v5 best practices. Each slice <120 lines, composed into single store. Prevents god-store anti-pattern."
+    
+    - pattern: "Provider/Context Pattern"
+      occurrences:
+        - "ProjectProvider (ProjectContext.tsx)"
+        - "ProjectContext (useProjectContext hook)"
+        - "unified-workspace-context.ts - workspace provider"
+      analysis: "React Context for sharing project/workspace state across components. Proper separation of concerns."
+    
+    - pattern: "Factory Pattern"
+      occurrences:
+        - "StorageAdapterFactory.ts - Creates FSA or IDB adapters"
+        - "storage-gateway-factory.ts - Creates storage gateways"
+        - "universal-adapter-factory.ts - Creates universal adapters"
+      analysis: "Factory pattern for creating platform-appropriate storage implementations based on platform contract."
+    
+    - pattern: "Adapter Pattern"
+      occurrences:
+        - "FSAStorageAdapter - File System Access API wrapper"
+        - "LocalFSAdapter - Local filesystem abstraction"
+        - "UnifiedStorageAdapter - Unified interface"
+      analysis: "Adapter pattern to abstract different storage backends behind common interface."
+    
+    - pattern: "Slice Architecture"
+      occurrences:
+        - "project-*.slice.ts files"
+        - "use-*-slice.ts hooks"
+      analysis: "Modular state management where each slice handles specific domain concern. Each slice is <120 lines."
+
+  recommendations:
+    - "Move all '@/lib/filesystem/**' imports in presentation to '@/domain/interfaces/storage-adapter' and inject adapters via context/props"
+    - "Domain services should depend on domain interfaces, not lib implementations"
+    - "Consider moving lib/ to infrastructure/ to make boundaries clearer"
+    - "Use dependency injection for factories instead of singletons where possible"
+    - "Event bus usage is appropriate but should be scoped to cross-workspace concerns only"

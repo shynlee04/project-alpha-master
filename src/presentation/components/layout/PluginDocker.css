@@ -1,0 +1,306 @@
+/**
+ * @fileoverview PluginDocker Styles - 8-bit Design System
+ * @module presentation/components/layout/PluginDocker.css
+ *
+ * EPIC-UXUI-04: Plugin Docker Component
+ * 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ *
+ * @story UXUI-04-04
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   Plugin Docker Container
+   ============================================================================ */
+
+.plugin-docker {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+
+  /* 8-bit Appearance */
+  background: hsl(var(--surface-1));
+  border: 2px solid hsl(var(--border));
+  border-radius: 0; /* Sharp corners */
+  box-shadow: var(--shadow-pixel);
+
+  /* Transitions */
+  transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dragging State */
+.plugin-docker--dragging {
+  box-shadow: var(--shadow-pixel-lg);
+}
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+
+.plugin-docker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 2px solid hsl(var(--border));
+  background: hsl(var(--surface-2));
+  flex-shrink: 0;
+}
+
+.plugin-docker__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: hsl(var(--text-primary));
+}
+
+.plugin-docker__count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  border-radius: 0; /* Sharp corners */
+}
+
+/* ============================================================================
+   Toggle Button
+   ============================================================================ */
+
+.plugin-docker__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+
+  /* 8-bit Appearance */
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 0; /* Sharp corners */
+  color: hsl(var(--text-secondary));
+  cursor: pointer;
+
+  /* Transitions */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.plugin-docker__toggle:hover {
+  background: hsl(var(--surface-3));
+  border-color: hsl(var(--border));
+  color: hsl(var(--text-primary));
+}
+
+.plugin-docker__toggle:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: -2px;
+}
+
+/* ============================================================================
+   Content Area
+   ============================================================================ */
+
+.plugin-docker__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+}
+
+/* Custom scrollbar */
+.plugin-docker__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.plugin-docker__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.plugin-docker__content::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 0; /* Sharp corners */
+}
+
+.plugin-docker__content::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--border-strong));
+}
+
+/* ============================================================================
+   Plugin List
+   ============================================================================ */
+
+.plugin-docker__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.plugin-docker__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 16px;
+  text-align: center;
+  color: hsl(var(--text-muted));
+}
+
+.plugin-docker__empty svg {
+  color: hsl(var(--border-strong));
+}
+
+.plugin-docker__empty p {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: hsl(var(--text-secondary));
+}
+
+.plugin-docker__empty span {
+  font-size: var(--text-xs);
+  color: hsl(var(--text-muted));
+}
+
+/* ============================================================================
+   Collapsed State
+   ============================================================================ */
+
+.plugin-docker--collapsed {
+  width: 48px !important;
+}
+
+.plugin-docker--collapsed .plugin-docker__header {
+  justify-content: center;
+  padding: 8px;
+  border-bottom: none;
+}
+
+.plugin-docker__collapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  flex: 1;
+}
+
+.plugin-docker__collapsed-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  /* 8-bit Appearance */
+  background: hsl(var(--surface-2));
+  border: 2px solid hsl(var(--border));
+  border-radius: 0; /* Sharp corners */
+  color: hsl(var(--text-secondary));
+  cursor: pointer;
+
+  /* Transitions */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.plugin-docker__collapsed-button:hover {
+  background: hsl(var(--surface-3));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+}
+
+.plugin-docker__collapsed-button:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: -2px;
+}
+
+/* Badge for collapsed state */
+.plugin-docker__collapsed-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  border-radius: 0; /* Sharp corners */
+  box-shadow: var(--shadow-pixel-sm);
+}
+
+/* ============================================================================
+   Animation - Panel Slide
+   ============================================================================ */
+
+@keyframes plugin-docker-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.plugin-docker--expanded .plugin-docker__content {
+  animation: plugin-docker-slide-in 200ms ease-out forwards;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .plugin-docker {
+    transition: none;
+  }
+
+  .plugin-docker--expanded .plugin-docker__content {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================================================
+   Touch Device Optimizations
+   ============================================================================ */
+
+@media (pointer: coarse) {
+  .plugin-docker__header {
+    padding: 16px;
+  }
+
+  .plugin-docker__toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .plugin-docker__content {
+    padding: 12px;
+  }
+
+  .plugin-docker__collapsed-button {
+    width: 48px;
+    height: 48px;
+  }
+}

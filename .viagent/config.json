@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "projectId": "ide:proj_1768787923364_wocg1ruel",
+  "exclusionPatterns": [
+    "node_modules",
+    ".git",
+    ".next",
+    "dist",
+    "build",
+    "coverage",
+    ".cache",
+    ".turbo",
+    "out",
+    ".viagent"
+  ],
+  "scan": {
+    "maxDepth": 20,
+    "warningDepth": 15,
+    "maxFiles": 50000,
+    "showProgress": true
+  },
+  "updatedAt": "2026-01-19T01:58:43.414Z"
+}

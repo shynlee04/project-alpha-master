@@ -1,0 +1,36 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*"],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/tests/**",
+    "**/test/**",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    ".vinxi/**",
+    ".output/**"
+  ],
+  "compilerOptions": {
+    // Note: tsgo (TypeScript native compiler) doesn't support all options
+    // These are the compatible performance optimizations
+    "incremental": true,
+    "tsBuildInfoFile": ".cache/tsgo/.tsbuildinfo",
+    // Skip type checking of declaration files for speed
+    "skipLibCheck": true,
+    // Disable strict checks that are slower but keep essential ones
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    // Enable isolated modules for faster transpilation
+    "isolatedModules": true,
+    // Preserve const enums for better performance
+    "preserveConstEnums": true,
+    // Remove baseUrl as it's deprecated in tsgo
+    "baseUrl": null
+  }
+}

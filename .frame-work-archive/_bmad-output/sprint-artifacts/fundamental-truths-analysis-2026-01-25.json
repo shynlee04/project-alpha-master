@@ -1,0 +1,376 @@
+{
+  "metadata": {
+    "artifact_id": "hnd_20260125_analyst_fundamental_truths",
+    "created_date": "2026-01-25",
+    "source_agent": "analyst-ext",
+    "target_agent": "bmad-master",
+    "analysis_version": "1.0.0",
+    "documents_analyzed": [
+      "new-fundamental-truths.md",
+      "ADR-034-project-centric-architecture-2026-01-20.md",
+      "ADR-034-AMENDMENT-001-platform-first-2026-01-21.md"
+    ],
+    "research_date": "2026-01-25",
+    "llm_provider_research": {
+      "method": "Web search via MCP servers",
+      "sources": [
+        "OpenAI official documentation",
+        "Anthropic official documentation",
+        "Google AI developer documentation",
+        "xAI official announcements",
+        "Tech news sources (CNBC, TechCrunch, etc.)"
+      ]
+    }
+  },
+
+  "executive_summary": {
+    "total_gaps_identified": 6,
+    "total_contradictions": 2,
+    "total_missing_topics": 5,
+    "llm_corrections_needed": 0,
+    "critical_items": 4,
+    "high_priority_items": 5,
+    "recommendation": "Update new-fundamental-truths.md to align with ADR-034-AMENDMENT-001, specifically addressing the deprecated 'workspace' concept and adding platform-first plugin defaults. BYOK Vault, Agent/Tool system, and Generative AI features require separate ADRs."
+  },
+
+  "gap_analysis": [
+    {
+      "section": "Project-centric",
+      "adr_034_coverage": "Full coverage - Route → Project → Feature Plugins",
+      "gap_identified": "new-fundamental-truths.md does not reference the unified route /$projectId from ADR-034",
+      "severity": "Medium",
+      "recommendation": "Update references to use /$projectId instead of workspace-based routes"
+    },
+    {
+      "section": "Plugins",
+      "adr_034_coverage": "Full coverage - FeaturePlugin interface, 5 plugins defined",
+      "gap_identified": "new-fundamental-truths.md mentions 2 always-loaded plugins but ADR-034 defines platform-first plugin selection via getDefaultPlugins()",
+      "severity": "Medium",
+      "recommendation": "Align with AMENDMENT-001's platform-first plugin defaults"
+    },
+    {
+      "section": "BYOK Vault",
+      "adr_034_coverage": "Missing - Not mentioned in ADR-034 or amendments",
+      "gap_identified": "BYOK Vault implementation details (LLM providers, key management, vault integration) are NOT covered in ADR-034",
+      "severity": "High",
+      "recommendation": "Create ADR-034-AMENDMENT-002 to specify BYOK Vault integration with TanStack AI SDK"
+    },
+    {
+      "section": "Agents/Tools",
+      "adr_034_coverage": "Partial - Plugin system includes 'agents' plugin ID but no detailed architecture",
+      "gap_identified": "Orchestrator/coordinator patterns, tool permissions, sub-agent delegation are NOT covered in ADR-034",
+      "severity": "High",
+      "recommendation": "Create ADR-034-AMENDMENT-003 to specify Agent/Tool architecture based on TanStack AI patterns"
+    },
+    {
+      "section": "Chat/Threads",
+      "adr_034_coverage": "Partial - Chat plugin exists, but thread management details missing",
+      "gap_identified": "Thread context limits (150k tokens), auto-compaction, thread-per-project-ID are NOT covered in ADR-034",
+      "severity": "High",
+      "recommendation": "Create ADR-034-AMENDMENT-004 to specify thread management architecture"
+    },
+    {
+      "section": "Generative AI Features",
+      "adr_034_coverage": "Missing - Not mentioned in ADR-034 or amendments",
+      "gap_identified": "Individual AI features (AI commands in Notes, text transformation) are NOT covered in ADR-034",
+      "severity": "High",
+      "recommendation": "Create ADR-034-AMENDMENT-005 to specify generative AI feature architecture"
+    }
+  ],
+
+  "contradictions": [
+    {
+      "contradiction_id": "CTR-001",
+      "title": "Workspace Concept vs Platform-First",
+      "new_fundamental_truths_says": "Thread Management: 'Chat cascade threads tied to Project ID and Workspace for RAG context'",
+      "adr_034_says": "AMENDMENT-001 eliminates workspace concept entirely: 'The concept of \"workspaces\" (IDE, Notes, etc.) is ELIMINATED'",
+      "resolution_type": "Update Document",
+      "resolution_detail": "Remove 'Workspace' from thread management description. Threads should be tied to Project ID only, not Workspace."
+    },
+    {
+      "contradiction_id": "CTR-002",
+      "title": "Route Structure References",
+      "new_fundamental_truths_says": "References /ide/$projectId and /notes/$projectId routes throughout document",
+      "adr_034_says": "AMENDMENT-001 eliminates these routes: 'Replace 9 routes with 2: /hub and /$projectId' and 'Old routes are deprecated and redirect to /$projectId'",
+      "resolution_type": "Update Document",
+      "resolution_detail": "Replace all references to /ide/$projectId and /notes/$projectId with /$projectId. Document should reference platform-filtered plugins, not workspace-based routes."
+    }
+  ],
+
+  "missing_topics": [
+    {
+      "topic_id": "MS-001",
+      "title": "Platform-First Plugin Defaults",
+      "adr_coverage": "AMENDMENT-001 defines getDefaultPlugins() and getDefaultLayoutMode()",
+      "missing_from_fundamental_truths": true,
+      "priority": "P0",
+      "description": "getDefaultPlugins() determines available plugins based on deviceType (desktop, tablet, mobile) and storageType (fsa, indexeddb)"
+    },
+    {
+      "topic_id": "MS-002",
+      "title": "Device-Specific Entry Flows",
+      "adr_coverage": "ADR-034 Phase 1: 'Implement device-specific entry flows (FSA vs IndexedDB)'",
+      "missing_from_fundamental_truths": true,
+      "priority": "P1",
+      "description": "Desktop users enter via FSA folder picker; Mobile users enter via Dexie browser project"
+    },
+    {
+      "topic_id": "MS-003",
+      "title": "Handle Persistence Details",
+      "adr_coverage": "ADR-034 Section 2: 'Persistence: Handle in IndexedDB'",
+      "missing_from_fundamental_truths": true,
+      "priority": "P1",
+      "description": "FSA handles are stored in IndexedDB for persistence across sessions"
+    },
+    {
+      "topic_id": "MS-004",
+      "title": "Layout System Specifications",
+      "adr_coverage": "ADR-034 Section 4: 'Unified Layout System' with 1/2/3 column layouts",
+      "missing_from_fundamental_truths": true,
+      "priority": "P2",
+      "description": "PluginLayout with 4 modes: 1-column, 2-column, 3-column, 2+1 (main + sidebar)"
+    },
+    {
+      "topic_id": "MS-005",
+      "title": "Migration Phases",
+      "adr_coverage": "ADR-034 Phase 1-4 with specific stories and completion criteria",
+      "missing_from_fundamental_truths": true,
+      "priority": "P3",
+      "description": "4-phase migration: Foundation, Feature Plugins, Layout System & UX, Cleanup & Migration"
+    }
+  ],
+
+  "llm_corrections": [
+    {
+      "provider": "Google Gemini",
+      "document_claims": "Google Gemini 3.0 variants (Pro + Flash)",
+      "research_verified": true,
+      "verified_models": [
+        "Gemini 3 Pro",
+        "Gemini 3 Flash",
+        "Gemini 2.5 Deep Think (newer)",
+        "Gemini 2.5 Computer Use (newer)"
+      ],
+      "release_timeline": "Gemini 3 series released Nov-Dec 2025",
+      "correction_required": false,
+      "notes": "Document is ACCURATE. Gemini 3.0 Pro and Flash variants exist as claimed."
+    },
+    {
+      "provider": "OpenAI",
+      "document_claims": "GPT 5.2 variants",
+      "research_verified": true,
+      "verified_models": [
+        "GPT-5.2 (released Dec 11, 2025)",
+        "GPT-5.2-Codex (released Dec 18, 2025)",
+        "GPT-5.1 Instant",
+        "GPT-5.1 Thinking"
+      ],
+      "release_timeline": "GPT-5.2 released December 11, 2025",
+      "correction_required": false,
+      "notes": "Document is ACCURATE. GPT-5.2 and its variants exist as claimed."
+    },
+    {
+      "provider": "Anthropic",
+      "document_claims": "Claude 4.5 (Opus, Sonnet, Haiku variants)",
+      "research_verified": true,
+      "verified_models": [
+        "Claude Opus 4.5 (released Nov 24, 2025)",
+        "Claude Sonnet 4.5 (released Sep 29, 2025)",
+        "Claude Haiku 4.5 (released Oct 15, 2025)"
+      ],
+      "release_timeline": "Claude 4.5 family complete by Nov 2025",
+      "correction_required": false,
+      "notes": "Document is ACCURATE. Claude 4.5 family with all three variants exists as claimed."
+    },
+    {
+      "provider": "xAI (Grok)",
+      "document_claims": "Grok support",
+      "research_verified": true,
+      "verified_models": [
+        "Grok 3 (released Feb 17-18, 2025)",
+        "Grok 4.1 (mentioned Nov-Dec 2025)",
+        "Grok 4.20 (teased for early 2026)"
+      ],
+      "release_timeline": "Grok 3 released February 17-18, 2025",
+      "correction_required": false,
+      "notes": "Document is ACCURATE. Grok 3 exists as claimed. Consider adding Grok 4.x if available."
+    },
+    {
+      "provider": "OpenRouter",
+      "document_claims": "OpenAI-compatible endpoints support",
+      "research_verified": true,
+      "verification_details": "OpenRouter supports OpenAI-compatible API format, including Gemini 3 Flash Preview",
+      "correction_required": false,
+      "notes": "Document is ACCURATE. OpenRouter concept and OpenAI-compatible format is correct."
+    },
+    {
+      "provider": "Ollama",
+      "document_claims": "Local Ollama support",
+      "research_verified": true,
+      "verification_details": "Ollama is a local LLM runtime with extensive model support",
+      "correction_required": false,
+      "notes": "Document is ACCURATE. Local Ollama concept is correct."
+    }
+  ],
+
+  "priority_matrix": {
+    "BYOK Vault Integration": {
+      "urgency_score": 95,
+      "reason": "No ADR coverage, critical for BYOK implementation"
+    },
+    "Agent/Tool Architecture": {
+      "urgency_score": 90,
+      "reason": "No ADR coverage, complex system requiring detailed specification"
+    },
+    "Thread Management": {
+      "urgency_score": 85,
+      "reason": "Missing from ADR-034, contradicts AMENDMENT-001"
+    },
+    "Generative AI Features": {
+      "urgency_score": 80,
+      "reason": "No ADR coverage, affects core UX features"
+    },
+    "Platform-First Plugin Defaults": {
+      "urgency_score": 75,
+      "reason": "Defined in AMENDMENT-001 but not reflected in new-fundamental-truths.md"
+    },
+    "Route Structure Update": {
+      "urgency_score": 70,
+      "reason": "Contradicts AMENDMENT-001, needs document update"
+    }
+  },
+
+  "recommendations": [
+    {
+      "rec_id": "REC-001",
+      "priority": "P0",
+      "action": "Update new-fundamental-truths.md Section 4 (Chat cascade and thread management)",
+      "description": "Remove 'Workspace' from thread management description. Change 'tied to Project ID and Workspace' to 'tied to Project ID' to align with AMENDMENT-001",
+      "impact": "Eliminates contradiction with ADR-034-AMENDMENT-001"
+    },
+    {
+      "rec_id": "REC-002",
+      "priority": "P0",
+      "action": "Update all route references in new-fundamental-truths.md",
+      "description": "Replace /ide/$projectId and /notes/$projectId references with /$projectId throughout the document",
+      "impact": "Aligns with ADR-034's single project route decision"
+    },
+    {
+      "rec_id": "REC-003",
+      "priority": "P1",
+      "action": "Add Platform-First Plugin Defaults section",
+      "description": "Reference AMENDMENT-001's getDefaultPlugins() and getDefaultLayoutMode() functions in new-fundamental-truths.md",
+      "impact": "Documents the approved platform-first approach"
+    },
+    {
+      "rec_id": "REC-004",
+      "priority": "P1",
+      "action": "Create ADR-034-AMENDMENT-002 for BYOK Vault",
+      "description": "Draft a new amendment specifying BYOK Vault architecture, LLM provider integration, key storage, and TanStack AI SDK usage",
+      "impact": "Provides architectural guidance for BYOK implementation"
+    },
+    {
+      "rec_id": "REC-005",
+      "priority": "P1",
+      "action": "Create ADR-034-AMENDMENT-003 for Agent/Tool Architecture",
+      "description": "Draft a new amendment specifying orchestrator patterns, tool permissions, sub-agent delegation, and TanStack AI integration",
+      "impact": "Provides architectural guidance for agent system implementation"
+    },
+    {
+      "rec_id": "REC-006",
+      "priority": "P2",
+      "action": "Create ADR-034-AMENDMENT-004 for Thread Management",
+      "description": "Draft a new amendment specifying thread context limits, auto-compaction, thread-per-project-ID pattern, and RAG context management",
+      "impact": "Provides architectural guidance for thread management"
+    },
+    {
+      "rec_id": "REC-007",
+      "priority": "P2",
+      "action": "Create ADR-034-AMENDMENT-005 for Generative AI Features",
+      "description": "Draft a new amendment specifying individual AI features in Notes plugin, AI commands, and text transformation capabilities",
+      "impact": "Provides architectural guidance for generative AI features"
+    },
+    {
+      "rec_id": "REC-008",
+      "priority": "P3",
+      "action": "Add Device-Specific Entry Flows section",
+      "description": "Document desktop (FSA) vs mobile (IndexedDB) entry flows in new-fundamental-truths.md",
+      "impact": "Completes device parity documentation"
+    },
+    {
+      "rec_id": "REC-009",
+      "priority": "P3",
+      "action": "Add Handle Persistence Details section",
+      "description": "Document how FSA handles are stored in IndexedDB for persistence",
+      "impact": "Completes storage architecture documentation"
+    },
+    {
+      "rec_id": "REC-010",
+      "priority": "P3",
+      "action": "Add Migration Phases reference",
+      "description": "Reference ADR-034's Phase 1-4 migration plan in new-fundamental-truths.md",
+      "impact": "Provides implementation roadmap context"
+    }
+  ],
+
+  "tanstack_ai_sdk_verification": {
+    "document_claims": {
+      "orchestrator_patterns": "Claims orchestrator/coordinator mode with read-only tools",
+      "tool_architecture": "Claims client/server tools with tool approval workflow",
+      "agent_loop_strategies": "Claims multi-step task delegation",
+      "isomorphic_tools": "Claims tools work on both client and server"
+    },
+    "research_verified": true,
+      "verified_patterns": [
+        {
+          "pattern": "Agent Loop Strategies",
+          "document": "TanStack AI docs/guide/agent-loop-strategies",
+          "detail": "TanStack AI provides flexible agent loop strategies for iteration control, preventing infinite loops"
+        },
+        {
+          "pattern": "Tool Approval Workflow",
+          "document": "TanStack AI docs/guide/tool-approval",
+          "detail": "Tool approval workflow provides user control for sensitive operations"
+        },
+        {
+          "pattern": "Isomorphic Tool Architecture",
+          "document": "TanStack AI docs/guide/isomorphic-tool-architecture",
+          "detail": "Tools defined once work on both client and server"
+        },
+        {
+          "pattern": "Server/Client Tools",
+          "document": "TanStack AI docs/guide/tool-definition-and-server-client-execution",
+          "detail": "Server tools execute on backend, client tools execute in browser"
+        },
+        {
+          "pattern": "Multi-Modal Support",
+          "document": "TanStack AI docs/guide/multimodal-content",
+          "detail": "Supports text, images, audio, video, and documents"
+        },
+        {
+          "pattern": "Observability",
+          "document": "TanStack AI docs/guide/observability",
+          "detail": "Events for text:started, text:completed, text:iteration for monitoring"
+        }
+      ],
+      "correction_required": false,
+      "notes": "TanStack AI SDK concepts in new-fundamental-truths.md are ACCURATE and align with official documentation. The document references correct URLs and patterns."
+  },
+
+  "next_steps": [
+    "Update new-fundamental-truths.md to address REC-001 and REC-002 (P0 items)",
+    "Create ADR-034-AMENDMENT-002 for BYOK Vault (P1 item)",
+    "Create ADR-034-AMENDMENT-003 for Agent/Tool Architecture (P1 item)",
+    "Update new-fundamental-truths.md to add Platform-First Plugin Defaults reference (P1 item)",
+    "Create remaining amendments for Thread Management and Generative AI Features (P2 items)",
+    "Complete new-fundamental-truths.md updates with device flows, handle persistence, and migration phases (P3 items)"
+  ],
+
+  "verification_status": {
+    "document_staleness": "Fresh (2026-01-25)",
+    "adr_compliance": "Partial - contradictions identified",
+    "llm_provider_accuracy": "100% - All verified accurate",
+    "tanstack_ai_accuracy": "100% - All patterns verified",
+    "overall_status": "ACTION REQUIRED - Update document to resolve contradictions"
+  }
+}

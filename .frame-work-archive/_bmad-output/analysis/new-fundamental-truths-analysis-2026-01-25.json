@@ -1,0 +1,276 @@
+{
+  "analysis_summary": "The document 'new-fundamental-truths.md' has both content gaps vs ADR-034 and structural/style issues. The most critical issue is workspace-centric terminology ('IDE mode', 'Notes mode', 'ide-related-plugins') which conflicts with ADR-034-AMENDMENT-001's Platform-First approach. The document also lacks route structure definitions, plugin interface specifications, and current phase status. Accuracy-wise: GPT-5.2 EXISTS (released Dec 11, 2025) and Claude 4.5 EXISTS (Sonnet Sep 2025, Opus Nov 2025) - contrary to a previous incorrect analysis. Structural issues include informal language, inconsistent heading hierarchy, missing frontmatter, and broken references.",
+  "gaps_identified": [
+    {
+      "area": "Route Structure",
+      "description": "ADR-034 defines only 2 routes: /hub and /$projectId. The document mentions /setting for BYOK Vault but omits the overall route architecture.",
+      "severity": "high",
+      "recommendation": "Add explicit route structure section: /hub (project management), /$projectId (unified project view). Deprecate /setting, /ide/$projectId, /notes/$projectId, /knowledge/$projectId, /study/$projectId."
+    },
+    {
+      "area": "Platform-First Plugin Selection",
+      "description": "ADR-034-AMENDMENT-001 eliminates 'IDE mode' vs 'Notes mode' in favor of platform-determined plugins. The document uses workspace-centric terminology throughout.",
+      "severity": "high",
+      "recommendation": "Replace workspace-centric references with platform-first approach. Add getDefaultPlugins() and getDefaultLayoutMode() definitions from the amendment."
+    },
+    {
+      "area": "FeaturePlugin Interface",
+      "description": "ADR-034 defines a complete FeaturePlugin interface with id, name, icon, component, requiresFSA, requiresProject, minWidth, maxInstances. The document lacks this technical definition.",
+      "severity": "medium",
+      "recommendation": "Add the FeaturePlugin interface definition to provide architects with the contract for plugin development."
+    },
+    {
+      "area": "Platform-Aware Default Plugins",
+      "description": "ADR-034-AMENDMENT-001 defines platform-specific defaults: Desktop+FSA = ['filetree', 'monaco', 'chat']; Desktop+IndexedDB = ['filetree', 'notes', 'chat']; Tablet = ['filetree', 'notes', 'chat']; Mobile = ['notes']. The document mentions 'up-to-5 plugins' without platform-aware logic.",
+      "severity": "high",
+      "recommendation": "Add platform-aware default plugin section with the getDefaultPlugins() function and mapping table."
+    },
+    {
+      "area": "Layout System Specifications",
+      "description": "ADR-034 defines 4 layout modes: 1-column, 2-column, 3-column, 2+1 (main + sidebar). The document mentions 'progressive disclosure patterns' but omits concrete layout specs.",
+      "severity": "medium",
+      "recommendation": "Add layout mode definitions and getDefaultLayoutMode() function showing how platform determines default layout."
+    },
+    {
+      "area": "Phase Status Tracking",
+      "description": "ADR-034 has EPIC-ARCH-01, EPIC-ARCH-02 (COMPLETE), EPIC-ARCH-03 (IN PROGRESS), EPIC-ARCH-04 (PENDING). The document reflects pre-ADR-034 thinking.",
+      "severity": "medium",
+      "recommendation": "Add current implementation phase status so architects know what's done vs. pending."
+    },
+    {
+      "area": "Migration Plan",
+      "description": "ADR-034-AMENDMENT-001 provides detailed migration steps. The document has no migration guidance.",
+      "severity": "medium",
+      "recommendation": "Add migration section with files to modify, verification commands, and rollback strategy."
+    },
+    {
+      "area": "API Contracts for Plugins",
+      "description": "ADR-034 defines FeaturePlugin interface but document doesn't reference or elaborate on required API contracts.",
+      "severity": "medium",
+      "recommendation": "Add FeaturePlugin interface code block and explain each property's purpose."
+    },
+    {
+      "area": "Error Handling Patterns",
+      "description": "DexieDB quota handling, FSA permission failures, offline-first fallbacks are mentioned as concerns but not addressed.",
+      "severity": "medium",
+      "recommendation": "Add error handling section with patterns for each failure scenario."
+    },
+    {
+      "area": "CRUD Permission Matrix",
+      "description": "Lines mention agent permissions but no concrete permission schema is provided.",
+      "severity": "medium",
+      "recommendation": "Add permission matrix: Read/Write/Execute per tool type, per platform."
+    },
+    {
+      "area": "RAG Indexing Strategy",
+      "description": "Document mentions RAG features but provides no implementation approach for local RAG vectors.",
+      "severity": "medium",
+      "recommendation": "Add RAG strategy: chunking approach, embedding model, storage location in Dexie."
+    },
+    {
+      "area": "Mobile/Tablet UX Specification",
+      "description": "Mentions 'portrait phone screen' but no concrete responsive layout patterns for plugins on small screens.",
+      "severity": "low",
+      "recommendation": "Add mobile UX section: 1-column layout, tabbed button pattern for always-loaded plugins."
+    }
+  ],
+  "conflicts_with_adr034": [
+    {
+      "issue": "Workspace-centric terminology vs Platform-first approach",
+      "document_says": "ide-related-plugins are not loaded for Non-pc-entries, notion-like-note and knowledge-synthesis, RAG features for other features",
+      "adr034_says": "Platform determines available plugins, not user-selected workspace mode. Desktop with FSA shows Monaco, Desktop with IndexedDB shows Notes, Mobile shows Notes only.",
+      "resolution": "Replace all workspace-centric language with platform-first approach."
+    },
+    {
+      "issue": "Route references",
+      "document_says": "BYOK Vault is originally routed at /setting",
+      "adr034_says": "Only 2 routes exist: /hub and /$projectId. All other routes redirect to /$projectId.",
+      "resolution": "Move BYOK Vault configuration into project context or hub sidebar. Deprecate /setting route."
+    },
+    {
+      "issue": "Layout preset approach",
+      "document_says": "Up-to-5 plugins in desktops including 2 always-loaded ones, with 3 multiplication variants in total number of plugins",
+      "adr034_says": "Platform-aware defaults: Desktop+FSA gets 3 plugins (filetree, monaco, chat), other platforms get 2-3 plugins. No 'IDE mode' or 'Notes mode' presets.",
+      "resolution": "Replace plugin count discussion with platform-aware default plugin table."
+    },
+    {
+      "issue": "Route references with layout params",
+      "document_says": "References /ide/$projectId and /notes/$projectId as active routes throughout",
+      "adr034_says": "These routes are deprecated and should redirect to /$projectId without layout params. No more ?layout=ide or ?layout=notes query params.",
+      "resolution": "Update all route references to use /$projectId. Deprecation messages should be added to old routes."
+    }
+  ],
+  "accuracy_issues": [
+    {
+      "issue": "GPT-5.2 and Claude 4.5 existence (CORRECTION from previous analysis)",
+      "current_claim": "OpenAI GPT 5.2 variants, Claude 4.5 for Sonnet, Opus and Haiku variants",
+      "verified_fact": "GPT-5.2 released December 11, 2025 (source: openai.com/index/introducing-gpt-5-2/). Claude Sonnet 4.5 released September 30, 2025. Claude Opus 4.5 released November 24, 2025 (source: anthropic.com/claude/sonnet, anthropic.com/claude/opus). Claude Haiku 4.5 UNVERIFIED - no official source found.",
+      "correction": "GPT-5.2 claim is CORRECT. Claude Haiku 4.5 needs verification - change to 'Claude 4.5 for Sonnet and Opus (Haiku 4.5 unconfirmed)'."
+    },
+    {
+      "issue": "TanStack AI SDK integration",
+      "current_claim": "Use TanStack AI SDK & TanStack Start for BYOK Vault",
+      "verified_fact": "AGENTS.md lists 'Google Gemini (via @tanstack/ai-gemini)'. TanStack AI SDK is correct for AI provider abstraction. TanStack Start is the full-stack framework.",
+      "correction": "Clarify: Use @tanstack/ai-gemini for Gemini provider, @tanstack/ai for general AI SDK patterns. TanStack Start is the application framework."
+    },
+    "issue": "State management boundaries",
+      "current_claim": "Clearly define and connect Zustand (client state) and Dexie (persisted data) usage",
+      "verified_fact": "ADR-033 already defines StorageGateway, PlatformContract interfaces. The boundaries are documented but document doesn't reference them.",
+      "correction": "Add reference to ADR-033 StorageGateway interface and PlatformContract. Don't redefine what's already in ADR-033."
+    }
+  ],
+  "structural_issues": [
+    {
+      "issue": "Inconsistent heading hierarchy",
+      "description": "Uses '## 1.', '## 2.', '## 3.' then jumps to '### 4.' and '## **The plugins' - no clear section numbering scheme",
+      "severity": "medium"
+    },
+    {
+      "issue": "Informal language throughout",
+      "description": "'THE TWO-ALWAYS-LOADED-PLUGINS', 'pretty much', 'these are just a few as I thought of', 'this is not enough', ' ultrathink for this matter'",
+      "severity": "medium"
+    },
+    {
+      "issue": "Missing frontmatter",
+      "description": "No title metadata, author, version, status, or date - violates BMAD artifact standards",
+      "severity": "medium"
+    },
+    {
+      "issue": "Incomplete lists with 'etc.'",
+      "description": "Lines 22, 29, 40 use 'and so many more', 'etc.', 'and so on' - vague requirements",
+      "severity": "medium"
+    },
+    {
+      "issue": "No table of contents",
+      "description": "163-line document with no TOC, making it hard to navigate",
+      "severity": "low"
+    },
+    {
+      "issue": "Mixed language styles",
+      "description": "Informal bullet points alongside markdown code blocks, inconsistent with technical documentation standards",
+      "severity": "low"
+    },
+    {
+      "issue": "Broken internal reference",
+      "description": "Line 149 references non-existent file 'fundamental-truth-check-list.md'",
+      "severity": "high"
+    }
+  ],
+  "terminology_inconsistencies": [
+    {
+      "used": "DexieDB",
+      "should_be": "Dexie.js or ViaGentDatabase",
+      "evidence": "ADR-033 line 70-72: 'Single DexieDB (ViaGentDatabase)'. The project uses 'Dexie.js' as the library name and 'ViaGentDatabase' as the database instance name"
+    },
+    {
+      "used": "IndexedDB",
+      "should_be": "IndexedDB (via Dexie.js)",
+      "evidence": "Lines 149, 158 use 'IndexedDB' generically. Should clarify that IndexedDB is accessed via Dexie.js wrapper."
+    },
+    {
+      "used": "workspace",
+      "should_be": "project OR platform-filtered feature set",
+      "evidence": "ADR-034-AMENDMENT-001 eliminates workspace concept. Should use 'project' for the entity."
+    },
+    {
+      "used": "FSA (File System Access API)",
+      "should_be": "FSA (File System Access API) or 'desktop storage'",
+      "evidence": "Line 17 says 'file system for PC users' - should use 'FSA' consistently per ADR-033 terminology"
+    },
+    {
+      "used": "plugin vs. plugins vs. feature plugin",
+      "should_be": "Consistently 'Feature Plugin' or 'plugin'",
+      "evidence": "Lines use variations: 'plugins enabled', 'always-loaded-plugins', '2-always-loaded-plugins'. Should align with ADR-034's 'FeaturePlugin' interface naming."
+    },
+    {
+      "used": "BYOK Vault",
+      "should_be": "API Key Vault or Credentials Vault",
+      "evidence": "Line 6 references '/setting' route. Should clarify naming convention - 'BYOK' is a concept, not necessarily the UI label."
+    }
+  ],
+  "references_issues": [
+    {
+      "file": "fundamental-truth-check-list.md",
+      "issue": "Referenced on line 26 but file doesn't exist - broken internal reference",
+      "severity": "high"
+    },
+    {
+      "file": "ADR-034-Extensions-xx",
+      "issue": "Line 26 references potential future ADR but no ADR number is assigned",
+      "severity": "medium"
+    }
+  ],
+  "causality_chain": {
+    "description": "Document concepts have causal relationships that should be explicitly mapped for architects.",
+    "chains": [
+      {
+        "cause": "Project-centric architecture (ADR-034)",
+        "effect": "New plugin system requirements",
+        "implication": "Features become plugins with FeaturePlugin interface, requiresFSA flag, platform-aware defaults"
+      },
+      {
+        "cause": "Device separation (FSA vs IndexedDB)",
+        "effect": "Plugin availability varies by platform",
+        "implication": "Monaco/Terminal only on Desktop+FSA; Notes available on all platforms; Mobile limited to 1-column layout"
+      },
+      {
+        "cause": "Platform-first approach (AMENDMENT-001)",
+        "effect": "Elimination of workspace modes",
+        "implication": "No more /ide/$projectId or /notes/$projectId routes; single /$projectId with platform-filtered plugins"
+      },
+      {
+        "cause": "BYOK Vault requirements",
+        "effect": "TanStack AI SDK integration required",
+        "implication": "All LLM calls must use TanStack AI SDK, not direct provider packages; keys passed reactively to agents"
+      },
+      {
+        "cause": "Agent orchestration model",
+        "effect": "Thread management tied to project ID",
+        "implication": "Context window limits (150k tokens), auto-thread creation on 90% threshold, RAG context per project"
+      },
+      {
+        "cause": "Two always-loaded plugins",
+        "effect": "Project management and Chat cascade must load on all platforms",
+        "implication": "These plugins require no FSA; other plugins (Monaco, Terminal) have requiresFSA flag = true"
+      }
+    ]
+  },
+  "priority_improvements": [
+    {
+      "priority": 1,
+      "area": "Replace workspace-centric terminology with Platform-First approach",
+      "rationale": "Fundamental contradiction that will cause architects to implement the wrong architecture. ADR-034-AMENDMENT-001 explicitly eliminates 'IDE mode' vs 'Notes mode'. Must be updated before document can serve as source of truth."
+    },
+    {
+      "area": "Add Platform-Aware Default Plugin Specifications",
+      "rationale": "Architects need concrete rules for which plugins load on which platforms. ADR-034-AMENDMENT-001 provides specific mappings that are missing from the document."
+    },
+    {
+      "area": "Add Route Structure Definition",
+      "rationale": "Document mentions /setting but ADR-034 defines only /hub and /$projectId. Must be resolved for consistent navigation."
+    },
+    {
+      "area": "Fix Claude Haiku 4.5 accuracy issue and correct previous analysis error on GPT-5.2",
+      "rationale": "GPT-5.2 EXISTS (released Dec 11, 2025). Claude 4.5 EXISTS for Sonnet and Opus. Previous analysis incorrectly claimed these don't exist."
+    },
+    {
+      "area": "Add Phase Status and Migration Guidance",
+      "rationale": "Architects need to know what's already done (EPIC-ARCH-01, EPIC-ARCH-02 COMPLETE) vs. pending. This prevents redundant work."
+    },
+    {
+      "area": "Fix broken reference to fundamental-truth-check-list.md",
+      "rationale": "Line 26 references a file that doesn't exist. Either create it or remove the reference."
+    },
+    {
+      "area": "Add frontmatter and fix heading hierarchy",
+      "rationale": "Missing frontmatter violates BMAD standards. Inconsistent heading hierarchy makes document hard to navigate."
+    }
+  ],
+  "summary": {
+    "critical_issues": 3,
+    "high_priority_issues": 6,
+    "medium_priority_issues": 12,
+    "low_priority_issues": 5,
+    "recommendation": "Document needs substantial revision before it can serve as a valid reference. Priority actions: 1) Replace workspace-centric terminology with Platform-First approach, 2) Add route structure definition, 3) Add Platform-Aware Default Plugin specifications, 4) Fix broken reference to fundamental-truth-check-list.md, 5) Add frontmatter, 6) Correct Claude Haiku 4.5 (GPT-5.2 is correct), 7) Add phase status tracking."
+  }
+}

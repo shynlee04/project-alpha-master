@@ -1,0 +1,53 @@
+/**
+ * @fileoverview PluginPanelRight Styles - 8-bit Design System
+ * @module presentation/components/layout/PluginPanelRight.css
+ *
+ * EPIC-UXUI-04: Plugin Panel System
+ * Right panel specific styles (2.5 grid units)
+ *
+ * @story UXUI-04-05
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   PluginPanelRight Specific Styles
+   ============================================================================ */
+
+.plugin-panel-right {
+  /* Right panel width (flex: 2.5) */
+  min-width: 250px;
+  max-width: 450px;
+}
+
+/* Ensure right panel takes full height */
+.plugin-panel-right .plugin-panel__content {
+  height: 100%;
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .plugin-panel-right {
+    min-width: 220px;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .plugin-panel-right {
+    min-width: 200px;
+    max-width: 350px;
+  }
+}
+
+/* ============================================================================
+   Mobile/Tablet Portrait - Hide right panel
+   ============================================================================ */
+
+@media (max-width: 767px) {
+  .plugin-panel-right {
+    display: none;
+  }
+}

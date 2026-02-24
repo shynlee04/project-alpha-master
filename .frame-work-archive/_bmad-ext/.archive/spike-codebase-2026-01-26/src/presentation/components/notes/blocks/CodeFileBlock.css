@@ -1,0 +1,142 @@
+/**
+ * @fileoverview Code File Block Styles
+ * @module presentation/components/notes/blocks/CodeFileBlock.css
+ * @story P1.5-03
+ *
+ * 8-bit dark theme styling for CodeFileBlock
+ */
+
+.code-file-block {
+  margin: 12px 0;
+}
+
+.code-file-block[data-align="center"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.code-file-block[data-align="right"] {
+  margin-left: auto;
+}
+
+/* Header */
+.code-file-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--color-surface-elevated, #171717);
+  border: 1px solid var(--color-border, #262626);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  min-height: 32px;
+}
+
+.code-file-block__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.code-file-block__filename {
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  color: var(--color-text-primary, #e5e5e5);
+}
+
+.code-file-block__language {
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  color: var(--color-text-secondary, #a3a3a3);
+  background: var(--color-surface, #0a0a0a);
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.code-file-block__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.code-file-block__action-btn {
+  padding: 4px 6px;
+  color: var(--color-text-secondary, #a3a3a3);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.code-file-block__action-btn:hover {
+  color: var(--color-text-primary, #e5e5e5);
+  background: var(--color-surface-hover, #262626);
+}
+
+.code-file-block__action-btn--remove:hover {
+  color: var(--color-error, #ef4444);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Content */
+.code-file-block__content {
+  display: block;
+  padding: 12px;
+  background: var(--color-surface, #0a0a0a);
+  border: 1px solid var(--color-border, #262626);
+  border-radius: 0 0 4px 4px;
+  overflow-x: auto;
+  max-height: 400px;
+}
+
+.code-file-block__content code {
+  display: block;
+  font-family: var(--font-family-mono, 'JetBrains Mono', 'Fira Code', monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-primary, #e5e5e5);
+}
+
+.code-line {
+  display: flex;
+  min-height: 1.5em;
+}
+
+/* Syntax highlighting tokens */
+.token-string {
+  color: #86efac;
+}
+
+.token-comment {
+  color: #737373;
+  font-style: italic;
+}
+
+.token-number {
+  color: #fbbf24;
+}
+
+.token-keyword {
+  color: #c084fc;
+  font-weight: 500;
+}
+
+.token-type {
+  color: #fbbf24;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .code-file-block__content {
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  .code-file-block__header {
+    padding: 6px 8px;
+  }
+}

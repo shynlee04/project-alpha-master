@@ -1,0 +1,810 @@
+{
+  "config": {
+    "configFile": "/Users/apple/Documents/coding-projects/project-alpha-master/playwright.config.ts",
+    "rootDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 8
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "e2e/results/html-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "e2e/results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "mobile-safari",
+        "name": "mobile-safari",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "tablet",
+        "name": "tablet",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 8,
+    "webServer": {
+      "command": "pnpm dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "phase-1-e2e-user-journey.spec.ts",
+      "file": "phase-1-e2e-user-journey.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Phase 1 E2E User Journey",
+          "file": "phase-1-e2e-user-journey.spec.ts",
+          "line": 56,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Journey: Complete Phase 1 User Flow",
+              "file": "phase-1-e2e-user-journey.spec.ts",
+              "line": 63,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "completes full Phase 1 user journey",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 35088,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                "column": 20,
+                                "line": 91
+                              },
+                              "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/settings\", waiting until \"load\"\u001b[22m\n\n\n  89 |       } else {\n  90 |         // If no obvious link, navigate directly\n> 91 |         await page.goto('/settings');\n     |                    ^\n  92 |       }\n  93 |\n  94 |       // Verify Settings page loads\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:91:20"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:14.796Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/phase-1-e2e-user-journey-P-23540-s-full-Phase-1-user-journey-chromium/error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-499851d752b72ef54121",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 64,
+                  "column": 5
+                },
+                {
+                  "title": "mobile journey: temp project auto-creation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 15096,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:211:31\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:210:12",
+                            "location": {
+                              "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                              "column": 31,
+                              "line": 211
+                            },
+                            "snippet": "  209 |\n  210 |       test.step('mobile has temp project flow', () => {\n> 211 |         expect(hasMobileFlow).toBe(true);\n      |                               ^\n  212 |       });\n  213 |     });\n  214 |"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                "column": 31,
+                                "line": 211
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  209 |\n  210 |       test.step('mobile has temp project flow', () => {\n> 211 |         expect(hasMobileFlow).toBe(true);\n      |                               ^\n  212 |       });\n  213 |     });\n  214 |\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:211:31\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:210:12"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "steps": [
+                            {
+                              "title": "mobile has temp project flow",
+                              "duration": 26,
+                              "error": {
+                                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                                "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:211:31\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:210:12",
+                                "location": {
+                                  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                  "column": 31,
+                                  "line": 211
+                                },
+                                "snippet": "  209 |\n  210 |       test.step('mobile has temp project flow', () => {\n> 211 |         expect(hasMobileFlow).toBe(true);\n      |                               ^\n  212 |       });\n  213 |     });\n  214 |"
+                              }
+                            }
+                          ],
+                          "startTime": "2026-01-30T04:00:14.799Z",
+                          "annotations": [],
+                          "attachments": [],
+                          "errorLocation": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                            "column": 31,
+                            "line": 211
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-73f217aec02d94173741",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 197,
+                  "column": 5
+                },
+                {
+                  "title": "desktop journey: folder picker or temp project",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 2,
+                          "status": "failed",
+                          "duration": 14933,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:229:32\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:228:12",
+                            "location": {
+                              "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                              "column": 32,
+                              "line": 229
+                            },
+                            "snippet": "  227 |\n  228 |       test.step('desktop has folder picker flow', () => {\n> 229 |         expect(hasDesktopFlow).toBe(true);\n      |                                ^\n  230 |       });\n  231 |     });\n  232 |   });"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                "column": 32,
+                                "line": 229
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  227 |\n  228 |       test.step('desktop has folder picker flow', () => {\n> 229 |         expect(hasDesktopFlow).toBe(true);\n      |                                ^\n  230 |       });\n  231 |     });\n  232 |   });\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:229:32\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:228:12"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "steps": [
+                            {
+                              "title": "desktop has folder picker flow",
+                              "duration": 24,
+                              "error": {
+                                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                                "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:229:32\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:228:12",
+                                "location": {
+                                  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                  "column": 32,
+                                  "line": 229
+                                },
+                                "snippet": "  227 |\n  228 |       test.step('desktop has folder picker flow', () => {\n> 229 |         expect(hasDesktopFlow).toBe(true);\n      |                                ^\n  230 |       });\n  231 |     });\n  232 |   });"
+                              }
+                            }
+                          ],
+                          "startTime": "2026-01-30T04:00:14.782Z",
+                          "annotations": [],
+                          "attachments": [],
+                          "errorLocation": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                            "column": 32,
+                            "line": 229
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-bd3be01bc95d3fcbfea3",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 215,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "Phase 1 Acceptance Criteria Verification",
+              "file": "phase-1-e2e-user-journey.spec.ts",
+              "line": 234,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "FR-P1-01: Mobile users auto-receive temp project",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 3,
+                          "status": "passed",
+                          "duration": 15099,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:14.812Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-02f9204455c6b4bed80e",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 235,
+                  "column": 5
+                },
+                {
+                  "title": "FR-P1-02: Desktop users see folder picker or temp",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 4,
+                          "status": "failed",
+                          "duration": 15267,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:254:35",
+                            "location": {
+                              "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                              "column": 35,
+                              "line": 254
+                            },
+                            "snippet": "  252 |       // Should have some project selection method\n  253 |       const hasProjectSelection = await page.locator('text=Select Folder, text=temp project, text=Temp Project, button').count() > 0;\n> 254 |       expect(hasProjectSelection).toBe(true);\n      |                                   ^\n  255 |     });\n  256 |\n  257 |     test('FR-P1-03: Unknown routes fall back gracefully', async ({ page }) => {"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                "column": 35,
+                                "line": 254
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  252 |       // Should have some project selection method\n  253 |       const hasProjectSelection = await page.locator('text=Select Folder, text=temp project, text=Temp Project, button').count() > 0;\n> 254 |       expect(hasProjectSelection).toBe(true);\n      |                                   ^\n  255 |     });\n  256 |\n  257 |     test('FR-P1-03: Unknown routes fall back gracefully', async ({ page }) => {\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:254:35"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:14.765Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/phase-1-e2e-user-journey-P-5a940-s-see-folder-picker-or-temp-chromium/test-failed-1.png"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/phase-1-e2e-user-journey-P-5a940-s-see-folder-picker-or-temp-chromium/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                            "column": 35,
+                            "line": 254
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-28ddfaf48f6fda6cb844",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 246,
+                  "column": 5
+                },
+                {
+                  "title": "FR-P1-03: Unknown routes fall back gracefully",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 15329,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:14.798Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-6a990d921062f6246d94",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 257,
+                  "column": 5
+                },
+                {
+                  "title": "NFR-P1-01: No Maximum update depth errors",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "timedOut",
+                          "duration": 40050,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                "column": 20,
+                                "line": 268
+                              },
+                              "message": "Error: page.goto: net::ERR_ABORTED; maybe frame was detached?\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/settings\", waiting until \"load\"\u001b[22m\n\n\n  266 |\n  267 |       for (const route of routes) {\n> 268 |         await page.goto(route);\n      |                    ^\n  269 |         await page.waitForTimeout(500);\n  270 |\n  271 |         const hasDepthError = await page.evaluate(() => {\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:268:20"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:14.801Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-f336617d823ba790d10b",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 264,
+                  "column": 5
+                },
+                {
+                  "title": "NFR-P1-02: No console errors on route load",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 7,
+                          "status": "timedOut",
+                          "duration": 35094,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts",
+                                "column": 18,
+                                "line": 291
+                              },
+                              "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/settings\", waiting until \"load\"\u001b[22m\n\n\n  289 |       await page.goto('/ide');\n  290 |       await page.waitForTimeout(500);\n> 291 |       await page.goto('/settings');\n      |                  ^\n  292 |       await page.waitForTimeout(500);\n  293 |\n  294 |       // Filter out non-blocking errors\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/phase-1-e2e-user-journey.spec.ts:291:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:14.828Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/phase-1-e2e-user-journey-P-f297f-onsole-errors-on-route-load-chromium/error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-9710db91f4e6cbc78cef",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 279,
+                  "column": 5
+                },
+                {
+                  "title": "NFR-P1-03: HMR doesn't break pages (simulated)",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 3,
+                          "status": "passed",
+                          "duration": 20921,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:32.340Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-c0e191f5f68b426be8ea",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 308,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "Phase 1 Gate Summary",
+              "file": "phase-1-e2e-user-journey.spec.ts",
+              "line": 326,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "generate Phase 1 gate verification summary",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 22037,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "═══════════════════════════════════════\n"
+                            },
+                            {
+                              "text": "PHASE 1 GATE VERIFICATION SUMMARY\n"
+                            },
+                            {
+                              "text": "═══════════════════════════════════════\n"
+                            },
+                            {
+                              "text": "Date: 2026-01-30T04:00:54.056Z\n"
+                            },
+                            {
+                              "text": "Total Gates: 7\n"
+                            },
+                            {
+                              "text": "Passed: 5\n"
+                            },
+                            {
+                              "text": "Failed: 2\n"
+                            },
+                            {
+                              "text": "───────────────────────────────────────\n"
+                            },
+                            {
+                              "text": "✓ Route: /notes\n"
+                            },
+                            {
+                              "text": "✗ Route: /notes/test-project\n"
+                            },
+                            {
+                              "text": "✓ Route: /ide\n"
+                            },
+                            {
+                              "text": "✗ Route: /ide/test-project\n"
+                            },
+                            {
+                              "text": "✓ Route: /settings\n"
+                            },
+                            {
+                              "text": "✓ Mobile: /ide loads\n"
+                            },
+                            {
+                              "text": "✓ Desktop: /notes loads\n"
+                            },
+                            {
+                              "text": "═══════════════════════════════════════\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-01-30T04:00:32.351Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "2caa19fa6cf06905a8b2-a5c314207476859cb3bc",
+                  "file": "phase-1-e2e-user-journey.spec.ts",
+                  "line": 327,
+                  "column": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Phase 1 Foundation Completion",
+          "file": "phase-1-e2e-user-journey.spec.ts",
+          "line": 385,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Phase 1 is complete and ready for Phase 2",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 18147,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-30T04:00:34.645Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2caa19fa6cf06905a8b2-004d6fb1396a6fbf5f7d",
+              "file": "phase-1-e2e-user-journey.spec.ts",
+              "line": 386,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-01-30T03:59:48.111Z",
+    "duration": 69655.96100000001,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}

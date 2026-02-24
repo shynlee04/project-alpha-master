@@ -1,0 +1,342 @@
+{
+  "workflow": "run_tool",
+  "description": "Complete flow from agent decision to tool execution to result handling",
+  "entry_point": {
+    "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+    "function": "useAgentChatWithTools",
+    "line": 173
+  },
+  "registry_used": {
+    "file": "src/infrastructure/tools/centralized-tool-registry.ts",
+    "name": "CentralizedToolRegistry",
+    "singleton": "toolRegistry"
+  },
+  "sequence": [
+    {
+      "step": 1,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "sendMessage",
+      "action": "User sends message to agent via sendMessage() callback"
+    },
+    {
+      "step": 2,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "classifyCurrentMode",
+      "action": "ModeClassifier determines agent mode (coding, knowledge, orchestrator)"
+    },
+    {
+      "step": 3,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "rawSendMessage",
+      "action": "TanStack AI useChat hook sends message to LLM via SSE"
+    },
+    {
+      "step": 4,
+      "file": "src/routes/api/chat.ts",
+      "function": "Route.server.handlers.POST",
+      "action": "Server receives chat request, validates API key and messages"
+    },
+    {
+      "step": 5,
+      "file": "src/routes/api/chat.ts",
+      "function": "getTools",
+      "action": "Retrieves tool definitions from centralized tool registry"
+    },
+    {
+      "step": 6,
+      "file": "src/routes/api/chat.ts",
+      "function": "chat()",
+      "action": "TanStack AI creates chat stream with LLM adapter and tools"
+    },
+    {
+      "step": 7,
+      "file": "src/routes/api/chat.ts",
+      "function": "toServerSentEventsStream",
+      "action": "Converts chat stream to SSE format for client"
+    },
+    {
+      "step": 8,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "useChat",
+      "action": "TanStack AI receives SSE stream, parses tool_calls from LLM response"
+    },
+    {
+      "step": 9,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "pendingApprovals (useMemo)",
+      "action": "Extracts pending tool approvals from message parts"
+    },
+    {
+      "step": 10,
+      "file": "src/lib/agent/factory.ts",
+      "function": "createAgentClientTools",
+      "action": "Creates client tool implementations with TanStack AI clientTools()"
+    },
+    {
+      "step": 11,
+      "file": "src/lib/agent/factory.ts",
+      "function": "createClientFileTools / createClientTerminalTools / createClientNoteTools",
+      "action": "Creates tool handlers with workspace permission checks"
+    },
+    {
+      "step": 12,
+      "file": "src/lib/agent/factory.ts",
+      "function": "getWorkspaceExecutionContext",
+      "action": "Retrieves current workspace state from Zustand stores"
+    },
+    {
+      "step": 13,
+      "file": "src/lib/agent/workspace-permission-manager.ts",
+      "function": "checkWorkspacePermission",
+      "action": "Validates tool against workspace bindings and permissions"
+    },
+    {
+      "step": 14,
+      "file": "src/lib/agent/tool-permission-manager.ts",
+      "function": "checkPermission",
+      "action": "Checks trust level, session trust, YOLO mode, category approval"
+    },
+    {
+      "step": 15,
+      "file": "src/lib/agent/factory.ts",
+      "function": "toolDef.client(async (args) => {...})",
+      "action": "Executes tool implementation if permission granted"
+    },
+    {
+      "step": 16,
+      "file": "src/lib/agent/facades/file-tools-impl.ts",
+      "function": "FileToolsFacade.readFile/writeFile/listDirectory",
+      "action": "Performs actual file system operation with locking"
+    },
+    {
+      "step": 17,
+      "file": "src/lib/agent/facades/terminal-tools-impl.ts",
+      "function": "TerminalToolsFacade.executeCommand",
+      "action": "Executes command in WebContainer with timeout and event emission"
+    },
+    {
+      "step": 18,
+      "file": "src/lib/agent/tools/tool-execution-logger.ts",
+      "function": "logExecution / logSuccess / logError",
+      "action": "Logs tool execution to IndexedDB for audit trail"
+    },
+    {
+      "step": 19,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "approveToolCall / rejectToolCall",
+      "action": "Handles user approval/denial of tool execution"
+    },
+    {
+      "step": 20,
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "addToolApprovalResponse",
+      "action": "Sends approval response to TanStack AI for tool re-execution"
+    }
+  ],
+  "permission_checks": [
+    {
+      "check": "workspace_agent_available",
+      "file": "src/lib/agent/workspace-permission-manager.ts",
+      "function": "checkWorkspacePermission",
+      "line": 86,
+      "result": "Returns block if agent not available in workspace"
+    },
+    {
+      "check": "tool_workspace_permission",
+      "file": "src/lib/agent/workspace-permission-manager.ts",
+      "function": "checkWorkspacePermission",
+      "line": 108,
+      "result": "Returns block if tool not enabled for workspace"
+    },
+    {
+      "check": "tool_trust_level",
+      "file": "src/lib/agent/tool-permission-manager.ts",
+      "function": "checkPermission",
+      "line": 129,
+      "result": "Returns needsApproval=true if trust level is 'prompt'"
+    },
+    {
+      "check": "session_trust",
+      "file": "src/lib/agent/tool-permission-manager.ts",
+      "function": "checkPermission",
+      "line": 160,
+      "result": "Auto-approves if tool has session trust"
+    },
+    {
+      "check": "yolo_mode",
+      "file": "src/lib/agent/tool-permission-manager.ts",
+      "function": "checkPermission",
+      "line": 160,
+      "result": "Auto-approves all tools if YOLO mode enabled"
+    },
+    {
+      "check": "category_approval",
+      "file": "src/lib/agent/tool-permission-manager.ts",
+      "function": "checkPermission",
+      "line": 160,
+      "result": "Auto-approves if tool category is approved"
+    }
+  ],
+  "execution_context": {
+    "type": "webcontainer",
+    "primary_file": "src/lib/agent/facades/terminal-tools-impl.ts",
+    "secondary_files": [
+      "src/lib/webcontainer/manager.ts",
+      "src/lib/filesystem/local-fs-adapter.ts",
+      "src/infrastructure/sync/sync-manager.ts"
+    ],
+    "event_bus": "WorkspaceEventEmitter",
+    "events_emit": [
+      "process:started",
+      "process:output",
+      "process:exited",
+      "file:modified",
+      "file:created",
+      "file:deleted",
+      "agent:tool:started",
+      "agent:tool:completed",
+      "agent:tool:failed"
+    ]
+  },
+  "result_handling": {
+    "aggregation": "TanStack AI useChat hook aggregates tool results into messages array",
+    "state_update": {
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "function": "setToolCalls",
+      "action": "Updates toolCalls state with execution status"
+    },
+    "persistence": {
+      "file": "src/lib/agent/tools/tool-execution-logger.ts",
+      "function": "ToolExecutionLogger",
+      "store": "IndexedDB via dexie-db.ts"
+    },
+    "error_propagation": {
+      "file": "src/lib/agent/facades/file-tools-impl.ts",
+      "function": "checkPermission",
+      "throws": "ToolPermissionDeniedError",
+      "caught_by": "toolDef.client handler",
+      "returns": "{ success: false, error: message }"
+    }
+  },
+  "invariant_assumptions": [
+    {
+      "assumption": "ToolPermissionManager is singleton and initialized before use",
+      "enforced_by": "ToolPermissionManager.getInstance() pattern"
+    },
+    {
+      "assumption": "Workspace state is available in Zustand stores before tool execution",
+      "enforced_by": "getWorkspaceExecutionContext() reads from stores"
+    },
+    {
+      "assumption": "WebContainer is booted before terminal tool execution",
+      "enforced_by": "TerminalToolsFacade.executeCommand checks isBooted()"
+    },
+    {
+      "assumption": "File locks are released even on error",
+      "enforced_by": "FileToolsFacade uses try/finally pattern"
+    },
+    {
+      "assumption": "Tool definitions are registered before chat API is called",
+      "enforced_by": "initializeToolRegistry() called in getTools()"
+    },
+    {
+      "assumption": "API key is passed in request body (IndexedDB not available server-side)",
+      "enforced_by": "chat.ts validates apiKey field"
+    }
+  ],
+  "failure_points": [
+    {
+      "point": "Tool permission denied",
+      "condition": "checkPermission returns canExecute=false",
+      "result": "Tool returns { success: false, error: 'Permission denied' }",
+      "handled_by": "toolDef.client handler in factory.ts"
+    },
+    {
+      "point": "Workspace not ready",
+      "condition": "getFileTools() returns null",
+      "result": "Tool returns { success: false, error: 'No project folder opened' }",
+      "handled_by": "createClientFileTools in factory.ts"
+    },
+    {
+      "point": "WebContainer not booted",
+      "condition": "isBooted() returns false",
+      "result": "TerminalToolsError('WebContainer not booted')",
+      "handled_by": "TerminalToolsFacade.executeCommand"
+    },
+    {
+      "point": "Command timeout",
+      "condition": "Command exceeds timeout (default 30s)",
+      "result": "TerminalToolsError('Command timed out')",
+      "handled_by": "Promise.race with timeoutPromise"
+    },
+    {
+      "point": "File not found",
+      "condition": "localFS.readFile returns null",
+      "result": "Tool returns { success: false, error: 'File not found' }",
+      "handled_by": "FileToolsFacade.readFile"
+    },
+    {
+      "point": "Tool not registered",
+      "condition": "toolRegistry.get(id) returns undefined",
+      "result": "Tool definition not included in LLM context",
+      "handled_by": "getFilteredTools in centralized-tool-registry.ts"
+    },
+    {
+      "point": "Model doesn't support tools",
+      "condition": "modelId in MODELS_WITHOUT_TOOL_SUPPORT",
+      "result": "Tools stripped from request, model responds without tool_calls",
+      "handled_by": "modelSupportsTools() in chat.ts"
+    }
+  ],
+  "data_flow": {
+    "input": {
+      "source": "User message via sendMessage()",
+      "format": "string | CoreMessage (multimodal)"
+    },
+    "llm_context": {
+      "source": "TanStack AI chat() function",
+      "includes": ["messages", "tools", "systemPrompts"]
+    },
+    "tool_call": {
+      "source": "LLM response via SSE",
+      "format": "UIMessage with tool-call parts"
+    },
+    "execution": {
+      "source": "TanStack AI clientTools() handler",
+      "format": "ClientTool.execute(args)"
+    },
+    "result": {
+      "source": "Tool implementation",
+      "format": "{ success: boolean; data?: T; error?: string }"
+    },
+    "aggregation": {
+      "source": "TanStack AI useChat",
+      "format": "messages array with tool-result parts"
+    }
+  },
+  "key_files": {
+    "entry_point": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+    "tool_factory": "src/lib/agent/factory.ts",
+    "permission_manager": "src/lib/agent/tool-permission-manager.ts",
+    "workspace_permission": "src/lib/agent/workspace-permission-manager.ts",
+    "file_facade": "src/lib/agent/facades/file-tools-impl.ts",
+    "terminal_facade": "src/lib/agent/facades/terminal-tools-impl.ts",
+    "execution_logger": "src/lib/agent/tools/tool-execution-logger.ts",
+    "chat_api": "src/routes/api/chat.ts",
+    "tool_registry": "src/infrastructure/tools/centralized-tool-registry.ts"
+  },
+  "trust_levels": {
+    "auto": "Execute immediately without user approval",
+    "prompt": "Require user approval before execution",
+    "block": "Never execute"
+  },
+  "tool_categories": {
+    "files": "read_file, write_file, list_files, delete_file",
+    "terminal": "execute_command",
+    "knowledge": "synthesize, process_pdf, process_image, process_url",
+    "search": "search_notes",
+    "vision": "process_image",
+    "web": "process_url"
+  },
+  "generated_at": "2026-01-18T10:30:00.000Z"
+}

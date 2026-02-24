@@ -1,0 +1,20 @@
+{
+  "name": "type-safe-automation",
+  "version": "1.0.0",
+  "description": "Automated type safety and contract synchronization for TanStack Start",
+  "scripts": {
+    "types:generate": "pnpm run types:routes && pnpm run types:contracts && pnpm run types:validate",
+    "types:routes": "tanstack-router generate && echo '✓ Route types generated'",
+    "types:contracts": "node scripts/generate-contract-types.js",
+    "types:validate": "node scripts/validate-type-contracts.js",
+    "types:watch": "chokidar 'src/routes/**/*.tsx' 'src/domain/**/*.ts' 'src/infrastructure/**/*.ts' -c 'pnpm types:generate'",
+    "schema:sync": "node scripts/sync-schemas.js",
+    "schema:watch": "chokidar 'src/**/*schema*.ts' 'src/**/*.zod.ts' -c 'pnpm schema:sync'",
+    "contracts:check": "node scripts/check-api-contracts.js",
+    "deps:visualize": "madge src --image deps-graph.svg && echo '✓ Dependency graph generated: deps-graph.svg'",
+    "deps:circular": "madge src --circular && echo '✓ No circular dependencies found'",
+    "lint:types": "tsc --noEmit --pretty",
+    "lint:types:fast": "tsgo --noEmit",
+    "fix:types": "node scripts/auto-fix-types.js"
+  }
+}

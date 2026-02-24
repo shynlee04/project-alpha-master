@@ -1,0 +1,66 @@
+# Phase 2+ Context Exclusion
+# These directories contain AI/Agent features - Phase 2+
+# Excluded from AI context to prevent poisoning during Phase 1A work
+# Created: 2026-01-29
+
+# Core AI Library (24,946 lines)
+src/lib/agent/
+
+# Chat Components (10,934 lines)
+src/presentation/components/chat/
+
+# Agent Components (11,929 lines)
+src/presentation/components/agent/
+
+# Workflow Builder (5,938 lines)
+src/lib/workflow/
+
+# RAG Components (1,198 lines)
+src/presentation/components/rag/
+
+# AI Note Services
+src/lib/notes/*ai*
+src/lib/notes/note-ai-service.ts
+src/lib/notes/ai-completion-service.ts
+
+# AI Note Components
+src/presentation/components/notes/AISlashCommand.tsx
+src/presentation/components/notes/AICompletionMenu.tsx
+src/presentation/components/notes/AISuggestionPanel.tsx
+
+# Chat Plugin
+src/plugins/chat/
+
+# Agent/Provider/Conversation Stores
+src/infrastructure/persistence/stores/agents/
+src/infrastructure/persistence/stores/providers/
+src/infrastructure/persistence/stores/conversation/
+
+# Domain Tools (AI)
+src/domain/tools/
+
+# Infrastructure Tools
+src/infrastructure/tools/
+
+# Application Services (AI)
+src/application/services/ProviderService.ts
+src/application/services/AgentService.ts
+
+# Agent Route
+src/routes/agents.tsx
+
+# IDE AI Panels
+src/presentation/components/ide/AgentChatPanel.tsx
+src/presentation/components/ide/AgentChatPanel/
+src/presentation/components/ide/AgentsPanel.tsx
+src/presentation/components/ide/EnhancedChatInterface.tsx
+
+# Spike folder (duplicate codebase)
+spike/
+
+# Legacy lib directories being migrated
+src/lib/filesystem/
+src/lib/workspace/
+
+# Archive folders
+_bmad-ext/.archive/

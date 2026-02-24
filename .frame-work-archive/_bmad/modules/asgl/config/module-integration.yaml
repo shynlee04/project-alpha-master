@@ -1,0 +1,322 @@
+# ASGL Module Integration Configuration
+# Defines how ASGL orchestrator invokes other modules
+# ASGL does NOT replace these modules, it INTEGRATES with them
+
+version: "1.1.0"
+last_updated: "2026-01-06T10:00:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MODULE REGISTRY
+# ═══════════════════════════════════════════════════════════════════════════
+
+modules:
+  # -------------------------------------------------------------------------
+  # QUALITY MODULE (Diagnostics) - upgraded from deep-scan
+  # -------------------------------------------------------------------------
+  quality:
+    path: "_bmad/modules/quality/"
+    purpose: "Comprehensive architectural diagnostics & evidence-based auditing"
+    status: "ACTIVE"
+
+    # ASGL invokes, does NOT replace
+    relationship: "INVOKE_FOR_DIAGNOSTICS"
+
+    entry_points:
+      - workflow: "full-scan"
+        path: "_bmad/modules/quality/workflows/full-scan.md"
+        use_when: "Need comprehensive codebase scan"
+        output: "_bmad/modules/quality/artifacts/scan-results/"
+
+      - workflow: "targeted-scan"
+        path: "_bmad/modules/quality/workflows/targeted-scan.md"
+        use_when: "Need domain-specific scan (state, types, persistence, etc.)"
+
+      - workflow: "code-review"
+        path: "_bmad/modules/quality/workflows/code-review.md"
+        use_when: "Post-fix verification"
+
+    agents:
+      - id: "state-scanner"
+        purpose: "Store duplication, god stores, circular deps"
+      - id: "types-scanner"
+        purpose: "TypeScript errors, contract drift"
+      - id: "architecture-scanner"
+        purpose: "Layer violations, god components"
+      - id: "ux-scanner"
+        purpose: "Mobile gaps, i18n coverage"
+      - id: "security-scanner"
+        purpose: "API key exposure, XSS vectors"
+      - id: "persistence-scanner"
+        purpose: "IndexedDB quota, schema migrations"
+      - id: "performance-scanner"
+        purpose: "Bundle bloat, render waste"
+      - id: "workspace-scanner"
+        purpose: "Cross-workspace leaks, event isolation"
+
+    integration_pattern: |
+      # When ASGL needs diagnostics:
+      1. Load quality module
+      2. Execute appropriate scan workflow
+      3. Collect scan results
+      4. Feed to architecture-remediation or sprint-planning
+
+  # -------------------------------------------------------------------------
+  # ARCHITECTURE-REMEDIATION MODULE (Fixes)
+  # -------------------------------------------------------------------------
+  architecture-remediation:
+    path: "_bmad/modules/architecture-remediation/"
+    purpose: "Systematic execution of course correction and remediation"
+    status: "ACTIVE"
+
+    # ASGL invokes, does NOT replace
+    relationship: "INVOKE_FOR_REMEDIATION"
+
+    entry_points:
+      - workflow: "eliminate-god-stores"
+        path: "_bmad/modules/architecture-remediation/workflows/eliminate-god-stores.md"
+        use_when: "Story involves splitting oversized stores"
+
+      - workflow: "normalize-components"
+        path: "_bmad/modules/architecture-remediation/workflows/normalize-components.md"
+        use_when: "Story involves splitting oversized components"
+
+      - workflow: "state-consolidation-cycle"
+        path: "_bmad/modules/architecture-remediation/workflows/state-consolidation-cycle.md"
+        use_when: "Story is part of Epic 53 (ADR-024)"
+
+      - workflow: "fix-typescript-errors"
+        path: "_bmad/modules/architecture-remediation/workflows/fix-typescript-errors.md"
+        use_when: "Story involves batch TS error fixes"
+
+      - workflow: "workspace-file-system-e2e"
+        path: "_bmad/modules/architecture-remediation/workflows/workspace-file-system-e2e.md"
+        use_when: "Story involves workspace E2E implementation"
+
+    agents:
+      - id: "store-refactorer"
+        purpose: "God store elimination, slice extraction"
+      - id: "component-splitter"
+        purpose: "Component normalization (<300 lines)"
+      - id: "typescript-fixer"
+        purpose: "Batch TS error remediation"
+      - id: "test-writer"
+        purpose: "Test coverage improvement"
+      - id: "workspace-architect"
+        purpose: "Workspace E2E implementation"
+      - id: "file-sync-specialist"
+        purpose: "Sync strategies"
+
+    tracking:
+      file: "_bmad-output/sprint-artifacts/arc-sprint-status.yaml"
+      epics: ["ARC-1", "ARC-2", "ARC-3", "ARC-4"]
+
+    integration_pattern: |
+      # When ASGL needs remediation:
+      1. Load architecture-remediation module
+      2. Select appropriate workflow based on story type
+      3. Load corresponding agent
+      4. Execute workflow with validation gates
+      5. Update arc-sprint-status.yaml
+
+  # -------------------------------------------------------------------------
+  # GOVERNANCE MODULE (Artifact Lifecycle)
+  # -------------------------------------------------------------------------
+  governance:
+    path: "_bmad/modules/governance/"
+    purpose: "Artifact tracking, naming enforcement, stale validation"
+    status: "ACTIVE"
+
+    relationship: "INVOKE_FOR_ARTIFACT_MANAGEMENT"
+
+    entry_points:
+      - workflow: "stale-artifact-validation"
+        path: "_bmad/modules/governance/workflows/stale-artifact-validation.md"
+        use_when: "Handoff artifact >24 hours old"
+
+      - workflow: "naming-enforcement"
+        path: "_bmad/modules/governance/workflows/naming-enforcement.md"
+        use_when: "Creating new artifacts"
+
+      - workflow: "archive-cycle"
+        path: "_bmad/modules/governance/workflows/archive-cycle.md"
+        use_when: "Daily artifact cleanup"
+
+    integration_pattern: |
+      # When ASGL creates artifacts:
+      1. Check naming conventions via governance module
+      2. Validate artifact freshness (<24h for handoffs)
+      3. Register in artifact-registry.yaml
+      4. Auto-archive expired artifacts
+
+  # -------------------------------------------------------------------------
+  # BMAD CORE WORKFLOWS
+  # -------------------------------------------------------------------------
+  bmad-core:
+    path: "_bmad/bmm/"
+    purpose: "Standard BMAD workflows for general development"
+    status: "ACTIVE"
+
+    relationship: "INVOKE_FOR_STANDARD_PROCESSES"
+
+    entry_points:
+      - workflow: "dev-story"
+        path: "_bmad/bmm/workflows/4-implementation/dev-story/workflow.yaml"
+        alias: "dev-story"
+        use_when: "Standard story implementation"
+
+      - workflow: "code-review"
+        path: "_bmad/bmm/workflows/4-implementation/code-review/workflow.yaml"
+        alias: "code-review"
+        use_when: "Story requires code review"
+
+      - workflow: "correct-course"
+        path: "_bmad/bmm/workflows/4-implementation/correct-course/workflow.yaml"
+        alias: "correct-course"
+        use_when: "Significant deviation detected"
+
+      - workflow: "sprint-planning"
+        path: "_bmad/bmm/workflows/4-implementation/sprint-planning/workflow.yaml"
+        alias: "sprint-planning"
+        use_when: "Planning new sprint"
+
+      - workflow: "create-story"
+        path: "_bmad/bmm/workflows/4-implementation/create-story/workflow.yaml"
+        alias: "create-story"
+        use_when: "Creating next story from epic"
+
+      - workflow: "retrospective"
+        path: "_bmad/bmm/workflows/4-implementation/retrospective/workflow.yaml"
+        alias: "retrospective"
+        use_when: "Epic complete, need lessons learned"
+
+    agents:
+      - id: "analyst"
+        path: "_bmad/bmm/agents/analyst.md"
+        purpose: "Requirements analysis, research"
+      - id: "architect"
+        path: "_bmad/bmm/agents/architect.md"
+        purpose: "System design, ADRs"
+      - id: "dev"
+        path: "_bmad/bmm/agents/dev.md"
+        purpose: "Implementation, code review"
+      - id: "sm"
+        path: "_bmad/bmm/agents/sm.md"
+        purpose: "Story management, sprint tracking"
+      - id: "pm"
+        path: "_bmad/bmm/agents/pm.md"
+        purpose: "Backlog management"
+      - id: "tea"
+        path: "_bmad/bmm/agents/tea.md"
+        purpose: "Test architecture"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKFLOW ROUTING DECISION TREE
+# ═══════════════════════════════════════════════════════════════════════════
+
+workflow_routing:
+  decision_tree:
+    - condition: "story.type == 'DIAGNOSTIC'"
+      module: "quality"
+      workflow: "targeted-scan"
+
+    - condition: "story.type == 'GOD_STORE_SPLIT'"
+      module: "architecture-remediation"
+      workflow: "eliminate-god-stores"
+      agent: "store-refactorer"
+
+    - condition: "story.type == 'COMPONENT_SPLIT'"
+      module: "architecture-remediation"
+      workflow: "normalize-components"
+      agent: "component-splitter"
+
+    - condition: "story.epic == 'EPIC-53'"
+      module: "architecture-remediation"
+      workflow: "state-consolidation-cycle"
+      agent: "store-refactorer"
+
+    - condition: "story.type == 'TYPESCRIPT_FIX'"
+      module: "architecture-remediation"
+      workflow: "fix-typescript-errors"
+      agent: "typescript-fixer"
+
+    - condition: "story.type == 'WORKSPACE_E2E'"
+      module: "architecture-remediation"
+      workflow: "workspace-file-system-e2e"
+      agent: "workspace-architect"
+
+    - condition: "story.requires_code_review == true"
+      module: "bmad-core"
+      workflow: "code-review"
+      agent: "dev"
+
+    - condition: "story.type == 'IMPLEMENTATION'"
+      module: "bmad-core"
+      workflow: "dev-story"
+      agent: "dev"
+
+    - condition: "default"
+      module: "bmad-core"
+      workflow: "dev-story"
+      agent: "dev"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PLATFORM INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+platforms:
+  claude_code:
+    config_dir: ".claude/"
+    skill_sync: true
+    sync_target: ".claude/skills/asgl/SKILL.md"
+    skill_contents: "Copy of README.md"
+
+    auto_load_triggers:
+      - "autonomous loop"
+      - "self-governing"
+      - "execute course correction"
+      - "run full cycle"
+
+  opencode:
+    config_dir: ".opencode/"
+    skill_sync: true
+    sync_target: ".opencode/skill/asgl/SKILL.md"
+    skill_contents: "Copy of README.md"
+
+  bmad_master:
+    path: "_bmad/core/agents/bmad-master.md"
+    integration: |
+      @bmad-core-bmad-master detects ASGL-related intent:
+      - "autonomous loop" → load ASGL
+      - "course correction sprint" → load ASGL
+      - "execute full cycle" → load ASGL
+
+      ASGL then routes to appropriate module/workflow.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HANDOFF PROTOCOL
+# ═══════════════════════════════════════════════════════════════════════════
+
+handoff:
+  when_invoking_module:
+    - step: "Generate handoff artifact"
+      template: "_bmad/modules/asgl/templates/handoff-artifact.md"
+
+    - step: "Include context"
+      fields:
+        - session_id
+        - story_id
+        - task_objective
+        - constraints
+        - acceptance_criteria
+        - validation_commands
+
+    - step: "Track in registry"
+      file: "_bmad/modules/governance/scratchpad/artifact-registry.yaml"
+
+  on_module_return:
+    - step: "Receive completion report"
+    - step: "Validate acceptance criteria"
+    - step: "Update LOOP_STATE"
+    - step: "Update sprint-status"
+    - step: "Check governance triggers"
+    - step: "Continue to next story"

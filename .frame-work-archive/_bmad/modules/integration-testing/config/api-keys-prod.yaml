@@ -1,0 +1,263 @@
+# ============================================================================
+# REAL API KEY MANAGEMENT
+# ============================================================================
+# Integration Testing Module - Production API Keys
+#
+# Purpose: Real-world testing with actual API keys (NO MOCKS)
+#          Track quota and costs to prevent exhaustion
+#          Enable production-grade testing
+#
+# SECURITY: This file is gitignored - NEVER commit to version control
+# Governance: Tier 3 (Archival) - Keep for 90 days max
+# Last Updated: 2026-01-06T00:00:00+07:00
+# ============================================================================
+
+version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+last_updated: "2026-01-06T00:00:00+07:00"
+
+# ============================================================================
+# API KEYS (USER-PROVIDED)
+# ============================================================================
+
+# ⚠️  SECURITY WARNING ⚠️
+# - NEVER commit these keys to git
+# - NEVER log keys in output
+# - NEVER include in handoff artifacts
+# - Load from YAML config only (not environment)
+# - Validate key format before use
+
+api_keys:
+  gemini:
+    key: "AIzaSyAY-8Zev3jmTXfut3TlshfEGyxIlZjieXs"  # Replace with actual key
+    purpose: "Real AI model testing for production validation"
+    provider: "Google"
+    documentation: "https://ai.google.dev/gemini-api/docs/models"
+
+    # PRIMARY MODEL: Gemini 3 Pro Preview (Jan 2026)
+    # "OUR MOST INTELLIGENT MODEL" - Best multimodal understanding
+    primary_model: "gemini-3-pro-preview"
+    model_capabilities:
+      - "Multimodal: Text, Image, Video, Audio, PDF"
+      - "1M token context window"
+      - "Code execution supported"
+      - "Function calling supported"
+      - "Thinking supported"
+      - "Agentic coding and vibe-coding"
+
+    # FALLBACK MODEL: Gemini 3 Flash Preview (Dec 2025)
+    # "OUR MOST BALANCED MODEL" - Built for speed, scale, and frontier intelligence
+    fallback_model: "gemini-3-flash-preview"
+    fallback_capabilities:
+      - "Multimodal: Text, Image, Video, Audio, PDF"
+      - "1M token context window"
+      - "Faster than Pro, optimized for scale"
+      - "Low-latency, high volume tasks"
+
+    # MINIMUM ACCEPTABLE: Gemini 2.5 Flash (June 2025)
+    # "Best price-performance model"
+    # NOTE: Anything smaller than 2.5 Flash is NOT acceptable
+    minimum_model: "gemini-2.5-flash"
+    minimum_reason: "Best price-performance, anything smaller is unacceptable"
+
+    quota:
+      max_requests_per_day: 1000
+      current_usage: 0
+      last_reset: "2026-01-06T00:00:00+07:00"
+      reset_frequency: "daily"
+
+    cost_tracking:
+      estimated_cost_per_request: 0.0001  # USD (varies by model)
+      daily_budget: 10.0  # USD
+      current_spend: 0.0
+      budget_alert_threshold: 8.0  # Alert at 80% of budget
+
+    rate_limiting:
+      requests_per_minute: 60
+      current_rate: 0
+      last_minute_reset: "2026-01-06T00:00:00+07:00"
+
+    status: "ACTIVE"  # ACTIVE | SUSPENDED | EXHAUSTED
+
+  openrouter:
+    key: "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"  # Replace with actual key
+    purpose: "Multi-model routing testing for production validation"
+    provider: "OpenRouter"
+    documentation: "https://openrouter.ai/models?order=pricing-low-to-high"
+
+    # FREE MODELS ONLY (as of 2026-01-06)
+    free_models:
+      # Coding Agent: Devstral 2 2512 (Free)
+      # Specialized for agentic coding tasks
+      # 123B parameters, state-of-the-art open-source
+      coding_model: "mistralai/devstral-2512:free"
+      coding_capabilities:
+        - "Agentic coding specialization"
+        - "State-of-the-art reasoning"
+        - "Free tier available on OpenRouter"
+
+      # Image Processing/Multimodal: Mistral Small 3.1 24B (Free)
+      # Advanced multimodal capabilities
+      # 24B parameters, upgraded from Mistral Small 3
+      multimodal_model: "mistralai/mistral-small-3.1-24b-instruct:free"
+      multimodal_capabilities:
+        - "Advanced multimodal capabilities"
+        - "Image processing"
+        - "Free tier available on OpenRouter"
+
+    quota:
+      max_requests_per_day: 500  # Free tier limits
+      current_usage: 0
+      last_reset: "2026-01-06T00:00:00+07:00"
+      reset_frequency: "daily"
+
+    cost_tracking:
+      estimated_cost_per_request: 0.0  # FREE models
+      daily_budget: 0.0  # FREE tier
+      current_spend: 0.0
+      budget_alert_threshold: "N/A (free tier)"
+
+    rate_limiting:
+      requests_per_minute: 30  # Free tier rate limit
+      current_rate: 0
+      last_minute_reset: "2026-01-06T00:00:00+07:00"
+
+    status: "ACTIVE"  # ACTIVE | SUSPENDED | EXHAUSTED
+
+# ============================================================================
+# SECURITY PROTOCOLS
+# ============================================================================
+
+security:
+  key_validation:
+    - "Validate key format before API calls"
+    - "Check key is not empty or placeholder"
+    - "Verify key length meets requirements"
+
+  logging_protection:
+    - "NEVER log full key in output"
+    - "Log only: '***{last_4_chars}***'"
+    - "Sanitize all logs and reports"
+
+  artifact_protection:
+    - "NEVER include keys in handoff artifacts"
+    - "Reference via: 'configured in api-keys-prod.yaml'"
+    - "Block artifact creation if keys detected in content"
+
+  access_control:
+    - "Only real-world-validator agent can access"
+    - "Requires explicit approval for use"
+    - "Track all API key usage in AGENT-STATE.yaml"
+
+# ============================================================================
+# QUOTA MANAGEMENT
+# ============================================================================
+
+quota_management:
+  daily_reset:
+    schedule: "0 0 * * *"  # Midnight daily
+    actions:
+      - "Reset current_usage to 0"
+      - "Update last_reset timestamp"
+      - "Generate daily usage report"
+      - "Alert if budget exceeded previous day"
+
+  budget_alerts:
+    warning_at: 80  # Percentage
+    critical_at: 95  # Percentage
+    exhausted_at: 100  # Percentage
+
+    on_warning:
+      action: "LOG warning, continue testing"
+      notification: "Include in daily report"
+
+    on_critical:
+      action: "PAUSE new tests, complete current"
+      notification: "IMMEDIATE alert to human"
+
+    on_exhausted:
+      action: "SUSPEND all testing, BLOCK new requests"
+      notification: "CRITICAL alert, budget exhausted"
+      recovery: "Wait for manual reset or budget increase"
+
+  usage_tracking:
+    tracked_metrics:
+      - "total_requests_today: count"
+      - "successful_requests: count"
+      - "failed_requests: count"
+      - "average_response_time_ms: milliseconds"
+      - "total_cost_today: USD"
+      - "cost_per_request: USD"
+
+    output: "_bmad-output/usage-reports/api-usage-{date}.md"
+
+# ============================================================================
+# TESTING PROTOCOLS
+# ============================================================================
+
+testing_protocols:
+  pre_test_validation:
+    - "Check key status is ACTIVE"
+    - "Verify budget not exhausted"
+    - "Confirm quota available"
+    - "Validate key format"
+
+  during_test:
+    - "Track each API call"
+    - "Monitor response times"
+    - "Log errors without exposing keys"
+    - "Increment usage counters"
+
+  post_test:
+    - "Update usage statistics"
+    - "Check budget thresholds"
+    - "Generate test summary"
+    - "Alert if approaching limits"
+
+# ============================================================================
+# FAILURE HANDLING
+# ============================================================================
+
+failure_handling:
+  key_invalid:
+    action: "BLOCK all testing, ALERT human immediately"
+    recovery: "Wait for new valid key"
+
+  quota_exceeded:
+    action: "SUSPEND testing until reset"
+    recovery: "Wait for daily reset or budget increase"
+
+  rate_limit_hit:
+    action: "THROTTLE requests, implement exponential backoff"
+    recovery: "Wait for rate limit window to clear"
+
+  budget_exhausted:
+    action: "SUSPEND all testing, CRITICAL alert"
+    recovery: "Wait for manual budget increase"
+
+# ============================================================================
+# COST OPTIMIZATION
+# ============================================================================
+
+cost_optimization:
+  strategies:
+    - "Cache responses when appropriate"
+    - "Batch requests when possible"
+    - "Use cheaper models for testing"
+    - "Implement request deduplication"
+    - "Optimize prompt sizes to reduce token usage"
+
+  cost_alerts:
+    daily_budget_warning: 8.0  # USD
+    daily_budget_critical: 9.5  # USD
+    daily_budget_exhausted: 10.0  # USD
+
+# ============================================================================
+# VERSION CONTROL
+# ============================================================================
+
+version:
+  config_version: "1.0.0"
+  schema_version: "1.0.0"
+  last_rotation: "2026-01-06T00:00:00+07:00"
+  next_rotation: "2026-04-06T00:00:00+07:00"  # Quarterly key rotation

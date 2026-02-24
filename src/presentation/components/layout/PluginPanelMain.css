@@ -1,0 +1,69 @@
+/**
+ * @fileoverview PluginPanelMain Styles - 8-bit Design System
+ * @module presentation/components/layout/PluginPanelMain.css
+ *
+ * EPIC-UXUI-04: Plugin Panel System
+ * Main panel specific styles (4 grid units)
+ *
+ * @story UXUI-04-05
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   PluginPanelMain Specific Styles
+   ============================================================================ */
+
+.plugin-panel-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.plugin-panel-main-wrapper .activity-bar-main-top {
+  flex-shrink: 0;
+}
+
+.plugin-panel-main-wrapper .plugin-panel-main {
+  flex: 1;
+  min-height: 0;
+}
+
+.plugin-panel-main {
+  /* Main panel takes the most space (flex: 4) */
+  min-width: 400px;
+  flex: 4 !important; /* Override to ensure main panel is largest */
+}
+
+/* Ensure main panel takes full height */
+.plugin-panel-main .plugin-panel__content {
+  height: 100%;
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .plugin-panel-main {
+    min-width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .plugin-panel-main {
+    min-width: 300px;
+  }
+}
+
+/* ============================================================================
+   Mobile/Tablet Portrait - Full width
+   ============================================================================ */
+
+@media (max-width: 767px) {
+  .plugin-panel-main {
+    min-width: 100%;
+    flex: 1 !important;
+  }
+}

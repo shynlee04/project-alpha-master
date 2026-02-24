@@ -1,0 +1,1154 @@
+src/application/services/ProviderService.ts(718,9): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'GeminiAdapterConfig'.
+src/application/services/ProviderService.ts(737,9): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'AnthropicAdapterConfig'.
+src/application/services/ProviderService.ts(796,9): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'GeminiAdapterConfig'.
+src/application/services/ProviderService.ts(831,9): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'AnthropicAdapterConfig'.
+src/application/services/ProviderService.ts(1119,72): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'CustomAdapterConfig'.
+src/application/services/ProviderService.ts(1155,72): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'CustomAdapterConfig'.
+src/application/services/ProviderService.ts(1760,7): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'GeminiAdapterConfig'.
+src/application/services/ProviderService.ts(1812,7): error TS2353: Object literal may only specify known properties, and 'apiKey' does not exist in type 'AnthropicAdapterConfig'.
+src/core/entities/Agent.ts(9,72): error TS2307: Cannot find module '../../domain/entities/agent' or its corresponding type declarations.
+src/core/entities/index.ts(9,15): error TS2307: Cannot find module '../../domain/entities/agent' or its corresponding type declarations.
+src/core/entities/index.ts(15,35): error TS2307: Cannot find module '../../shared/types/index' or its corresponding type declarations.
+src/core/entities/index.ts(18,15): error TS2307: Cannot find module '../../domain/entities/project' or its corresponding type declarations.
+src/core/entities/index.ts(21,15): error TS2307: Cannot find module '../../domain/entities/workspace' or its corresponding type declarations.
+src/core/entities/index.ts(24,15): error TS2307: Cannot find module '../../domain/entities/rag' or its corresponding type declarations.
+src/core/entities/index.ts(27,15): error TS2307: Cannot find module '../../domain/entities/knowledge' or its corresponding type declarations.
+src/core/entities/index.ts(30,15): error TS2307: Cannot find module '../../domain/entities/study' or its corresponding type declarations.
+src/core/entities/Project.ts(5,15): error TS2307: Cannot find module '../../domain/entities/project' or its corresponding type declarations.
+src/core/entities/Provider.ts(5,35): error TS2307: Cannot find module '../../shared/types/index' or its corresponding type declarations.
+src/core/entities/Workspace.ts(5,15): error TS2307: Cannot find module '../../domain/entities/workspace' or its corresponding type declarations.
+src/domain/agent.ts(10,57): error TS2307: Cannot find module '../value-objects/workspace-binding' or its corresponding type declarations.
+src/domain/agent.ts(11,57): error TS2307: Cannot find module '../value-objects/tool-permission' or its corresponding type declarations.
+src/domain/agent.ts(12,31): error TS2307: Cannot find module '../value-objects/workspace-type' or its corresponding type declarations.
+src/domain/services/agent-orchestration-service.ts(9,23): error TS2307: Cannot find module '../entities/agent' or its corresponding type declarations.
+src/domain/services/agent-orchestration-service.ts(144,48): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/domain/services/agent-orchestration-service.ts(218,55): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/domain/services/index.ts(55,8): error TS2307: Cannot find module '@/domain/types/llm/provider-types' or its corresponding type declarations.
+src/domain/services/note-gateway.ts(23,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/domain/services/project-registry-types.ts(10,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/domain/services/ProjectRegistry.ts(43,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/domain/services/universal-adapter-factory.ts(17,8): error TS2307: Cannot find module '@/domain/types/llm/provider-types.js' or its corresponding type declarations.
+src/domain/services/universal-adapter-factory.ts(65,77): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+src/domain/services/universal-provider-registry.ts(17,8): error TS2307: Cannot find module '@/domain/types/llm/provider-types.js' or its corresponding type declarations.
+src/domain/services/universal-provider-registry.ts(413,58): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/domain/services/universal-provider-registry.ts(449,36): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/domain/services/workspace-transition-service.ts(9,23): error TS2307: Cannot find module '../entities/agent' or its corresponding type declarations.
+src/infrastructure/dexie-db-core-types.ts(14,40): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/dexie-db-core-types.ts(153,40): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/dexie-db-plugin-types.ts(11,61): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/infrastructure/dexie-db-workflow-types.ts(11,31): error TS2307: Cannot find module '@/lib/workflow/builder/types' or its corresponding type declarations.
+src/infrastructure/events/index.ts(11,54): error TS2307: Cannot find module '../persistence/state-orchestrator' or its corresponding type declarations.
+src/infrastructure/filesystem/file-ops.ts(301,27): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/file-tree-scanner.ts(28,8): error TS2307: Cannot find module '@/domain/types/viagent-metadata' or its corresponding type declarations.
+src/infrastructure/filesystem/file-tree-scanner.ts(33,8): error TS2307: Cannot find module '@/domain/types/viagent-metadata' or its corresponding type declarations.
+src/infrastructure/filesystem/folder-overlap-service.ts(18,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/filesystem/fsa-storage-adapter.ts(105,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/handle-persistence.ts(36,8): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers' or its corresponding type declarations.
+src/infrastructure/filesystem/handle-persistence.ts(37,38): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/infrastructure/filesystem/handle-persistence.ts(343,39): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/handle-persistence.ts(439,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/handle-types.ts(11,38): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/infrastructure/filesystem/idb-gateway.ts(26,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/filesystem/idb-gateway.ts(27,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-idb-file-types' or its corresponding type declarations.
+src/infrastructure/filesystem/idb-gateway.ts(314,12): error TS18048: 'allFiles' is possibly 'undefined'.
+src/infrastructure/filesystem/idb-gateway.ts(336,17): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/infrastructure/filesystem/idb-gateway.ts(420,51): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/infrastructure/filesystem/idb-gateway.ts(428,45): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/infrastructure/filesystem/index.ts(167,8): error TS2307: Cannot find module '@/domain/types/viagent-metadata' or its corresponding type declarations.
+src/infrastructure/filesystem/index.ts(177,8): error TS2307: Cannot find module '@/domain/types/viagent-metadata' or its corresponding type declarations.
+src/infrastructure/filesystem/local-fs-adapter.ts(53,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/markdown-sync-service.ts(22,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/filesystem/viagent-service.ts(25,8): error TS2307: Cannot find module '@/domain/types/viagent-metadata' or its corresponding type declarations.
+src/infrastructure/filesystem/viagent-service.ts(33,8): error TS2307: Cannot find module '@/domain/types/viagent-metadata' or its corresponding type declarations.
+src/infrastructure/filesystem/viagent-service.ts(356,34): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/infrastructure/filesystem/viagent-service.ts(370,31): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/infrastructure/index.ts(19,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/agents/agent-selection-store.ts(15,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/agents/slices/agent-crud-slice.ts(13,34): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/persistence/stores/agents/slices/agent-utils-slice.ts(14,34): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/persistence/stores/agents/types.ts(11,46): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/persistence/stores/analytics-store.ts(13,51): error TS2307: Cannot find module '@/lib/analytics/metrics-collector' or its corresponding type declarations.
+src/infrastructure/persistence/stores/analytics-store.ts(14,39): error TS2307: Cannot find module '@/lib/analytics/performance-monitor' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/canvas-db.ts(19,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/slices/canvas-io-slice.ts(20,51): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/slices/canvas-linkage-slice.ts(20,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/slices/canvas-linkage-slice.ts(22,39): error TS2307: Cannot find module '@/lib/canvas/linkage-analyzer' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/slices/canvas-state-slice.ts(24,45): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/slices/canvas-state-slice.ts(25,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/types.ts(16,8): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/canvas/types.ts(17,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/index.ts(64,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(14,36): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(66,7): error TS2353: Object literal may only specify known properties, and 'workspaceType' does not exist in type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(106,36): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'Partial<ConversationWithId>'.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(115,24): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(118,25): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(139,56): error TS2339: Property 'status' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(142,49): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts(145,49): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(21,40): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(22,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(118,63): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(129,35): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(130,39): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(131,31): error TS2339: Property 'title' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(132,33): error TS2339: Property 'preview' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(133,33): error TS2339: Property 'agentId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(135,40): error TS2339: Property 'scrollPosition' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(136,35): error TS2339: Property 'createdAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(137,35): error TS2339: Property 'updatedAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(141,19): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(142,22): error TS2339: Property 'content' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(143,22): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(144,24): error TS2339: Property 'agentName' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(145,25): error TS2339: Property 'agentModel' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(146,24): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(148,24): error TS2339: Property 'toolCalls' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(148,40): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(284,18): error TS7006: Parameter 'all' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(286,24): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(287,22): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts(287,25): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/chat/slices/context-window-slice.ts(79,30): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window-slice.ts(99,30): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window-slice.ts(107,11): error TS2322: Type '{ [x: string]: ThreadWithId | { contextWindow: { maxTokens: any; currentTokens: number; compressionStrategy: any; }; id: string; conversationId: string; isRoot?: boolean; }; }' is not assignable to type 'Record<string, ThreadWithId>'.
+  'string' index signatures are incompatible.
+    Type 'ThreadWithId | { contextWindow: { maxTokens: any; currentTokens: number; compressionStrategy: any; }; id: string; conversationId: string; isRoot?: boolean | undefined; }' is not assignable to type 'ThreadWithId'.
+      Object literal may only specify known properties, and 'contextWindow' does not exist in type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window-slice.ts(110,41): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window-slice.ts(127,52): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window-slice.ts(128,30): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window/internal.ts(44,52): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window/internal.ts(45,49): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window/setters.ts(14,42): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/context-window/setters.ts(35,9): error TS2322: Type '{ [x: string]: ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean; }; }' is not assignable to type 'Record<string, ThreadWithId>'.
+  'string' index signatures are incompatible.
+    Type 'ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean | undefined; }' is not assignable to type 'ThreadWithId'.
+      Object literal may only specify known properties, and 'contextWindow' does not exist in type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window/setters.ts(36,21): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window/setters.ts(62,9): error TS2322: Type '{ [x: string]: ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean; }; }' is not assignable to type 'Record<string, ThreadWithId>'.
+  'string' index signatures are incompatible.
+    Type 'ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean | undefined; }' is not assignable to type 'ThreadWithId'.
+      Object literal may only specify known properties, and 'contextWindow' does not exist in type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/context-window/setters.ts(63,21): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/message-crud-slice.ts(14,34): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/message-crud-slice.ts(62,7): error TS2353: Object literal may only specify known properties, and 'timestamp' does not exist in type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/message-crud-slice.ts(81,35): error TS2339: Property 'messageCount' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/message-crud-slice.ts(99,43): error TS2339: Property 'messageCount' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/message-crud-slice.ts(140,25): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/message-crud-slice.ts(140,39): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(33,55): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(71,24): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(78,7): error TS2353: Object literal may only specify known properties, and 'projectId' does not exist in type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(78,32): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(79,36): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(94,36): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(111,43): error TS2339: Property 'childThreadIds' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(146,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(152,16): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(152,41): error TS2339: Property 'workspaceType' does not exist on type 'Partial<Omit<ThreadWithId, "id" | "createdAt" | "conversationId">>'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(152,65): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(152,91): error TS2339: Property 'workspaceType' does not exist on type 'Partial<Omit<ThreadWithId, "id" | "createdAt" | "conversationId">>'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(154,25): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(155,28): error TS2339: Property 'workspaceType' does not exist on type 'Partial<Omit<ThreadWithId, "id" | "createdAt" | "conversationId">>'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(182,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(188,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(216,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(222,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(265,55): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(271,16): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(271,53): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(276,67): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(281,16): error TS2339: Property 'parentThreadId' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(281,55): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(287,27): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts(290,29): error TS2339: Property 'childThreadIds' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/slices/tool-execution-slice.ts(14,45): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/slices/tool-execution-slice.ts(86,7): error TS2353: Object literal may only specify known properties, and 'createdAt' does not exist in type 'ToolCallWithId'.
+src/infrastructure/persistence/stores/chat/slices/tool-execution-slice.ts(126,54): error TS2339: Property 'status' does not exist on type 'ToolCallWithId'.
+src/infrastructure/persistence/stores/chat/unified-chat-store.ts(24,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/unified-chat-store.ts(49,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/unified-chat-store.ts(155,25): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/unified-chat-store.ts(155,39): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/chat/unified-chat-types.ts(21,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/chat/unified-chat-types.ts(109,55): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/chat/unified-chat-types.ts(215,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/persistence/stores/code-chunk-store.ts(15,51): error TS2307: Cannot find module '@/domain/entities/code-chunk' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation-auto-restore.ts(1,47): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation-auto-restore.ts(2,67): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation/conversation-helpers.ts(10,47): error TS2307: Cannot find module '../../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation/conversation-types.ts(16,42): error TS2307: Cannot find module '../../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts(20,25): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-class' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation/persistence.ts(18,51): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation/slices/create-context-window-slice.ts(41,73): error TS2307: Cannot find module '@/lib/chat/context-window-manager' or its corresponding type declarations.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(45,25): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(46,21): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(47,19): error TS2339: Property 'agentId' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(48,18): error TS2339: Property 'status' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(49,17): error TS2339: Property 'title' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(50,19): error TS2339: Property 'preview' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(51,24): error TS2339: Property 'messageCount' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(52,26): error TS2339: Property 'scrollPosition' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(53,21): error TS2339: Property 'createdAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(54,21): error TS2339: Property 'updatedAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(55,18): error TS2339: Property 'pinned' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(56,16): error TS2339: Property 'tags' does not exist on type 'ConversationWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(71,41): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(76,22): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(79,15): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(80,18): error TS2339: Property 'content' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(81,18): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(82,20): error TS2339: Property 'agentName' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(83,21): error TS2339: Property 'agentModel' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(84,20): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(85,20): error TS2339: Property 'toolCalls' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(85,36): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(98,23): error TS2339: Property 'projectId' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(99,27): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(100,19): error TS2339: Property 'title' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(101,21): error TS2339: Property 'preview' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(102,26): error TS2339: Property 'messageCount' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(103,23): error TS2339: Property 'createdAt' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(104,23): error TS2339: Property 'updatedAt' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(105,20): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(106,28): error TS2339: Property 'parentThreadId' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(107,28): error TS2339: Property 'childThreadIds' does not exist on type 'ThreadWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(121,11): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(125,15): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(126,18): error TS2339: Property 'content' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(127,18): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(128,20): error TS2339: Property 'agentName' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(129,21): error TS2339: Property 'agentModel' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(130,20): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(131,20): error TS2339: Property 'toolCalls' does not exist on type 'MessageWithId'.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(131,36): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(347,20): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(348,17): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/conversation/useConversationStore.ts(356,42): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/editor-tabs/index.ts(13,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/file-watcher-store.ts(14,57): error TS2307: Cannot find module '@/lib/watcher/file-watcher' or its corresponding type declarations.
+src/infrastructure/persistence/stores/filesystem/snapshot-bulk-ops-slice.ts(11,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts(11,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts(62,22): error TS7006: Parameter 'part' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts(62,28): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/filesystem/snapshot-types.ts(10,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/filesystem/snapshot-types.ts(173,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/index.ts(98,22): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/index.ts(111,43): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/index.ts(127,55): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-crud-slice.ts(7,32): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-crud-slice.ts(37,37): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-filter-slice.ts(7,49): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-operations-slice.ts(7,46): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-persistence-slice.ts(7,46): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-set-crud-slice.ts(7,35): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-set-crud-slice.ts(29,45): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/flashcard/slices/flashcard-set-crud-slice.ts(171,40): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/git/git-branch-slice.ts(12,43): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/persistence/stores/git/git-client-slice.ts(12,32): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/persistence/stores/git/git-client-slice.ts(73,12): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/persistence/stores/git/git-operations-slice.ts(12,52): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/persistence/stores/git/git-status-slice.ts(12,43): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/persistence/stores/hydration-manager.ts(13,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/ide/ide-state-storage.ts(27,37): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/ide/ide-state-storage.ts(29,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(156,8): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(158,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(159,33): error TS2307: Cannot find module '../dexie-db-class' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(224,15): error TS2307: Cannot find module '../dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(225,15): error TS2307: Cannot find module '../dexie-db-ai-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(226,15): error TS2307: Cannot find module '../dexie-db-session-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/index.ts(227,15): error TS2307: Cannot find module '../dexie-db-knowledge-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notes/note-context-tracker.ts(21,30): error TS2307: Cannot find module '@/lib/notes' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notes/note-context-tracker.ts(22,39): error TS2307: Cannot find module '@/lib/notes/types-embedding' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notes/note-context-tracker.ts(23,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notes/slash-commands/index.ts(19,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notifications/index.ts(13,59): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notifications/notification-crud-slice.ts(12,35): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/notifications/notification-filter-slice.ts(12,55): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/permissions/tool-permission-store.ts(23,36): error TS2307: Cannot find module '../../dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/permissions/types.ts(10,51): error TS2307: Cannot find module '@/domain/tools/tool-permissions' or its corresponding type declarations.
+src/infrastructure/persistence/stores/plugins-store.ts(20,8): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/plugins-store.ts(237,28): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/plugins-store.ts(247,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/project/index.ts(65,47): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(68,35): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(69,23): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(70,29): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(73,27): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(74,36): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(75,30): error TS2339: Property 'description' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(76,23): error TS2339: Property 'tags' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(81,23): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(82,29): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(85,27): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(86,36): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(87,30): error TS2339: Property 'description' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(88,23): error TS2339: Property 'tags' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(125,50): error TS2339: Property 'deleted' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(148,69): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/index.ts(203,20): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/index.ts(224,31): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/index.ts(259,35): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/migrate-bindings.ts(18,40): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/migrate-bindings.ts(141,28): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/migrate-bindings.ts(147,33): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/migrate-bindings.ts(150,37): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/migrate-bindings.ts(194,49): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/migrate-bindings.ts(195,31): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-bindings-slice.ts(11,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-bindings-slice.ts(46,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-bindings-slice.ts(66,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(16,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(32,8): error TS2307: Cannot find module '@/domain/types/project-ids' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(65,38): error TS2307: Cannot find module '@/domain/types/project-ids' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(73,17): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(74,19): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(75,19): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(77,25): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(78,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(79,24): error TS2339: Property 'createdAt' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(80,32): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(81,34): error TS2339: Property 'fileSnapshotEnabled' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(91,5): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(125,7): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(194,7): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(194,20): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-crud-slice.ts(195,27): error TS2339: Property 'createdAt' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-layout-slice.ts(57,21): error TS2339: Property 'layoutState' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-permissions-slice.ts(56,81): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-types.ts(10,80): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-types.ts(11,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-types.ts(213,40): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-types.ts(219,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(10,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(46,36): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(60,24): error TS7006: Parameter 'record' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(62,26): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(88,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(88,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(89,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(89,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(102,17): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(103,17): error TS2339: Property 'description' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(104,17): error TS2339: Property 'tags' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(104,29): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(113,31): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(124,36): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(126,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(126,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(127,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(127,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(147,28): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(148,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(159,28): error TS2339: Property 'createdAt' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(165,36): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(166,30): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(171,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(171,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(172,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(172,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(179,49): error TS2339: Property 'deleted' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/project-utils-slice.ts(180,49): error TS2339: Property 'deleted' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/use-fsa-projects.ts(8,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/use-fsa-projects.ts(29,8): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts(17,31): error TS2307: Cannot find module '@/hooks/useResponsive' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts(88,31): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts(116,43): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts(121,47): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/providers/google-model-fetcher.ts(11,32): error TS2307: Cannot find module '@/domain/types/llm/model-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/providers/types.ts(28,8): error TS2307: Cannot find module '@/domain/types/llm' or its corresponding type declarations.
+src/infrastructure/persistence/stores/quiz-history-store.ts(8,33): error TS2307: Cannot find module '@/lib/study/quiz-session' or its corresponding type declarations.
+src/infrastructure/persistence/stores/quiz-history-store.ts(9,40): error TS2307: Cannot find module '@/lib/study/quiz-session' or its corresponding type declarations.
+src/infrastructure/persistence/stores/rag/rag-store.ts(26,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/rag/rag-types.ts(16,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/persistence/stores/session-snapshot-manager.ts(167,14): error TS2307: Cannot find module '../dexie-db-session-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/session-snapshot-manager.ts(172,50): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/session-snapshot-manager.ts(186,55): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/session-snapshot-manager.ts(251,59): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/synthesis-store.ts(10,37): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/synthesis-store.ts(11,35): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/synthesis-store.ts(12,34): error TS2307: Cannot find module '@/lib/knowledge/synthesis-service' or its corresponding type declarations.
+src/infrastructure/persistence/stores/synthesis-store.ts(13,56): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/persistence/stores/synthesis-store.ts(103,22): error TS7006: Parameter 'progress' implicitly has an 'any' type.
+src/infrastructure/persistence/stores/terminal-store.ts(19,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/types.ts(11,46): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/persistence/stores/use-app-store.ts(21,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/use-app-store.ts(109,100): error TS2307: Cannot find module '../dexie-db' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(89,65): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(100,70): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(116,36): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(120,109): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(127,103): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(138,85): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(161,98): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(171,23): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(172,38): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(174,23): error TS2339: Property 'exclusionPatterns' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(175,42): error TS2339: Property 'exclusionPatterns' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts(186,75): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(35,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(36,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(135,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(149,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(200,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(218,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts(276,77): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(41,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(42,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(127,40): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(175,24): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(232,60): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(257,35): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(291,9): error TS2353: Object literal may only specify known properties, and 'autoSync' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts(321,9): error TS2353: Object literal may only specify known properties, and 'exclusionPatterns' does not exist in type 'Project'.
+src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts(31,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx(34,36): error TS2307: Cannot find module '@/infrastructure/ui/AgentWorkspaceSync' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx(84,33): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/persistence/stores/workspace/workspace-store.ts(21,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/persistence/stores/workspace/workspace-types.ts(9,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/services/db-consolidation-service.ts(140,34): error TS2345: Argument of type 'FlashcardSetRecord' is not assignable to parameter of type 'FlashcardRecord'.
+  Type 'FlashcardSetRecord' is missing the following properties from type 'FlashcardRecord': question, answer, difficulty, topic
+src/infrastructure/state-orchestrator.ts(10,43): error TS2307: Cannot find module '../events/event-bus' or its corresponding type declarations.
+src/infrastructure/state-orchestrator.ts(11,34): error TS2307: Cannot find module '../events/event-bus' or its corresponding type declarations.
+src/infrastructure/state-orchestrator.ts(12,31): error TS2307: Cannot find module '../../domain/value-objects/workspace-type' or its corresponding type declarations.
+src/infrastructure/stores/agents/agent-selection-store.ts(15,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/agents/slices/agent-crud-slice.ts(13,34): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/stores/agents/slices/agent-utils-slice.ts(14,34): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/stores/agents/types.ts(11,46): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/stores/analytics-store.ts(13,51): error TS2307: Cannot find module '@/lib/analytics/metrics-collector' or its corresponding type declarations.
+src/infrastructure/stores/analytics-store.ts(14,39): error TS2307: Cannot find module '@/lib/analytics/performance-monitor' or its corresponding type declarations.
+src/infrastructure/stores/canvas/canvas-db.ts(19,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-io-slice.ts(20,51): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-linkage-slice.ts(20,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-linkage-slice.ts(22,39): error TS2307: Cannot find module '@/lib/canvas/linkage-analyzer' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-state-slice.ts(24,45): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-state-slice.ts(25,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/types.ts(16,8): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/types.ts(17,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/chat/index.ts(64,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(14,36): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(66,7): error TS2353: Object literal may only specify known properties, and 'workspaceType' does not exist in type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(106,36): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'Partial<ConversationWithId>'.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(115,24): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(118,25): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(139,56): error TS2339: Property 'status' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(142,49): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-metadata-slice.ts(145,49): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(21,40): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(22,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(118,63): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(129,35): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(130,39): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(131,31): error TS2339: Property 'title' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(132,33): error TS2339: Property 'preview' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(133,33): error TS2339: Property 'agentId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(135,40): error TS2339: Property 'scrollPosition' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(136,35): error TS2339: Property 'createdAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(137,35): error TS2339: Property 'updatedAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(141,19): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(142,22): error TS2339: Property 'content' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(143,22): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(144,24): error TS2339: Property 'agentName' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(145,25): error TS2339: Property 'agentModel' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(146,24): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(148,24): error TS2339: Property 'toolCalls' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(148,40): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(284,18): error TS7006: Parameter 'all' implicitly has an 'any' type.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(286,24): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(287,22): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/infrastructure/stores/chat/slices/chat-persistence-slice.ts(287,25): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/infrastructure/stores/chat/slices/context-window-slice.ts(79,30): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window-slice.ts(99,30): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window-slice.ts(107,11): error TS2322: Type '{ [x: string]: ThreadWithId | { contextWindow: { maxTokens: any; currentTokens: number; compressionStrategy: any; }; id: string; conversationId: string; isRoot?: boolean; }; }' is not assignable to type 'Record<string, ThreadWithId>'.
+  'string' index signatures are incompatible.
+    Type 'ThreadWithId | { contextWindow: { maxTokens: any; currentTokens: number; compressionStrategy: any; }; id: string; conversationId: string; isRoot?: boolean | undefined; }' is not assignable to type 'ThreadWithId'.
+      Object literal may only specify known properties, and 'contextWindow' does not exist in type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window-slice.ts(110,41): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window-slice.ts(127,52): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window-slice.ts(128,30): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window/internal.ts(44,52): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/context-window/internal.ts(45,49): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/context-window/setters.ts(14,42): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/context-window/setters.ts(35,9): error TS2322: Type '{ [x: string]: ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean; }; }' is not assignable to type 'Record<string, ThreadWithId>'.
+  'string' index signatures are incompatible.
+    Type 'ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean | undefined; }' is not assignable to type 'ThreadWithId'.
+      Object literal may only specify known properties, and 'contextWindow' does not exist in type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window/setters.ts(36,21): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window/setters.ts(62,9): error TS2322: Type '{ [x: string]: ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean; }; }' is not assignable to type 'Record<string, ThreadWithId>'.
+  'string' index signatures are incompatible.
+    Type 'ThreadWithId | { contextWindow: ContextWindowConfig; id: string; conversationId: string; isRoot?: boolean | undefined; }' is not assignable to type 'ThreadWithId'.
+      Object literal may only specify known properties, and 'contextWindow' does not exist in type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/context-window/setters.ts(63,21): error TS2339: Property 'contextWindow' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/message-crud-slice.ts(14,34): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/message-crud-slice.ts(62,7): error TS2353: Object literal may only specify known properties, and 'timestamp' does not exist in type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/message-crud-slice.ts(81,35): error TS2339: Property 'messageCount' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/message-crud-slice.ts(99,43): error TS2339: Property 'messageCount' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/message-crud-slice.ts(140,25): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/message-crud-slice.ts(140,39): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(33,55): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(71,24): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(78,7): error TS2353: Object literal may only specify known properties, and 'projectId' does not exist in type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(78,32): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(79,36): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(94,36): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(111,43): error TS2339: Property 'childThreadIds' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(146,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(152,16): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(152,41): error TS2339: Property 'workspaceType' does not exist on type 'Partial<Omit<ThreadWithId, "id" | "createdAt" | "conversationId">>'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(152,65): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(152,91): error TS2339: Property 'workspaceType' does not exist on type 'Partial<Omit<ThreadWithId, "id" | "createdAt" | "conversationId">>'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(154,25): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(155,28): error TS2339: Property 'workspaceType' does not exist on type 'Partial<Omit<ThreadWithId, "id" | "createdAt" | "conversationId">>'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(182,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(188,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(216,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(222,16): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(265,55): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(271,16): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(271,53): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(276,67): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(281,16): error TS2339: Property 'parentThreadId' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(281,55): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(287,27): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/thread-management-slice.ts(290,29): error TS2339: Property 'childThreadIds' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/slices/tool-execution-slice.ts(14,45): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/slices/tool-execution-slice.ts(86,7): error TS2353: Object literal may only specify known properties, and 'createdAt' does not exist in type 'ToolCallWithId'.
+src/infrastructure/stores/chat/slices/tool-execution-slice.ts(126,54): error TS2339: Property 'status' does not exist on type 'ToolCallWithId'.
+src/infrastructure/stores/chat/unified-chat-store.ts(24,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/chat/unified-chat-store.ts(49,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/unified-chat-store.ts(155,25): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/unified-chat-store.ts(155,39): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/chat/unified-chat-types.ts(21,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/chat/unified-chat-types.ts(109,55): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/chat/unified-chat-types.ts(215,8): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/infrastructure/stores/code-chunk-store.ts(15,51): error TS2307: Cannot find module '@/domain/entities/code-chunk' or its corresponding type declarations.
+src/infrastructure/stores/conversation/migration/conversation-migration.ts(20,25): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-class' or its corresponding type declarations.
+src/infrastructure/stores/conversation/persistence.ts(18,51): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/conversation/slices/create-context-window-slice.ts(41,73): error TS2307: Cannot find module '@/lib/chat/context-window-manager' or its corresponding type declarations.
+src/infrastructure/stores/conversation/useConversationStore.ts(45,25): error TS2339: Property 'workspaceType' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(46,21): error TS2339: Property 'projectId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(47,19): error TS2339: Property 'agentId' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(48,18): error TS2339: Property 'status' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(49,17): error TS2339: Property 'title' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(50,19): error TS2339: Property 'preview' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(51,24): error TS2339: Property 'messageCount' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(52,26): error TS2339: Property 'scrollPosition' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(53,21): error TS2339: Property 'createdAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(54,21): error TS2339: Property 'updatedAt' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(55,18): error TS2339: Property 'pinned' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(56,16): error TS2339: Property 'tags' does not exist on type 'ConversationWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(71,41): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(76,22): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(79,15): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(80,18): error TS2339: Property 'content' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(81,18): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(82,20): error TS2339: Property 'agentName' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(83,21): error TS2339: Property 'agentModel' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(84,20): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(85,20): error TS2339: Property 'toolCalls' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(85,36): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(98,23): error TS2339: Property 'projectId' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(99,27): error TS2339: Property 'workspaceType' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(100,19): error TS2339: Property 'title' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(101,21): error TS2339: Property 'preview' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(102,26): error TS2339: Property 'messageCount' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(103,23): error TS2339: Property 'createdAt' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(104,23): error TS2339: Property 'updatedAt' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(105,20): error TS2339: Property 'status' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(106,28): error TS2339: Property 'parentThreadId' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(107,28): error TS2339: Property 'childThreadIds' does not exist on type 'ThreadWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(121,11): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(125,15): error TS2339: Property 'role' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(126,18): error TS2339: Property 'content' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(127,18): error TS2339: Property 'agentId' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(128,20): error TS2339: Property 'agentName' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(129,21): error TS2339: Property 'agentModel' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(130,20): error TS2339: Property 'timestamp' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(131,20): error TS2339: Property 'toolCalls' does not exist on type 'MessageWithId'.
+src/infrastructure/stores/conversation/useConversationStore.ts(131,36): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(347,20): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(348,17): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(356,42): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/editor-tabs/index.ts(13,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/file-watcher-store.ts(14,57): error TS2307: Cannot find module '@/lib/watcher/file-watcher' or its corresponding type declarations.
+src/infrastructure/stores/filesystem/snapshot-bulk-ops-slice.ts(11,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/stores/filesystem/snapshot-metadata-slice.ts(11,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/stores/filesystem/snapshot-metadata-slice.ts(62,22): error TS7006: Parameter 'part' implicitly has an 'any' type.
+src/infrastructure/stores/filesystem/snapshot-metadata-slice.ts(62,28): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/infrastructure/stores/filesystem/snapshot-types.ts(10,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/stores/filesystem/snapshot-types.ts(173,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/index.ts(98,22): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/index.ts(111,43): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/index.ts(127,55): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-crud-slice.ts(7,32): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-crud-slice.ts(37,37): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-filter-slice.ts(7,49): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-operations-slice.ts(7,46): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-persistence-slice.ts(7,46): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-set-crud-slice.ts(7,35): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-set-crud-slice.ts(29,45): error TS2307: Cannot find module '@/lib/knowledge/types' or its corresponding type declarations.
+src/infrastructure/stores/flashcard/slices/flashcard-set-crud-slice.ts(171,40): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/infrastructure/stores/git/git-branch-slice.ts(12,43): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/stores/git/git-client-slice.ts(12,32): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/stores/git/git-client-slice.ts(73,12): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/stores/git/git-operations-slice.ts(12,52): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/stores/git/git-status-slice.ts(12,43): error TS2307: Cannot find module '@/lib/git/git-client' or its corresponding type declarations.
+src/infrastructure/stores/hydration-manager.ts(13,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/ide/ide-state-storage.ts(27,37): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/ide/ide-state-storage.ts(29,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/index.ts(158,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/notes/note-context-tracker.ts(21,30): error TS2307: Cannot find module '@/lib/notes' or its corresponding type declarations.
+src/infrastructure/stores/notes/note-context-tracker.ts(22,39): error TS2307: Cannot find module '@/lib/notes/types-embedding' or its corresponding type declarations.
+src/infrastructure/stores/notes/note-context-tracker.ts(23,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/notes/slash-commands/index.ts(19,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/notifications/index.ts(13,59): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/stores/notifications/notification-crud-slice.ts(12,35): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/stores/notifications/notification-filter-slice.ts(12,55): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/stores/permissions/types.ts(10,51): error TS2307: Cannot find module '@/domain/tools/tool-permissions' or its corresponding type declarations.
+src/infrastructure/stores/plugins-store.ts(20,8): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/infrastructure/stores/plugins-store.ts(237,28): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/stores/plugins-store.ts(247,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/infrastructure/stores/project/index.ts(65,47): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(68,35): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(69,23): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(70,29): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(73,27): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(74,36): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(75,30): error TS2339: Property 'description' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(76,23): error TS2339: Property 'tags' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(81,23): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(82,29): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(85,27): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(86,36): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(87,30): error TS2339: Property 'description' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(88,23): error TS2339: Property 'tags' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(125,50): error TS2339: Property 'deleted' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(148,69): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/index.ts(203,20): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/stores/project/index.ts(224,31): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/stores/project/index.ts(259,35): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/migrate-bindings.ts(18,40): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/infrastructure/stores/project/migrate-bindings.ts(141,28): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/migrate-bindings.ts(147,33): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/migrate-bindings.ts(150,37): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/migrate-bindings.ts(194,49): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/migrate-bindings.ts(195,31): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-bindings-slice.ts(11,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/project/project-bindings-slice.ts(46,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-bindings-slice.ts(66,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(16,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/project/project-crud-slice.ts(32,8): error TS2307: Cannot find module '@/domain/types/project-ids' or its corresponding type declarations.
+src/infrastructure/stores/project/project-crud-slice.ts(65,38): error TS2307: Cannot find module '@/domain/types/project-ids' or its corresponding type declarations.
+src/infrastructure/stores/project/project-crud-slice.ts(73,17): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(74,19): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(75,19): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(77,25): error TS2339: Property 'folderPath' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(78,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(79,24): error TS2339: Property 'createdAt' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(80,32): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(81,34): error TS2339: Property 'fileSnapshotEnabled' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(91,5): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(125,7): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(194,7): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(194,20): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-crud-slice.ts(195,27): error TS2339: Property 'createdAt' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-layout-slice.ts(57,21): error TS2339: Property 'layoutState' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-permissions-slice.ts(56,81): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-types.ts(10,80): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/stores/project/project-types.ts(11,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/stores/project/project-types.ts(213,40): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/infrastructure/stores/project/project-types.ts(219,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/stores/project/project-utils-slice.ts(10,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/project/project-utils-slice.ts(46,36): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/infrastructure/stores/project/project-utils-slice.ts(60,24): error TS7006: Parameter 'record' implicitly has an 'any' type.
+src/infrastructure/stores/project/project-utils-slice.ts(62,26): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(88,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(88,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(89,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(89,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(102,17): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(103,17): error TS2339: Property 'description' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(104,17): error TS2339: Property 'tags' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(104,29): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/stores/project/project-utils-slice.ts(113,31): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(124,36): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(126,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(126,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(127,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(127,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(147,28): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(148,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(159,28): error TS2339: Property 'createdAt' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(165,36): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(166,30): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(171,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(171,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(172,25): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(172,49): error TS2339: Property 'lastOpened' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(179,49): error TS2339: Property 'deleted' does not exist on type 'Project'.
+src/infrastructure/stores/project/project-utils-slice.ts(180,49): error TS2339: Property 'deleted' does not exist on type 'Project'.
+src/infrastructure/stores/project/use-fsa-projects.ts(8,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/stores/project/use-fsa-projects.ts(29,8): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/infrastructure/stores/project/useWorkspaceProjects.ts(17,31): error TS2307: Cannot find module '@/hooks/useResponsive' or its corresponding type declarations.
+src/infrastructure/stores/project/useWorkspaceProjects.ts(88,31): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/infrastructure/stores/project/useWorkspaceProjects.ts(116,43): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/project/useWorkspaceProjects.ts(121,47): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/providers/google-model-fetcher.ts(11,32): error TS2307: Cannot find module '@/domain/types/llm/model-types' or its corresponding type declarations.
+src/infrastructure/stores/providers/types.ts(28,8): error TS2307: Cannot find module '@/domain/types/llm' or its corresponding type declarations.
+src/infrastructure/stores/quiz-history-store.ts(8,33): error TS2307: Cannot find module '@/lib/study/quiz-session' or its corresponding type declarations.
+src/infrastructure/stores/quiz-history-store.ts(9,40): error TS2307: Cannot find module '@/lib/study/quiz-session' or its corresponding type declarations.
+src/infrastructure/stores/rag/rag-store.ts(26,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/rag/rag-types.ts(16,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(10,37): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(11,35): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(12,34): error TS2307: Cannot find module '@/lib/knowledge/synthesis-service' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(13,56): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(103,22): error TS7006: Parameter 'progress' implicitly has an 'any' type.
+src/infrastructure/stores/terminal-store.ts(19,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/types.ts(11,46): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/infrastructure/stores/use-app-store.ts(21,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(89,65): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(100,70): error TS2339: Property 'name' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(116,36): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(120,109): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(127,103): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(138,85): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(161,98): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(171,23): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(172,38): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(174,23): error TS2339: Property 'exclusionPatterns' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(175,42): error TS2339: Property 'exclusionPatterns' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-loader-slice.ts(186,75): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(35,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(36,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(135,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(149,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(200,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(218,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(276,77): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(41,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(42,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(127,40): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(175,24): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(232,60): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(257,35): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(291,9): error TS2353: Object literal may only specify known properties, and 'autoSync' does not exist in type 'Project'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(321,9): error TS2353: Object literal may only specify known properties, and 'exclusionPatterns' does not exist in type 'Project'.
+src/infrastructure/stores/workspace/unified-workspace-context.ts(31,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/stores/workspace/unified-workspace-provider.tsx(34,36): error TS2307: Cannot find module '@/infrastructure/ui/AgentWorkspaceSync' or its corresponding type declarations.
+src/infrastructure/stores/workspace/unified-workspace-provider.tsx(84,33): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/stores/workspace/workspace-store.ts(21,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/infrastructure/stores/workspace/workspace-types.ts(9,36): error TS2307: Cannot find module '@/domain/entities/workspace' or its corresponding type declarations.
+src/infrastructure/sync/adapters/adapter-factory.ts(111,24): error TS2339: Property 'id' does not exist on type 'Project'.
+src/infrastructure/sync/adapters/fsa-permission-manager.ts(38,26): error TS18046: 'window.showDirectoryPicker' is of type 'unknown'.
+src/infrastructure/sync/bridges/note-folder-bridge.ts(12,23): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/sync/bridges/note-folder-bridge.ts(13,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-knowledge-types' or its corresponding type declarations.
+src/infrastructure/sync/bridges/note-folder-bridge.ts(87,21): error TS7006: Parameter 'note' implicitly has an 'any' type.
+src/infrastructure/sync/workspace-services/hooks/index.ts(11,36): error TS2307: Cannot find module '@/lib/filesync/hooks/use-file-sync-service' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/hooks/index.ts(12,74): error TS2307: Cannot find module '@/lib/filesync/hooks/use-file-sync-service' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/knowledge-file-sync-service.ts(44,11): error TS6133: '_config' is declared but its value is never read.
+src/infrastructure/sync/workspace-services/notes/note-crud-operations.ts(13,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts(19,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts(28,8): error TS2307: Cannot find module '@/lib/utils/error-handling' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/notes/note-markdown-writer.ts(12,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/notes/notes-file-sync-core.ts(20,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts(32,68): error TS2307: Cannot find module '@/lib/notes/slices/note-sync-slice' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/study-file-sync-service.ts(44,11): error TS6133: '_config' is declared but its value is never read.
+src/infrastructure/workflow-persistence.ts(12,31): error TS2307: Cannot find module '@/lib/workflow/builder/types' or its corresponding type declarations.
+src/infrastructure/workflow-persistence.ts(113,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(122,47): error TS2339: Property 'createdAt' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(123,45): error TS2339: Property 'createdAt' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(133,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(134,29): error TS2339: Property 'name' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(135,26): error TS2339: Property 'description' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(136,27): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/workflow-persistence.ts(350,58): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'UpdateSpec<WorkflowRecord> | ((obj: WorkflowRecord, ctx: { value: any; primKey: IndexableType; }) => boolean | void)'.
+src/infrastructure/workflow-persistence.ts(372,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(375,21): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'UpdateSpec<WorkflowRecord> | ((obj: WorkflowRecord, ctx: { value: any; primKey: IndexableType; }) => boolean | void)'.
+src/infrastructure/workflow-persistence.ts(401,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(404,21): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'UpdateSpec<WorkflowRecord> | ((obj: WorkflowRecord, ctx: { value: any; primKey: IndexableType; }) => boolean | void)'.
+src/infrastructure/workflow-persistence.ts(404,39): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/infrastructure/workflow-persistence.ts(444,31): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(448,22): error TS2339: Property 'createdAt' does not exist on type 'WorkflowRecord'.
+src/lib/agent/deep-think/deep-think-hook.ts(13,35): error TS2307: Cannot find module '@/lib/utils/platform-detection' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(18,8): error TS2307: Cannot find module '@/domain/tools/note/types' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(19,37): error TS2307: Cannot find module '@/lib/notes/types-slice' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(20,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(216,29): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/agent/facades/note-tools-impl.ts(222,10): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/agent/facades/note-tools-impl.ts(234,34): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/agent/facades/note-tools.ts(13,70): error TS2307: Cannot find module '@/domain/tools/note/types' or its corresponding type declarations.
+src/lib/agent/facades/terminal-tools-impl.ts(15,33): error TS2307: Cannot find module '../../webcontainer/manager' or its corresponding type declarations.
+src/lib/agent/facades/terminal-tools-impl.ts(261,28): error TS7006: Parameter 'exitCode' implicitly has an 'any' type.
+src/lib/agent/factory.ts(28,8): error TS2307: Cannot find module '@/domain/tools/note' or its corresponding type declarations.
+src/lib/agent/factory.ts(373,51): error TS2345: Argument of type '{ sourceId: string; sourceType: "text" | "markdown" | "pdf" | "image" | "url"; title: string; content: string; mimeType?: string | undefined; options?: { generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined; }' is not assignable to parameter of type 'SynthesisInput'.
+  Type '{ sourceId: string; sourceType: "text" | "markdown" | "pdf" | "image" | "url"; title: string; content: string; mimeType?: string | undefined; options?: { generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined; }' is missing the following properties from type 'SynthesisInput': sourceIds, artifactType
+src/lib/agent/factory.ts(378,38): error TS2339: Property 'sourceId' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/factory.ts(379,41): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/factory.ts(380,39): error TS2339: Property 'synthesizedAt' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/factory.ts(444,81): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/factory.ts(509,85): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/factory.ts(556,81): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/hooks/use-multi-agent-chat.ts(21,8): error TS2307: Cannot find module '@/lib/workflow/agents/debate-agent' or its corresponding type declarations.
+src/lib/agent/hooks/use-multi-agent-chat.ts(26,8): error TS2307: Cannot find module '@/lib/workflow/agents/content-routing-agent' or its corresponding type declarations.
+src/lib/agent/hooks/use-multi-agent-chat.ts(31,8): error TS2307: Cannot find module '@/lib/workflow/agents/sequential-expansion-agent' or its corresponding type declarations.
+src/lib/agent/mode-classifier-types.ts(14,32): error TS2307: Cannot find module '@/domain/tools/tool-definition' or its corresponding type declarations.
+src/lib/agent/mode-classifier.ts(21,32): error TS2307: Cannot find module '@/domain/tools/tool-definition' or its corresponding type declarations.
+src/lib/agent/prompt-orchestrator.ts(13,30): error TS2307: Cannot find module '@/infrastructure/tools/centralized-tool-registry' or its corresponding type declarations.
+src/lib/agent/prompt-orchestrator.ts(15,47): error TS2307: Cannot find module '@/domain/tools' or its corresponding type declarations.
+src/lib/agent/prompt-orchestrator.ts(216,30): error TS7006: Parameter 'tool' implicitly has an 'any' type.
+src/lib/agent/providers/agent-validation-service.ts(19,28): error TS2307: Cannot find module '@/domain/entities/agent' or its corresponding type declarations.
+src/lib/agent/providers/agent-validation-service.ts(373,56): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/agent/providers/agent-validation-service.ts(374,47): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/lib/agent/providers/agent-validation-service.ts(374,53): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/lib/agent/providers/agent-validation-service.ts(386,58): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/agent/providers/agent-validation-service.ts(411,46): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/lib/agent/providers/agent-validation-service.ts(422,68): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/agent/providers/anthropic-adapter.ts(40,28): error TS2339: Property 'apiKey' does not exist on type 'AnthropicAdapterConfig'.
+src/lib/agent/providers/anthropic-adapter.ts(41,29): error TS2339: Property 'baseURL' does not exist on type 'AnthropicAdapterConfig'.
+src/lib/agent/providers/chutes-adapter.ts(17,35): error TS2307: Cannot find module '@/domain/types/llm/provider-types' or its corresponding type declarations.
+src/lib/agent/providers/chutes-adapter.ts(105,17): error TS2339: Property 'apiKey' does not exist on type 'ChutesAdapterConfig'.
+src/lib/agent/providers/chutes-adapter.ts(108,26): error TS2339: Property 'apiKey' does not exist on type 'ChutesAdapterConfig'.
+src/lib/agent/providers/chutes-adapter.ts(110,20): error TS2339: Property 'baseURL' does not exist on type 'ChutesAdapterConfig'.
+src/lib/agent/providers/chutes-adapter.ts(116,28): error TS2339: Property 'model' does not exist on type 'ChutesAdapterConfig'.
+src/lib/agent/providers/credential-storage.ts(14,46): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/agent/providers/gemini-adapter.ts(221,21): error TS2339: Property 'apiKey' does not exist on type 'GeminiAdapterConfig'.
+src/lib/agent/providers/gemini-adapter.ts(224,30): error TS2339: Property 'apiKey' does not exist on type 'GeminiAdapterConfig'.
+src/lib/agent/providers/gemini-adapter.ts(226,32): error TS2339: Property 'model' does not exist on type 'GeminiAdapterConfig'.
+src/lib/agent/providers/groq-adapter.ts(77,17): error TS2339: Property 'apiKey' does not exist on type 'GroqAdapterConfig'.
+src/lib/agent/providers/groq-adapter.ts(80,26): error TS2339: Property 'apiKey' does not exist on type 'GroqAdapterConfig'.
+src/lib/agent/providers/groq-adapter.ts(81,27): error TS2339: Property 'baseURL' does not exist on type 'GroqAdapterConfig'.
+src/lib/agent/providers/groq-adapter.ts(83,28): error TS2339: Property 'model' does not exist on type 'GroqAdapterConfig'.
+src/lib/agent/providers/mistral-adapter.ts(74,17): error TS2339: Property 'apiKey' does not exist on type 'MistralAdapterConfig'.
+src/lib/agent/providers/mistral-adapter.ts(77,26): error TS2339: Property 'apiKey' does not exist on type 'MistralAdapterConfig'.
+src/lib/agent/providers/mistral-adapter.ts(78,27): error TS2339: Property 'baseURL' does not exist on type 'MistralAdapterConfig'.
+src/lib/agent/providers/mistral-adapter.ts(80,28): error TS2339: Property 'model' does not exist on type 'MistralAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(77,32): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(78,33): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(95,32): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(96,33): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(98,31): error TS2339: Property 'model' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(114,32): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(115,33): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(117,31): error TS2339: Property 'model' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(131,32): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(132,33): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(134,31): error TS2339: Property 'model' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(148,32): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(149,33): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(151,31): error TS2339: Property 'model' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(161,25): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(199,20): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(200,38): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(209,32): error TS2339: Property 'model' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(212,31): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(266,90): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(271,77): error TS2339: Property 'apiKey' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/provider-adapter.ts(272,37): error TS2339: Property 'baseURL' does not exist on type 'CustomAdapterConfig'.
+src/lib/agent/providers/types.ts(29,8): error TS2307: Cannot find module '@/domain/types/llm' or its corresponding type declarations.
+src/lib/agent/system-prompt.ts(27,47): error TS2307: Cannot find module '@/domain/tools/tool-definition' or its corresponding type declarations.
+src/lib/agent/tools/note-commands.ts(15,92): error TS2307: Cannot find module '@/lib/notes/format/note-formatter' or its corresponding type declarations.
+src/lib/agent/tools/note-commands.ts(196,42): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(260,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(295,44): error TS6133: 'content' is declared but its value is never read.
+src/lib/agent/tools/note-commands.ts(336,21): error TS2339: Property 'write' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(380,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(384,21): error TS2339: Property 'delete' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(432,42): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(496,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(531,44): error TS6133: 'content' is declared but its value is never read.
+src/lib/agent/tools/note-commands.ts(572,21): error TS2339: Property 'write' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(616,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(620,21): error TS2339: Property 'delete' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/process-image-tool.ts(111,78): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-image-tool.ts(115,31): error TS2339: Property 'text' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-image-tool.ts(116,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/lib/agent/tools/process-image-tool.ts(117,33): error TS2339: Property 'detectedObjects' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-image-tool.ts(117,54): error TS7006: Parameter 'obj' implicitly has an 'any' type.
+src/lib/agent/tools/process-image-tool.ts(121,31): error TS2339: Property 'imageType' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(124,74): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-pdf-tool.ts(128,26): error TS2339: Property 'headings' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(128,39): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(133,24): error TS2339: Property 'tables' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(133,35): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(139,25): error TS2339: Property 'figures' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(139,37): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(144,27): error TS2339: Property 'citations' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(144,41): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/lib/agent/tools/process-url-tool.ts(91,73): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-url-tool.ts(95,9): error TS2741: Property 'cleanContent' is missing in type '{ id: string; title?: string | undefined; success: boolean; }' but required in type '{ cleanContent: string; title: string; author?: string | undefined; publishedDate?: string | undefined; contentType?: string | undefined; readingTimeMinutes?: number | undefined; summary?: string | undefined; tags?: string[] | undefined; relatedLinks?: { ...; }[] | undefined; mainImageUrl?: string | undefined; }'.
+src/lib/agent/tools/retry-queue.ts(24,8): error TS2307: Cannot find module '../../utils/error-classification' or its corresponding type declarations.
+src/lib/agent/tools/search-notes-tool.ts(15,29): error TS2307: Cannot find module '@/lib/notes/note-retriever' or its corresponding type declarations.
+src/lib/agent/tools/search-notes-tool.ts(65,25): error TS7006: Parameter 'note' implicitly has an 'any' type.
+src/lib/agent/tools/search-notes-tool.ts(66,22): error TS7006: Parameter 'note' implicitly has an 'any' type.
+src/lib/agent/tools/synthesize-tool.ts(98,9): error TS2322: Type '{ generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined' is not assignable to type 'SynthesisOptions | undefined'.
+  Type '{ generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; }' has no properties in common with type 'SynthesisOptions'.
+src/lib/agent/tools/synthesize-tool.ts(104,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(105,49): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(107,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(108,52): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(110,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(111,69): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(119,29): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(120,33): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(120,62): error TS7006: Parameter 'kc' implicitly has an 'any' type.
+src/lib/agent/tools/synthesize-tool.ts(121,29): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(122,26): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(123,33): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(126,29): error TS2339: Property 'synthesizedAt' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/tool-execution-logger.ts(2,45): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/agent/tools/tool-execution-logger.ts(9,8): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/agent/utils/token-estimator.ts(13,44): error TS2307: Cannot find module '@/domain/entities/chat' or its corresponding type declarations.
+src/lib/events/cross-workspace-event-bus.ts(31,34): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/lib/filesystem/file-ops.ts(301,27): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/lib/filesystem/file-snapshot-store.ts(53,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store.ts(84,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/file-snapshot-store-refactored.ts(37,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(70,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(133,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(137,18): error TS7006: Parameter 'snapshot' implicitly has an 'any' type.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(144,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(151,51): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(168,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts(177,18): error TS7006: Parameter 'snapshot' implicitly has an 'any' type.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(79,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(115,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(120,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(125,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(131,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(148,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts(159,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(58,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(75,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(97,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(107,15): error TS7006: Parameter 'snapshot' implicitly has an 'any' type.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(123,18): error TS7006: Parameter 'snapshot' implicitly has an 'any' type.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(150,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts(182,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-lookup-slice.ts(49,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-lookup-slice.ts(90,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-lookup-slice.ts(106,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/file-snapshot-store/snapshot-lookup-slice.ts(117,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/permission-lifecycle.ts(11,38): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/permission-lifecycle.ts(17,8): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/sync-executor.ts(1,41): error TS2307: Cannot find module '../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(9,54): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(13,41): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(14,35): error TS2307: Cannot find module '../../sync/file-metadata-cache' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(222,72): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/lib/filesystem/sync-manager/sync-file-ops.ts(9,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-file-ops.ts(14,32): error TS2307: Cannot find module '../../utils/error-handling' or its corresponding type declarations.
+src/lib/filesystem/sync-transaction/sync-batch-deleter.ts(13,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-transaction/sync-batch-writer.ts(13,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-transaction/sync-rollback-executor.ts(13,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/unified-storage-adapter.ts(282,26): error TS18046: 'window.showDirectoryPicker' is of type 'unknown'.
+src/lib/rag/chunk-strategies/chunk-strategy.interface.ts(10,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/chunk-strategies/fixed-size-chunker.ts(14,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/chunk-strategies/recursive-chunker.ts(16,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/chunk-strategies/semantic-chunker.ts(14,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/document-chunker.ts(14,35): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/embedding-cache.ts(10,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/embedding-cache.ts(173,27): error TS7006: Parameter 'record' implicitly has an 'any' type.
+src/lib/rag/embedding-cache.ts(195,29): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/lib/rag/embedding-cache.ts(195,34): error TS7006: Parameter 'model' implicitly has an 'any' type.
+src/lib/rag/embedding-service.ts(113,47): error TS2304: Cannot find name 'GPU'.
+src/lib/rag/embedding-service.ts(114,68): error TS2304: Cannot find name 'GPU'.
+src/lib/rag/indexeddb-storage.ts(10,43): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/rag/indexeddb-storage.ts(95,25): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/rag/indexeddb-storage.ts(110,28): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/lib/rag/indexeddb-storage.ts(110,35): error TS7006: Parameter 'record' implicitly has an 'any' type.
+src/lib/rag/indexeddb-storage.ts(176,25): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/rag/transformers-loader.ts(81,28): error TS2339: Property 'gpu' does not exist on type 'Navigator'.
+src/lib/rag/transformers-loader.ts(82,45): error TS2339: Property 'gpu' does not exist on type 'Navigator'.
+src/lib/rag/utils/code-chunker.ts(13,77): error TS2307: Cannot find module '@/domain/entities/code-chunk' or its corresponding type declarations.
+src/lib/workspace/browser-mode.ts(19,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/workspace/browser-mode.ts(34,19): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/browser-mode.ts(34,62): error TS2339: Property 'isBrowserMode' does not exist on type 'Project'.
+src/lib/workspace/browser-mode.ts(56,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/lib/workspace/browser-mode.ts(72,49): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/browser-mode.ts(82,7): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/lib/workspace/browser-mode.ts(106,45): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/lib/workspace/browser-mode.ts(116,58): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/file-sync-status-store/file-sync-status-store-refactored.ts(18,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-storage' or its corresponding type declarations.
+src/lib/workspace/fsa-persistence.ts(67,35): error TS2307: Cannot find module '@/lib/utils/platform-detection' or its corresponding type declarations.
+src/lib/workspace/fsa-persistence.ts(87,33): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/lib/workspace/hooks/useSyncOperations.ts(8,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/lib/workspace/hooks/useSyncOperations.ts(9,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/lib/workspace/hooks/useWorkspaceActions.ts(21,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/lib/workspace/hooks/useWorkspaceActions.ts(22,45): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/lib/workspace/hooks/useWorkspaceActions.ts(67,46): error TS7006: Parameter 'path' implicitly has an 'any' type.
+src/lib/workspace/hooks/useWorkspaceActions.ts(95,41): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/lib/workspace/hooks/useWorkspaceActions.ts(107,17): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/lib/workspace/hooks/useWorkspaceActions.ts(128,50): error TS7006: Parameter 'path' implicitly has an 'any' type.
+src/lib/workspace/hooks/useWorkspaceActions.ts(143,46): error TS7006: Parameter 'path' implicitly has an 'any' type.
+src/lib/workspace/hooks/useWorkspaceActions.ts(152,41): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/lib/workspace/hooks/useWorkspaceActions.ts(173,17): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Project'.
+src/lib/workspace/hooks/useWorkspaceActions.ts(197,50): error TS7006: Parameter 'path' implicitly has an 'any' type.
+src/lib/workspace/hooks/useWorkspaceActions.ts(215,17): error TS2353: Object literal may only specify known properties, and 'autoSync' does not exist in type 'Project'.
+src/lib/workspace/hooks/useWorkspaceActions.ts(240,17): error TS2353: Object literal may only specify known properties, and 'exclusionPatterns' does not exist in type 'Project'.
+src/lib/workspace/hooks/useWorkspaceActions.ts(278,83): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/hooks/useWorkspaceState.ts(29,76): error TS2339: Property 'autoSync' does not exist on type 'Project'.
+src/lib/workspace/hooks/useWorkspaceState.ts(32,25): error TS2339: Property 'exclusionPatterns' does not exist on type 'Project'.
+src/lib/workspace/index.ts(28,34): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/lib/workspace/note-context-tracker.ts(21,30): error TS2307: Cannot find module '@/lib/notes' or its corresponding type declarations.
+src/lib/workspace/note-context-tracker.ts(22,39): error TS2307: Cannot find module '@/lib/notes/types-embedding' or its corresponding type declarations.
+src/lib/workspace/note-context-tracker.ts(23,33): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/workspace/project-types.ts(10,40): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-core-types' or its corresponding type declarations.
+src/lib/workspace/ProjectContext.tsx(19,34): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/lib/workspace/ProjectContext.tsx(100,21): error TS2339: Property 'workspaceBindings' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(253,18): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(254,68): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(257,16): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(282,19): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(290,95): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(293,79): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(296,99): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(299,110): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(308,16): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(320,107): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(341,19): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(346,53): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(367,38): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(373,16): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(380,19): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(382,34): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(383,16): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(401,21): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(433,38): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(438,15): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(451,21): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(481,38): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/ProjectContext.tsx(485,15): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/session-snapshot.ts(27,48): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/workspace/session-snapshot.ts(146,19): error TS7006: Parameter 'snapshot' implicitly has an 'any' type.
+src/lib/workspace/session-snapshot.ts(166,19): error TS7006: Parameter 'snapshot' implicitly has an 'any' type.
+src/lib/workspace/session-snapshot.ts(170,31): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/workspace/temp-project.ts(23,30): error TS2307: Cannot find module '@/domain/entities/project' or its corresponding type declarations.
+src/lib/workspace/temp-project.ts(24,35): error TS2307: Cannot find module '@/lib/utils/platform-detection' or its corresponding type declarations.
+src/lib/workspace/threads-store.ts(21,83): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/workspace/threads-store.ts(68,39): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/lib/workspace/threads-store.ts(76,41): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/lib/workspace/useUnifiedProjectState.ts(56,46): error TS2339: Property 'id' does not exist on type 'Project'.
+src/lib/workspace/useUnifiedProjectState.ts(56,65): error TS2339: Property 'name' does not exist on type 'Project'.
+src/lib/workspace/useUnifiedProjectState.ts(88,10): error TS2352: Conversion of type '{ projectId: string | null; projectName: any; projects: Project[]; isLoading: boolean; setProjectId: (newProjectId: string) => void; }' to type 'UnifiedProjectState & { setProjectId: (id: string) => void; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ projectId: string | null; projectName: any; projects: Project[]; isLoading: boolean; setProjectId: (newProjectId: string) => void; }' is not comparable to type 'UnifiedProjectState'.
+    Types of property 'projects' are incompatible.
+      Type 'Project[]' is not comparable to type '{ id: string; name: string; folderPath: string; }[]'.
+        Type 'Project' is missing the following properties from type '{ id: string; name: string; folderPath: string; }': id, name, folderPath
+src/lib/workspace/workspace-access-helper.tsx(33,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/lib/workspace/workspace-access-helper.tsx(36,36): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-types' or its corresponding type declarations.
+src/lib/workspace/workspace-access-helper.tsx(141,18): error TS2339: Property 'id' does not exist on type 'Project'.
+src/routes/$__debug__.provider-playground.tsx(487,38): error TS2345: Argument of type '"/$__debug__/provider-playground"' is not assignable to parameter of type 'undefined'.
+src/routes/__root.tsx(5,32): error TS2307: Cannot find module '../i18n/LocaleProvider' or its corresponding type declarations.
+src/routes/__root.tsx(6,34): error TS2307: Cannot find module '@/presentation/components/common/AppErrorBoundary' or its corresponding type declarations.
+src/routes/__root.tsx(7,32): error TS2307: Cannot find module '@/presentation/components/common/AppInitializer' or its corresponding type declarations.
+src/routes/__root.tsx(8,40): error TS2307: Cannot find module '@/presentation/components/common/DatabaseRecoveryDialog' or its corresponding type declarations.
+src/routes/__root.tsx(9,28): error TS2307: Cannot find module '../lib/monitoring/sentry' or its corresponding type declarations.
+src/routes/__root.tsx(10,41): error TS2307: Cannot find module '@/lib/errorHandling/globalErrorHandlers' or its corresponding type declarations.
+src/routes/__root.tsx(11,31): error TS2307: Cannot find module '@/presentation/components/ui/ThemeProvider' or its corresponding type declarations.
+src/routes/__root.tsx(12,33): error TS2307: Cannot find module '@/presentation/components/ui/tooltip-react19-compatible' or its corresponding type declarations.
+src/routes/__root.tsx(13,47): error TS2307: Cannot find module '@/presentation/components/ui/Toast' or its corresponding type declarations.
+src/routes/__root.tsx(14,29): error TS2307: Cannot find module '@/presentation/components/ui/OverlayRoot' or its corresponding type declarations.
+src/routes/__root.tsx(15,33): error TS2307: Cannot find module '@/presentation/components/agent/MigrationStatus' or its corresponding type declarations.
+src/routes/__root.tsx(17,49): error TS2307: Cannot find module '@/presentation/components/notifications/NotificationPermissionRequester' or its corresponding type declarations.
+src/routes/__root.tsx(18,32): error TS2307: Cannot find module '@/presentation/components/command-palette/CommandPalette' or its corresponding type declarations.
+src/routes/__root.tsx(19,35): error TS2307: Cannot find module '@/hooks/useCommandPalette' or its corresponding type declarations.
+src/routes/about.lazy.tsx(2,27): error TS2307: Cannot find module '@/presentation/components/about' or its corresponding type declarations.
+src/routes/about.lazy.tsx(4,42): error TS2345: Argument of type '"/about"' is not assignable to parameter of type 'never'.
+src/routes/about.tsx(3,38): error TS2345: Argument of type '"/about"' is not assignable to parameter of type 'undefined'.
+src/routes/agents.tsx(15,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/agents.tsx(16,29): error TS2307: Cannot find module '@/presentation/components/ide/AgentsPanel' or its corresponding type declarations.
+src/routes/agents.tsx(17,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/routes/agents.tsx(18,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/routes/agents.tsx(20,38): error TS2345: Argument of type '"/agents"' is not assignable to parameter of type 'undefined'.
+src/routes/api/chat.ts(26,30): error TS2307: Cannot find module '@/infrastructure/tools/centralized-tool-registry' or its corresponding type declarations.
+src/routes/api/chat.ts(27,40): error TS2307: Cannot find module '@/infrastructure/tools/tool-catalog' or its corresponding type declarations.
+src/routes/api/chat.ts(32,8): error TS2307: Cannot find module '../../lib/validation/chat-request' or its corresponding type declarations.
+src/routes/api/chat.ts(139,39): error TS7006: Parameter 'tool' implicitly has an 'any' type.
+src/routes/api/chat.ts(144,30): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/routes/api/chat.ts(156,38): error TS2345: Argument of type '"/api/chat"' is not assignable to parameter of type 'undefined'.
+src/routes/api/chat.ts(157,5): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/chat.ts(272,46): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/routes/api/provider-test.ts(248,38): error TS2345: Argument of type '"/api/provider-test"' is not assignable to parameter of type 'undefined'.
+src/routes/api/provider-test.ts(249,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.execute.ts(19,8): error TS2307: Cannot find module '@/domain/types/llm/provider-types' or its corresponding type declarations.
+src/routes/api/providers.$id.execute.ts(107,38): error TS2345: Argument of type '"/api/providers/$id/execute"' is not assignable to parameter of type 'undefined'.
+src/routes/api/providers.$id.execute.ts(108,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.ts(18,46): error TS2307: Cannot find module '@/domain/types/llm/provider-types' or its corresponding type declarations.
+src/routes/api/providers.$id.ts(150,38): error TS2345: Argument of type '"/api/providers/$id"' is not assignable to parameter of type 'undefined'.
+src/routes/api/providers.$id.ts(151,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.ts(20,8): error TS2307: Cannot find module '@/domain/types/llm/provider-types' or its corresponding type declarations.
+src/routes/api/providers.ts(135,38): error TS2345: Argument of type '"/api/providers"' is not assignable to parameter of type 'undefined'.
+src/routes/api/providers.ts(136,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/debug.tsx(8,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/routes/debug.tsx(10,38): error TS2345: Argument of type '"/debug"' is not assignable to parameter of type 'undefined'.
+src/routes/hub.tsx(2,29): error TS2307: Cannot find module '@/presentation/components/hub/HubHomePage' or its corresponding type declarations.
+src/routes/hub.tsx(3,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/hub.tsx(4,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/hub.tsx(6,38): error TS2345: Argument of type '"/hub"' is not assignable to parameter of type 'undefined'.
+src/routes/ide.$projectId.tsx(21,38): error TS2307: Cannot find module '@/presentation/components/ui/Toast' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(25,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(26,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(32,10): error TS2307: Cannot find module '@/presentation/components/layout/IDELayoutMain' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(37,38): error TS2345: Argument of type '"/ide/$projectId"' is not assignable to parameter of type 'undefined'.
+src/routes/ide.$projectId.tsx(70,67): error TS2339: Property 'id' does not exist on type 'Project'.
+src/routes/ide.$projectId.tsx(70,85): error TS2339: Property 'name' does not exist on type 'Project'.
+src/routes/ide.tsx(18,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/ide.tsx(19,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/ide.tsx(21,36): error TS2307: Cannot find module '@/presentation/components/workspace' or its corresponding type declarations.
+src/routes/ide.tsx(25,38): error TS2345: Argument of type '"/ide"' is not assignable to parameter of type 'undefined'.
+src/routes/ide.tsx(124,23): error TS7006: Parameter 'projectId' implicitly has an 'any' type.
+src/routes/index.tsx(2,29): error TS2307: Cannot find module '@/presentation/components/hub/HubHomePage' or its corresponding type declarations.
+src/routes/index.tsx(3,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/index.tsx(5,38): error TS2345: Argument of type '"/"' is not assignable to parameter of type 'undefined'.
+src/routes/notes.$projectId.lazy.tsx(27,27): error TS2307: Cannot find module '@/presentation/components/notes/NotesPage' or its corresponding type declarations.
+src/routes/notes.$projectId.lazy.tsx(30,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/notes.$projectId.lazy.tsx(38,42): error TS2345: Argument of type '"/notes/$projectId"' is not assignable to parameter of type 'never'.
+src/routes/notes.$projectId.tsx(2,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/routes/notes.$projectId.tsx(6,38): error TS2345: Argument of type '"/notes/$projectId"' is not assignable to parameter of type 'undefined'.
+src/routes/notes.lazy.tsx(16,20): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db' or its corresponding type declarations.
+src/routes/notes.lazy.tsx(17,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/notes.lazy.tsx(22,42): error TS2345: Argument of type '"/notes"' is not assignable to parameter of type 'never'.
+src/routes/notes.lazy.tsx(43,32): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/routes/projects.tsx(2,30): error TS2307: Cannot find module '@/presentation/components/project/ProjectsPage' or its corresponding type declarations.
+src/routes/projects.tsx(3,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/projects.tsx(4,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/projects.tsx(6,38): error TS2345: Argument of type '"/projects"' is not assignable to parameter of type 'undefined'.
+src/routes/settings.tsx(16,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/settings.tsx(17,35): error TS2307: Cannot find module '@/presentation/components/agent/AgentConfigDialog' or its corresponding type declarations.
+src/routes/settings.tsx(18,31): error TS2307: Cannot find module '@/presentation/components/common/ErrorBoundary' or its corresponding type declarations.
+src/routes/settings.tsx(19,40): error TS2307: Cannot find module '@/presentation/components/ui/icons' or its corresponding type declarations.
+src/routes/settings.tsx(21,24): error TS2307: Cannot find module '@/presentation/components/ui/button' or its corresponding type declarations.
+src/routes/settings.tsx(22,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/routes/settings.tsx(23,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/routes/settings.tsx(24,34): error TS2307: Cannot find module '@/presentation/components/agent/ProviderSettings' or its corresponding type declarations.
+src/routes/settings.tsx(25,33): error TS2307: Cannot find module '@/presentation/components/agent/VaultStatusCard' or its corresponding type declarations.
+src/routes/settings.tsx(26,29): error TS2307: Cannot find module '@/presentation/components/ui/ThemeToggle' or its corresponding type declarations.
+src/routes/settings.tsx(27,38): error TS2307: Cannot find module '@/presentation/components/settings/SettingsExportDialog' or its corresponding type declarations.
+src/routes/settings.tsx(28,38): error TS2307: Cannot find module '@/presentation/components/settings/SettingsImportDialog' or its corresponding type declarations.
+src/routes/settings.tsx(29,32): error TS2307: Cannot find module '@/presentation/components/snippets/SnippetManager' or its corresponding type declarations.
+src/routes/settings.tsx(30,37): error TS2307: Cannot find module '@/presentation/components/notes/SlashCommandManager' or its corresponding type declarations.
+src/routes/settings.tsx(32,36): error TS2307: Cannot find module '@/presentation/components/analytics' or its corresponding type declarations.
+src/routes/settings.tsx(45,38): error TS2345: Argument of type '"/settings"' is not assignable to parameter of type 'undefined'.
+src/routes/settings.tsx(414,31): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/routes/settings.tsx(443,32): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/routes/settings.tsx(447,67): error TS2339: Property 'id' does not exist on type 'Project'.
+src/routes/settings.tsx(455,39): error TS7006: Parameter 'snippet' implicitly has an 'any' type.
+src/routes/test-error-boundary.tsx(10,31): error TS2307: Cannot find module '@/presentation/components/error' or its corresponding type declarations.
+src/routes/test-error-boundary.tsx(13,38): error TS2345: Argument of type '"/test-error-boundary"' is not assignable to parameter of type 'undefined'.
+src/routes/test-error-boundary.tsx(71,25): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/routes/test-fs-adapter.tsx(4,31): error TS2307: Cannot find module '../hooks/useMediaQuery' or its corresponding type declarations.
+src/routes/test-fs-adapter.tsx(6,38): error TS2345: Argument of type '"/test-fs-adapter"' is not assignable to parameter of type 'undefined'.
+src/routes/webcontainer.$.tsx(3,38): error TS2345: Argument of type '"/webcontainer/$"' is not assignable to parameter of type 'undefined'.
+src/routes/workspace/$projectId.tsx(22,38): error TS2307: Cannot find module '@/presentation/components/ui/Toast' or its corresponding type declarations.
+src/routes/workspace/$projectId.tsx(31,37): error TS2307: Cannot find module '@/presentation/components/layout/IDELayoutMain' or its corresponding type declarations.
+src/routes/workspace/$projectId.tsx(79,38): error TS2345: Argument of type '"/workspace/$projectId"' is not assignable to parameter of type 'undefined'.
+src/routes/workspace/$projectId.tsx(86,39): error TS2339: Property 'projectId' does not exist on type 'never'.
+src/routes/workspace/$projectId.tsx(89,58): error TS2339: Property 'projectId' does not exist on type 'never'.
+src/routes/workspace/$projectId.tsx(92,95): error TS2339: Property 'projectId' does not exist on type 'never'.
+src/routes/workspace/$projectId.tsx(97,70): error TS2339: Property 'id' does not exist on type 'Project'.
+src/routes/workspace/$projectId.tsx(97,88): error TS2339: Property 'name' does not exist on type 'Project'.
+src/routes/workspace/$projectId.tsx(103,35): error TS2339: Property 'project' does not exist on type 'never'.
+src/routes/workspace/index.tsx(11,38): error TS2345: Argument of type '"/workspace/"' is not assignable to parameter of type 'undefined'.

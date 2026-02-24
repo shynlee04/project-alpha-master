@@ -1,0 +1,2 @@
+src/infrastructure/filesystem/storage-gateway-factory.ts(42,32): error TS6138: Property '_directoryHandle' is declared but its value is never read.
+src/infrastructure/filesystem/storage-gateway-factory.ts(91,32): error TS6138: Property '_projectId' is declared but its value is never read.

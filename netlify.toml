@@ -1,0 +1,30 @@
+# Netlify Configuration for TanStack Start
+# 
+# Build outputs:
+# - Static files: dist/client/
+# - SSR Functions: auto-configured by @netlify/vite-plugin-tanstack-start
+
+[build]
+  command = "pnpm run build"
+  publish = "dist/client"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # NITRO_PRESET not needed - handled by @netlify/vite-plugin-tanstack-start
+
+
+# Required headers for WebContainer support
+# Note: Also defined in dist/_headers which Netlify reads automatically
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Resource-Policy = "cross-origin"
+
+# SPA fallback for client-side routing (handled by Nitro SSR, but kept for static routes)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

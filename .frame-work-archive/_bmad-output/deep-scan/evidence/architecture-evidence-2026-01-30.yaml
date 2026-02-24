@@ -1,0 +1,537 @@
+# Architecture Layer Violation Scan
+# Generated: 2026-01-30
+# Scanner: deep-scan-architecture-scanner
+# Task ID: ARCH-00-LAYERS
+
+---
+scan_metadata:
+  timestamp: "2026-01-30T00:00:00+07:00"
+  scanner_version: "1.0.0"
+  scan_duration_estimate: "comprehensive"
+  source_files_analyzed: 1270
+
+codebase_metrics:
+  total_files:
+    presentation: 494
+    domain: 52
+    infrastructure: 361
+    lib_forbidden_zone: 363
+    total: 1270
+  
+  files_over_300_lines: 163
+  files_over_400_lines: 50+
+  total_lines_of_code: 275641
+
+# ============================================================================
+# CRITICAL FINDING: @/lib/ IMPORTS (FORBIDDEN ZONE)
+# ============================================================================
+
+lib_import_analysis:
+  total_count: 670
+  files_affected: 435
+  severity: critical
+  
+  by_layer_distribution:
+    - layer: "presentation"
+      import_count: 309
+      percentage: "46.1%"
+    - layer: "infrastructure"
+      import_count: 95
+      percentage: "14.2%"
+    - layer: "routes"
+      import_count: 2
+      percentage: "0.3%"
+    - layer: "domain"
+      import_count: 10
+      percentage: "1.5%"
+    - layer: "lib (internal)"
+      import_count: 254
+      percentage: "37.9%"
+  
+  by_category:
+    - category: "utils"
+      count: 201
+      primary_usage: "cn() classname utility"
+      migration_target: "@/presentation/utils/cn"
+      priority: "high (most used)"
+      
+    - category: "notes"
+      count: 71
+      migration_target: "@/infrastructure/persistence/stores/notes"
+      priority: "high"
+      
+    - category: "rag"
+      count: 49
+      migration_target: "@/infrastructure/rag"
+      priority: "medium"
+      
+    - category: "filesystem"
+      count: 44
+      migration_target: "@/infrastructure/filesystem"
+      priority: "high (already exists)"
+      
+    - category: "agent"
+      count: 44
+      migration_target: "@/infrastructure/agent"
+      priority: "high"
+      
+    - category: "events"
+      count: 35
+      migration_target: "@/infrastructure/events"
+      priority: "medium (already exists)"
+      
+    - category: "workspace"
+      count: 32
+      migration_target: "@/infrastructure/persistence/stores/workspace"
+      priority: "high (already exists)"
+      
+    - category: "canvas"
+      count: 22
+      migration_target: "@/infrastructure/canvas"
+      priority: "low"
+      
+    - category: "knowledge"
+      count: 14
+      migration_target: "@/infrastructure/knowledge"
+      priority: "low"
+      
+    - category: "webcontainer"
+      count: 11
+      migration_target: "@/infrastructure/webcontainer"
+      priority: "medium (already exists)"
+      
+    - category: "filesync"
+      count: 11
+      migration_target: "@/infrastructure/sync"
+      priority: "medium"
+      
+    - category: "plugins"
+      count: 10
+      migration_target: "@/infrastructure/plugins"
+      priority: "medium (already exists)"
+      
+    - category: "analytics"
+      count: 10
+      migration_target: "@/infrastructure/analytics"
+      priority: "low"
+
+  lib_subdirectories:
+    # Large modules (>30 files) - PRIORITY
+    - dir: "filesystem"
+      files: 59
+      note: "DUPLICATE: infrastructure/filesystem exists"
+      action: "MERGE into infrastructure"
+      
+    - dir: "notes"
+      files: 57
+      note: "Contains note-store, ai-image-service"
+      action: "Split: stores → infrastructure, services → domain"
+      
+    - dir: "rag"
+      files: 41
+      note: "RAG pipeline, indexing, embeddings"
+      action: "MOVE to infrastructure/rag"
+      
+    - dir: "workspace"
+      files: 33
+      note: "DUPLICATE: infrastructure/persistence/stores/workspace exists"
+      action: "MERGE into infrastructure"
+      
+    # Medium modules (10-30 files)
+    - dir: "filesync"
+      files: 15
+      action: "MOVE to infrastructure/sync"
+      
+    - dir: "agent"
+      files: 14
+      action: "MOVE to infrastructure/agent"
+      
+    - dir: "events"
+      files: 11
+      action: "MERGE into infrastructure/events"
+      
+    - dir: "webcontainer"
+      files: 10
+      action: "MERGE into infrastructure/webcontainer"
+
+# ============================================================================
+# CRITICAL FINDING: LAYER VIOLATIONS
+# ============================================================================
+
+layer_violations:
+  summary:
+    total_violations: 17
+    critical_violations: 11
+    infrastructure_to_presentation: 6
+    domain_to_infrastructure: 5
+    presentation_to_infrastructure_direct: 100+  # See detailed breakdown
+    
+  critical_violations:
+    # Domain Layer Violations (MOST SEVERE)
+    - id: "DV-001"
+      source: "src/domain/services/project-creation-service.ts"
+      target: "@/infrastructure/filesystem/platform-contract"
+      type: "domain → infrastructure"
+      line: 15
+      severity: "critical"
+      impact: "Domain layer depends on infrastructure implementation"
+      fix: "Create IPlatformContract interface in domain/interfaces"
+      
+    - id: "DV-002"
+      source: "src/domain/services/project-creation-service.ts"
+      target: "@/infrastructure/persistence/stores/project/useProjectStore"
+      type: "domain → infrastructure"
+      line: 16
+      severity: "critical"
+      impact: "Domain service imports Zustand store directly"
+      fix: "Inject repository interface, not implementation"
+      
+    - id: "DV-003"
+      source: "src/domain/services/project-creation-service.ts"
+      target: "@/infrastructure/persistence/stores/project/project-types"
+      type: "domain → infrastructure"
+      line: 17
+      severity: "critical"
+      impact: "Domain imports types from infrastructure"
+      fix: "Define types in domain, re-export from infrastructure"
+      
+    - id: "DV-004"
+      source: "src/domain/adapters/index.ts"
+      target: "@/infrastructure/*"
+      type: "domain → infrastructure"
+      severity: "critical"
+      impact: "Adapters barrel imports infrastructure"
+      fix: "Adapters should only export interfaces defined in domain"
+      
+    - id: "DV-005"
+      source: "src/domain/interfaces/feature-plugin.interface.ts"
+      target: "@/infrastructure/*"
+      type: "domain → infrastructure"
+      severity: "critical"
+      impact: "Interface file imports implementation"
+      fix: "Remove infrastructure dependencies from interface"
+      
+    # Infrastructure to Presentation Violations
+    - id: "IV-001"
+      source: "src/infrastructure/context/project-context.tsx"
+      target: "@/presentation/components/layout/PermissionOverlay"
+      type: "infrastructure → presentation"
+      line: 38
+      severity: "critical"
+      impact: "Context provider imports UI component"
+      fix: "Move PermissionOverlay to infrastructure or use render props"
+      
+    - id: "IV-002"
+      source: "src/infrastructure/persistence/stores/layout-store.ts"
+      target: "@/presentation/layouts/PluginLayoutStore"
+      type: "infrastructure → presentation"
+      line: 27
+      severity: "critical"
+      note: "Marked @deprecated but still used"
+      fix: "Remove dependency, consolidate to one store location"
+      
+    - id: "IV-003"
+      source: "src/infrastructure/persistence/stores/activity-bar/*.ts"
+      target: "@/presentation/*"
+      type: "infrastructure → presentation"
+      severity: "high"
+      count: 4
+      fix: "Remove presentation layer imports from stores"
+
+  presentation_to_infrastructure:
+    description: "Presentation layer directly importing from infrastructure"
+    total_count: 100+
+    pattern_breakdown:
+      persistence_stores: 105  # Direct store imports (expected pattern)
+      filesystem: 15          # Direct fs access (needs abstraction)
+      events: 4               # Event bus access (acceptable)
+      webcontainer: 2         # Direct impl access (needs gateway)
+      sync: 2                 # Sync service access
+      plugins: 2              # Plugin registry
+      context: 2              # Context providers (acceptable)
+    
+    direct_infra_access:
+      - file: "src/presentation/components/hub/HubHomePage.tsx"
+        imports: ["@/infrastructure/persistence/dexie-db"]
+        violation: "Presentation directly accessing database"
+        fix: "Use repository pattern through domain service"
+        
+      - file: "src/presentation/components/project/ProjectsPage.tsx"
+        imports: ["@/infrastructure/persistence/dexie-db", "@/infrastructure/filesystem/platform-contract"]
+        violation: "Multiple infrastructure imports"
+        fix: "Create ProjectService in domain layer"
+        
+      - file: "src/presentation/components/ide/FileTree/hooks/useFileTreeState.ts"
+        imports: ["@/infrastructure/persistence/dexie-db"]
+        violation: "Hook directly accessing database"
+        fix: "Use FileTreeService from domain"
+        
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        imports: ["@/infrastructure/events/file-event-bus", "@/infrastructure/sync/*"]
+        violation: "Component accessing events and sync directly"
+        fix: "Use domain layer event handling"
+
+# ============================================================================
+# GOD COMPONENTS ANALYSIS (>400 lines)
+# ============================================================================
+
+god_components:
+  threshold: 400
+  total_count: 50
+  
+  top_offenders:
+    - file: "src/presentation/components/notes/AISlashCommand.tsx"
+      lines: 1674
+      severity: "critical"
+      responsibilities:
+        - "Slash command parsing"
+        - "AI command execution"
+        - "UI rendering"
+        - "State management"
+        - "Event handling"
+      split_recommendation:
+        - "SlashCommandParser (domain)"
+        - "AICommandExecutor (domain)"
+        - "SlashCommandUI (presentation)"
+        - "useSlashCommandState (hook)"
+        
+    - file: "src/presentation/components/notes/NoteEditor.tsx"
+      lines: 1353
+      severity: "critical"
+      responsibilities:
+        - "Editor rendering"
+        - "Block management"
+        - "Markdown sync"
+        - "AI integration"
+        - "Event subscriptions"
+      split_recommendation:
+        - "NoteEditorCore (200 lines)"
+        - "useNoteBlockManagement (hook)"
+        - "useNoteMarkdownSync (hook)"
+        - "useNoteAIIntegration (hook)"
+        
+    - file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      lines: 773
+      severity: "high"
+      split_recommendation:
+        - "MonacoEditorCore"
+        - "useMonacoEditor (hook)"
+        - "MonacoEditorToolbar"
+        
+    - file: "src/presentation/components/ui/resizable.tsx"
+      lines: 763
+      severity: "high"
+      note: "UI primitive - may be acceptable if from library"
+      
+    - file: "src/presentation/components/notes/blocks/MultiStepGenerationBlock.tsx"
+      lines: 700
+      severity: "high"
+      split_recommendation:
+        - "MultiStepGenerator (core)"
+        - "StepProgressIndicator"
+        - "GenerationResultView"
+        
+    - file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+      lines: 1746
+      severity: "critical"
+      type: "infrastructure"
+      note: "Migration files naturally grow - consider splitting by version"
+      
+    - file: "src/infrastructure/persistence/dexie-db.ts"
+      lines: 1213
+      severity: "critical"
+      type: "infrastructure"
+      split_recommendation:
+        - "DexieSchema (types)"
+        - "DexieConnection (core)"
+        - "DexieTables (table definitions)"
+        - "DexieHooks (observers)"
+        
+    - file: "src/infrastructure/events/event-bus.ts"
+      lines: 888
+      severity: "high"
+      type: "infrastructure"
+      split_recommendation:
+        - "EventBusCore"
+        - "DomainEventTypes"
+        - "EventSubscriptions"
+        
+    - file: "src/infrastructure/filesystem/fsa-gateway.ts"
+      lines: 816
+      severity: "high"
+      type: "infrastructure"
+      
+    - file: "src/domain/services/universal-provider-registry.ts"
+      lines: 724
+      severity: "high"
+      type: "domain"
+      split_recommendation:
+        - "ProviderRegistry (core)"
+        - "ProviderValidator"
+        - "ProviderFactory"
+        
+    - file: "src/presentation/layouts/PluginLayoutStore.ts"
+      lines: 692
+      severity: "high"
+      note: "Store in presentation layer - should be in infrastructure"
+
+  by_layer:
+    presentation: 35
+    infrastructure: 12
+    lib: 8
+    domain: 3
+    routes: 2
+    plugins: 2
+
+# ============================================================================
+# MISSING ABSTRACTIONS
+# ============================================================================
+
+missing_abstractions:
+  - pattern: "Direct dexie-db access from presentation"
+    occurrences: 15
+    files:
+      - "src/presentation/components/hub/HubHomePage.tsx"
+      - "src/presentation/components/project/ProjectsPage.tsx"
+      - "src/presentation/components/ide/FileTree/hooks/useFileTreeState.ts"
+      - "src/presentation/components/snippets/SnippetEditor.tsx"
+      - "src/presentation/components/snippets/SnippetManager.tsx"
+      - "src/presentation/components/notes/NoteContextMenu.tsx"
+      - "src/presentation/components/notes/NoteTree.tsx"
+      - "src/presentation/components/notes/AISlashCommand.tsx"
+      - "src/presentation/components/notes/NoteSidebar.tsx"
+      - "src/presentation/components/hub/ProjectPickerDialog.tsx"
+      - "src/presentation/components/hub/WorkspaceBindingDialog.types.ts"
+      - "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
+      - "src/presentation/components/hub/useWorkspaceBindingState.ts"
+      - "src/presentation/components/project/wizard-types.ts"
+      - "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+    required_abstraction: "Repository interfaces in domain layer"
+    
+  - pattern: "Direct platform-contract access from presentation"
+    occurrences: 5
+    required_abstraction: "PlatformService in domain layer"
+    
+  - pattern: "Event bus access from presentation"
+    occurrences: 4
+    note: "May be acceptable if using domain events"
+    
+  - pattern: "@/lib/notes store access"
+    occurrences: 71
+    required_abstraction: "NoteRepository in domain/interfaces"
+
+# ============================================================================
+# REMEDIATION PRIORITY MATRIX
+# ============================================================================
+
+remediation_priority:
+  immediate:
+    - action: "Create @/presentation/utils/cn.ts"
+      impact: "Eliminates 201 @/lib/utils imports"
+      effort: "low"
+      files_affected: 201
+      
+    - action: "Fix domain → infrastructure violations"
+      impact: "Restores clean architecture in domain"
+      effort: "medium"
+      files_affected: 5
+      
+    - action: "Fix infrastructure → presentation violations"
+      impact: "Removes reverse dependencies"
+      effort: "medium"
+      files_affected: 6
+      
+  high:
+    - action: "Migrate @/lib/notes → infrastructure"
+      impact: "57 files, 71 imports"
+      effort: "high"
+      
+    - action: "Migrate @/lib/filesystem → infrastructure (merge)"
+      impact: "59 files, 44 imports"
+      effort: "medium (already exists)"
+      
+    - action: "Split AISlashCommand.tsx"
+      impact: "1674 lines → ~4 focused modules"
+      effort: "high"
+      
+    - action: "Split NoteEditor.tsx"
+      impact: "1353 lines → ~5 focused modules"
+      effort: "high"
+      
+  medium:
+    - action: "Migrate @/lib/rag → infrastructure"
+      impact: "41 files, 49 imports"
+      effort: "medium"
+      
+    - action: "Migrate @/lib/workspace → infrastructure (merge)"
+      impact: "33 files, 32 imports"
+      effort: "medium"
+      
+    - action: "Create domain repository interfaces"
+      impact: "Enables proper DI"
+      effort: "medium"
+      
+  deferred:
+    - action: "Migrate remaining small lib modules"
+      impact: "~100 files"
+      effort: "low per module"
+
+# ============================================================================
+# ARCHITECTURE HEALTH SCORE
+# ============================================================================
+
+health_score:
+  current: 29.5
+  target: 85.0
+  
+  breakdown:
+    lib_imports_penalty: -35  # 670 imports × 0.05
+    layer_violations_penalty: -17  # 17 critical violations × 1
+    god_components_penalty: -10  # 50 files × 0.2
+    presentation_infra_access_penalty: -5  # 15 direct DB access × 0.33
+    base_score: 100
+    
+  improvement_path:
+    phase_1: "Fix cn utility → +10 points"
+    phase_2: "Fix layer violations → +17 points"  
+    phase_3: "Split god components → +10 points"
+    phase_4: "Migrate lib modules → +18 points"
+    projected_after_all: 84.5
+
+# ============================================================================
+# CONCLUSIONS
+# ============================================================================
+
+conclusions:
+  - finding: "670 @/lib/ imports confirm architectural debt is REAL"
+    validated: true
+    previous_estimate: 654
+    actual: 670
+    
+  - finding: "201 imports are just @/lib/utils (cn function)"
+    recommendation: "Quick win: move cn() to @/presentation/utils"
+    
+  - finding: "Domain layer is NOT pure"
+    violations: 5
+    recommendation: "Priority 1: Fix domain → infrastructure imports"
+    
+  - finding: "Infrastructure layer imports presentation"
+    violations: 6
+    recommendation: "Reverse dependencies must be eliminated"
+    
+  - finding: "50+ god components exist (>400 lines)"
+    top_offender: "AISlashCommand.tsx (1674 lines)"
+    recommendation: "Systematic splitting required"
+    
+  - finding: "Presentation layer directly accesses database"
+    occurrences: 15
+    recommendation: "Create repository pattern in domain layer"
+
+handoff_notes:
+  to: "supreme-coordinator"
+  status: "COMPLETE"
+  deliverable: "architecture-evidence-2026-01-30.yaml"
+  next_actions:
+    - "Route to store-refactorer for god store elimination"
+    - "Route to component-splitter for god components"
+    - "Create migration plan for @/lib → infrastructure"

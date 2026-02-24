@@ -1,0 +1,106 @@
+# Spike Entry Page - Complete Dependency Resolution
+# Session: session-debug-2026-01-17
+# Updated: 2026-01-17T11:00:00+07:00
+
+issue_fixed:
+  - description: "Spike entry page was showing folder picker immediately on load, violating checklist requirements"
+  - cause: "Using simplified SpikeEntryMatrix component instead of full HubHomePage"
+  - solution: "Replaced /routes/spike/index.tsx to use HubHomePage with proper 2-level entry flow"
+
+files_copied:
+  - path: src/spike/components/hub/
+    files:
+      - BootSequence.tsx
+      - HubHero.tsx
+      - HubHomePage.tsx (from main)
+      - RecentProjectsSection.tsx
+      - SummaryCardsGrid.tsx
+      - ChartsGrid.tsx
+      - WorkspaceBindingDialog.tsx
+      - useDashboardMetrics.ts
+    reason: "HubHomePage needs full hub component ecosystem"
+    
+  - path: src/spike/components/ide/
+    files:
+      - BentoGrid.tsx
+    reason: "BentoGrid component needed by HubHomePage"
+    
+  - path: src/spike/components/ui/
+    files:
+      - button.tsx
+    reason: "Button component needed by HubHomePage"
+    
+  - path: src/spike/components/search/
+    files:
+      - AdvancedSearchDialog.tsx
+    reason: "Advanced search dialog used by HubHomePage"
+    
+  - path: src/spike/components/common/
+    files:
+      - MainLayout.tsx
+      - ProjectPickerDialog.tsx
+      - FolderOverlapWarningDialog.tsx
+    reason: "Common components used by HubHomePage"
+
+files_modified:
+  - path: src/spike/components/hub/HubHomePage.tsx
+    changes:
+      - Updated imports: @/ → @/spike/ for all paths
+      - Removed ProjectCreationWizard references (use simplified /spike/create navigation)
+      - Removed projectCreationWizardOpen state
+      - Updated useEffect to navigate to /spike/create
+      - Fixed ProjectPickerDialog import to use ../common/
+      - Fixed AdvancedSearchDialog import to use @/spike/components/search
+    reason: "Adapt HubHomePage to use spike-specific paths"
+    
+  - path: src/spike/components/common/ProjectPickerDialog.tsx
+    changes:
+      - Updated imports: @/lib/utils → @/spike/lib/utils
+      - Updated imports: @/infrastructure/persistence/dexie-db → @/spike/infrastructure/persistence/dexie-db
+      - Updated imports: @/infrastructure/persistence/stores/project/useProjectStore → @/spike/infrastructure/persistence/stores/project/useProjectStore
+    reason: "Fix import paths to use spike infrastructure"
+    
+  - path: src/spike/components/ui/button.tsx
+    changes:
+      - Updated imports: @/lib/utils → @/spike/lib/utils
+    reason: "Button component needs spike-specific utils"
+
+  - path: src/routes/spike/index.tsx
+    changes:
+      - Replaced SpikeEntryMatrix with HubHomePage
+      - Simplified route wrapper
+    reason: "Use full hub page instead of simplified spike entry"
+
+total_files_copied: 16
+total_files_modified: 3
+total_operations: 19
+
+next_steps:
+  - 1. Fix all import paths in ProjectPickerDialog.tsx
+  - 2. Verify all imports resolve correctly
+  - 3. Test spike entry page at /spike/
+  - 4. Verify no auto-showing of folder picker on load
+  - 5. Verify device-aware entry buttons work correctly
+
+# Session: hub-flow-debug-2026-01-17
+# Fixes: BUG-003, BUG-005
+
+files_modified_hub_flow_debug:
+  - path: src/infrastructure/persistence/stores/project/project-types.ts
+    changes:
+      - Updated ProjectMethods interface: createProject now returns Promise<string>
+    reason: "Fix BUG-005: Allow awaiting DB persistence"
+
+
+  - path: src/presentation/components/project/steps/ProjectDetailsStep.tsx
+    changes:
+      - Replaced useDeviceType/window checks with getPlatformContract().canAccessFSA
+      - Updated logic for storage type selection and filtering
+    reason: "Fix BUG-004: Desktop forced to mobile UI on resize"
+
+  - path: src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts
+    changes:
+      - Imported useProjectStore and useShallow
+      - Updated useVFSAutoWatch to depend on project.storageMetadata availability
+    reason: "Fix BUG-006: Hot load failure (VFS watcher timing)"
+

@@ -1,0 +1,110 @@
+/**
+ * @fileoverview File Attachment Block Styles
+ * @module presentation/components/notes/blocks/FileAttachmentBlock.css
+ * @story P1.5-03
+ *
+ * 8-bit dark theme styling for FileAttachmentBlock
+ */
+
+.file-attachment-block {
+  margin: 8px 0;
+}
+
+.file-attachment-block[data-align="center"] {
+  display: flex;
+  justify-content: center;
+}
+
+.file-attachment-block[data-align="right"] {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Content card */
+.file-attachment-block__content {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface-elevated, #171717);
+  border: 1px solid var(--color-border, #262626);
+  border-radius: 0;
+  max-width: 400px;
+  position: relative;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.file-attachment-block__content:hover {
+  border-color: var(--color-primary, #3b82f6);
+}
+
+/* Icon */
+.file-attachment-block__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-surface, #0a0a0a);
+  color: var(--color-text-secondary, #a3a3a3);
+  flex-shrink: 0;
+}
+
+/* File info */
+.file-attachment-block__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.file-attachment-block__name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary, #e5e5e5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 250px;
+}
+
+.file-attachment-block__size {
+  font-size: 11px;
+  color: var(--color-text-secondary, #a3a3a3);
+}
+
+/* Remove button */
+.file-attachment-block__remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px;
+  color: var(--color-text-secondary, #a3a3a3);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.file-attachment-block__content:hover .file-attachment-block__remove {
+  opacity: 1;
+}
+
+.file-attachment-block__remove:hover {
+  color: var(--color-error, #ef4444);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .file-attachment-block__content {
+    max-width: 100%;
+  }
+
+  .file-attachment-block__name {
+    max-width: 180px;
+  }
+}

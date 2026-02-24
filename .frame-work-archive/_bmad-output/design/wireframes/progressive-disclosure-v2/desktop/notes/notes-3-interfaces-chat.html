@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent Notes - AI-Assisted Writing (3 Interfaces: Chat)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --primary: #fafafa;
+      --action: #f97316;
+      --border: #3f3f46;
+      --border-light: #52525b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --chat-user-bg: #27272a;
+      --chat-ai-bg: #1e293b;
+    }
+
+    body {
+      font-family: 'Geist Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .notes-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 0;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s;
+      box-shadow: 0 0 0 0 #000;
+    }
+
+    .btn-primary {
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+    }
+
+    .btn-primary:hover {
+      background: var(--action-hover);
+      box-shadow: 2px 2px 0 0 #000;
+    }
+
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .note-item {
+      padding: 12px;
+      margin-bottom: 4px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .note-item:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-light);
+    }
+
+    .note-item.active {
+      background: var(--surface-hover);
+      border-color: var(--action);
+      border-left: 3px solid var(--action);
+    }
+
+    .note-item-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .note-item-preview {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+    }
+
+    .header {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .breadcrumb-item.active {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .workspace-split {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      min-width: 400px;
+    }
+
+    .chat-panel {
+      width: 380px;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      min-width: 320px;
+    }
+
+    .chat-header {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-status {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: #22c55e;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .chat-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+      font-size: 12px;
+      transition: all 0.1s;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+
+    .editor-toolbar {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-title {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'Geist Sans', sans-serif;
+      color: var(--text-primary);
+      padding: 8px 0;
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .editor-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      font-family: 'Geist Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-message {
+      max-width: 85%;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      background: var(--chat-user-bg);
+      border-radius: 8px 8px 0 8px;
+    }
+
+    .chat-message.ai {
+      align-self: flex-start;
+      background: var(--chat-ai-bg);
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .chat-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px 12px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--action);
+    }
+
+    .chat-send-btn {
+      padding: 10px 16px;
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 0;
+      transition: all 0.1s;
+    }
+
+    .chat-send-btn:hover {
+      background: var(--action-hover);
+      box-shadow: 2px 2px 0 0 #000;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-hover);
+    }
+
+    .suggestion-chip {
+      padding: 4px 10px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.1s;
+    }
+
+    .suggestion-chip:hover {
+      border-color: var(--action);
+      color: var(--text-primary);
+    }
+
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--canvas);
+    }
+
+    .status-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-right {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+
+    .status-item:hover {
+      opacity: 0.8;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 240px;
+      }
+      .chat-panel {
+        width: 350px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar, .chat-panel {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="notes-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <span>📝</span>
+          <span>Notes</span>
+        </div>
+        <button class="btn btn-primary">+ New</button>
+      </div>
+      <div class="note-list">
+        <div class="note-item active">
+          <div class="note-item-title">AI-Assisted Writing</div>
+          <div class="note-item-preview">
+            Using AI to enhance writing productivity while maintaining creative control...
+          </div>
+        </div>
+        <div class="note-item">
+          <div class="note-item-title">Blog Post Ideas</div>
+          <div class="note-item-preview">
+            Collection of blog post topics: 1. Progressive Disclosure 2. 8-bit Design...
+          </div>
+        </div>
+        <div class="note-item">
+          <div class="note-item-title">Research Notes</div>
+          <div class="note-item-preview">
+            Key findings from user research interviews and competitor analysis...
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <nav class="breadcrumb">
+          <span class="breadcrumb-item active">ai-assisted-writing.md</span>
+        </nav>
+        <div class="header-actions">
+          <button class="btn btn-secondary active">
+            <span>🤖</span>
+            <span>AI Chat</span>
+          </button>
+          <button class="btn btn-primary">
+            <span>💾</span>
+            <span>Save</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="workspace-split">
+        <div class="editor-panel">
+          <div class="editor-toolbar">
+            <input type="text" class="editor-title" value="AI-Assisted Writing" placeholder="Note title...">
+            <div class="editor-actions">
+              <button class="icon-btn">B</button>
+              <button class="icon-btn">I</button>
+              <button class="icon-btn">{"</>"}</button>
+            </div>
+          </div>
+
+          <div class="editor-content" contenteditable="true" spellcheck="false">
+            <h1>AI-Assisted Writing</h1>
+
+            <p>Writing with AI assistance can significantly boost productivity while maintaining creative control. The key is using AI as a collaborator, not a replacement.</p>
+
+            <h2>Best Practices</h2>
+
+            <ul>
+              <li>Use AI for brainstorming and ideation</li>
+              <li>Let AI help with structure and organization</li>
+              <li>Review and edit all AI-generated content</li>
+              <li>Maintain your unique voice and perspective</li>
+            </ul>
+
+            <p>The goal is to augment human creativity, not replace it.</p>
+
+            <h2>Via-Gent AI Integration</h2>
+
+            <p>Our AI assistant helps with:</p>
+
+            <ul>
+              <li>Content generation (blog posts, documentation)</li>
+              <li>Editing and proofreading</li>
+              <li>Research and fact-checking</li>
+              <li>Style consistency</li>
+            </ul>
+
+            <p>Always review and personalize the output to match your voice.</p>
+          </div>
+        </div>
+
+        <div class="chat-panel">
+          <div class="chat-header">
+            <div class="chat-title">
+              <span>🤖</span>
+              <span>AI Writing Assistant</span>
+              <span class="chat-status">Online</span>
+            </div>
+            <div class="chat-actions">
+              <button class="icon-btn" title="New Chat">+</button>
+            </div>
+          </div>
+
+          <div class="suggestions">
+            <div class="suggestion-chip">Expand this section</div>
+            <div class="suggestion-chip">Add examples</div>
+            <div class="suggestion-chip">Improve clarity</div>
+            <div class="suggestion-chip">Check grammar</div>
+          </div>
+
+          <div class="chat-messages">
+            <div class="chat-message ai">
+              Hi! I noticed you're writing about AI-assisted writing. Would you like me to help expand the "Best Practices" section with more specific examples?
+            </div>
+            <div class="chat-message user">
+              Yes, please add 3 practical examples for each point.
+            </div>
+            <div class="chat-message ai">
+              Great! Here are the examples:
+
+              <strong>Brainstorming:</strong>
+              1. "List 10 blog post topics about progressive disclosure"
+              2. "Generate 5 creative hooks for this introduction"
+              3. "What are counter-arguments to this point?"
+
+              <strong>Structure:</strong>
+              1. "Create an outline for this article"
+              2. "Suggest better transitions between paragraphs"
+              3. "Organize these bullet points logically"
+
+              <strong>Review:</strong>
+              1. "Check this paragraph for clarity"
+              2. "Suggest improvements for flow"
+              3. "Identify redundant sentences"
+
+              Shall I add these examples to your note?
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+              <input type="text" class="chat-input" placeholder="Ask AI to help with writing..." autofocus>
+              <button class="chat-send-btn">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-left">
+          <div class="status-item">
+            <span>🤖</span>
+            <span>AI Ready</span>
+          </div>
+          <div class="status-item">
+            <span>📊</span>
+            <span>245 words</span>
+          </div>
+        </div>
+        <div class="status-right">
+          <div class="status-item">
+            <span>📄</span>
+            <span>Markdown</span>
+          </div>
+          <div class="status-item">
+            <span>⏱</span>
+            <span>Editing</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.note-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.suggestion-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        const chatInput = document.querySelector('.chat-input');
+        chatInput.value = this.textContent;
+        chatInput.focus();
+      });
+    });
+
+    const chatInput = document.querySelector('.chat-input');
+    const sendBtn = document.querySelector('.chat-send-btn');
+    const chatMessages = document.querySelector('.chat-messages');
+
+    function sendMessage() {
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-message user';
+      userMsg.textContent = message;
+      chatMessages.appendChild(userMsg);
+
+      chatInput.value = '';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message ai';
+        aiMsg.textContent = `I'll help you with "${message}". Let me analyze your note and provide relevant suggestions...`;
+        chatMessages.appendChild(aiMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>

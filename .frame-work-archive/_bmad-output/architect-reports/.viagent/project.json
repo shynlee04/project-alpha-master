@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "projectId": "proj_1769589742742_t7s890hdp",
+  "projectName": "architect-reports",
+  "storageType": "fsa",
+  "workspaceBindings": {
+    "ide": true,
+    "knowledge": false,
+    "notes": true,
+    "study": false
+  },
+  "createdAt": "2026-01-28T08:42:23.032Z",
+  "updatedAt": "2026-01-28T08:42:23.033Z",
+  "tags": []
+}

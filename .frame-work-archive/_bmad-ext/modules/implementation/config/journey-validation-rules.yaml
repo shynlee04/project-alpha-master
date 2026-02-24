@@ -1,0 +1,156 @@
+# Journey Validation Rules
+# Story-Cycle Workflow - Step 1a: User Journey Simulation
+# File: journey-validation-rules.yaml
+# Purpose: Define anti-patterns to detect during "The Movie Script Test"
+
+version: "1.0.0"
+last_updated: "2026-01-11"
+
+# Anti-patterns that indicate UX/Product Reality failures
+anti_patterns:
+  island_feature:
+    name: "Island Feature"
+    description: "Feature with no clear entry point or discovery path"
+    severity: "high"
+    detection:
+      - "No obvious way to reach feature from main UI"
+      - "Feature buried in settings or obscure location"
+      - "No onboarding or hint about feature existence"
+    questions:
+      - "Where does user discover this feature?"
+      - "Is there a visible button/link?"
+      - "Would a new user know this exists?"
+
+  split_brain:
+    name: "Split Brain"
+    description: "Dual/fragmented workflows for same task causing confusion"
+    severity: "critical"
+    detection:
+      - "Multiple ways to do same thing with different results"
+      - "Separate UIs that should be integrated"
+      - "User has to choose between similar options without clarity"
+    examples:
+      - "Dual Chat Systems - history lost when switching tabs"
+      - "Multiple create buttons with different behaviors"
+    questions:
+      - "Are there multiple workflows that should be one?"
+      - "Do users get confused about which path to take?"
+
+  ghost_result:
+    name: "Ghost Result"
+    description: "Action with no visible result or result appears in unexpected location"
+    severity: "high"
+    detection:
+      - "User clicks but nothing visible happens"
+      - "Result appears off-screen or in different tab"
+      - "Result appears but user doesn't notice"
+    questions:
+      - "After clicking, where does the result appear?"
+      - "Is result immediately visible?"
+      - "Is there visual feedback confirming action?"
+
+  dead_end:
+    name: "Dead End"
+    description: "Action that traps user with no way back"
+    severity: "medium"
+    detection:
+      - "No back button or escape"
+      - "User must refresh to continue"
+      - "Forced to complete action to exit"
+    questions:
+      - "Can user get back to where they were?"
+      - "Is there a clear exit/cancel path?"
+
+  loading_vacuum:
+    name: "Loading Vacuum"
+    description: "No feedback during processing; user doesn't know if system is working"
+    severity: "medium"
+    detection:
+      - "No spinner, progress, or skeleton screen"
+      - "No timeout indication"
+      - "User can't tell if action is processing"
+    questions:
+      - "What does user see while waiting?"
+      - "Is there a progress indicator?"
+
+  empty_state_void:
+    name: "Empty State Void"
+    description: "No handling for zero-result scenarios"
+    severity: "low"
+    detection:
+      - "Empty list shows nothing or whitespace"
+      - "No message when no data available"
+      - "No guidance on what to do next"
+    questions:
+      - "What if there's nothing to show?"
+      - "Is there an empty state message?"
+      - "Is there a call-to-action?"
+
+# Cohesion scoring thresholds
+scoring:
+  journey_score:
+    min: 1
+    max: 5
+    thresholds:
+      5: "Delightful - Flow is intuitive and delightful"
+      4: "Good - Minor improvements possible"
+      3: "Acceptable - Functional but could be clearer"
+      2: "Poor - Confusing, needs work"
+      1: "Broken - UX failure, must fix"
+
+  individual_ratings:
+    entry_point:
+      weight: 1.0
+      description: "Can user find and access the feature?"
+
+    action_clarity:
+      weight: 1.0
+      description: "Is it clear what user can do?"
+
+    result_visibility:
+      weight: 1.0
+      description: "Does result appear where expected?"
+
+    error_handling:
+      weight: 1.0
+      description: "Are errors handled gracefully?"
+
+    context_preservation:
+      weight: 1.0
+      description: "Does user stay in context?"
+
+# Required elements for journey validation
+required_elements:
+  demo_script:
+    format: "30-second narrative"
+    required_fields:
+      - "User starts at: {screen/state}"
+      - "User performs: {action}"
+      - "System shows: {immediate feedback}"
+      - "Result appears: {location}"
+      - "User then: {next action or complete}"
+
+  journey_map:
+    format: "mermaid"
+    sections:
+      - name: "Discover"
+        rating_required: true
+      - name: "Act"
+        rating_required: true
+      - name: "Result"
+        rating_required: true
+      - name: "Error"
+        rating_required: true
+
+# Gate configuration
+gate:
+  name: "Product Reality Gate"
+  pass_threshold: 3
+  blocking_on_failure: true
+  auto_fail_patterns:
+    - "split_brain"
+    - "ghost_result"
+  warning_patterns:
+    - "island_feature"
+    - "dead_end"
+    - "loading_vacuum"

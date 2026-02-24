@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent Study - Quiz with AI Chat</title>
+  <link rel="stylesheet" href="../../styles/global.css">
+  <style>
+    :root {
+      --study-bg: #0e0e0e;
+    }
+    
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--study-bg);
+      overflow: hidden;
+    }
+    
+    .header {
+      height: var(--header-height);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      border-bottom: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    .main-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+    
+    .activity-bar {
+      width: var(--activity-bar-width);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-2) 0;
+      border-right: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    .topics-tree {
+      width: 200px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      border-right: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    .tree-header {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--border-color);
+      font-weight: var(--font-semibold);
+      font-size: var(--text-sm);
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .tree-content {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-2);
+    }
+    
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      margin-bottom: var(--space-1);
+    }
+    
+    .tree-item:hover {
+      background-color: var(--surface-hover);
+    }
+    
+    .tree-item.selected {
+      background-color: var(--surface-active);
+      border-color: var(--action);
+    }
+    
+    .tree-item-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .tree-item-badge {
+      margin-left: auto;
+      font-size: var(--text-xs);
+      color: var(--muted);
+    }
+    
+    .tree-item-children {
+      margin-left: var(--space-6);
+    }
+    
+    /* Quiz Area */
+    .quiz-area {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: var(--study-bg);
+    }
+    
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    .quiz-progress {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    .quiz-progress-info {
+      font-size: var(--text-sm);
+      color: var(--secondary);
+      min-width: 120px;
+    }
+    
+    .quiz-progress-bar {
+      flex: 1;
+      height: 8px;
+      background-color: var(--canvas);
+      border: var(--border-width) solid var(--border-color);
+      border-radius: var(--radius-none);
+      overflow: hidden;
+    }
+    
+    .quiz-progress-fill {
+      height: 100%;
+      background-color: var(--action);
+    }
+    
+    .quiz-content {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-6);
+    }
+    
+    .quiz-question-card {
+      background-color: var(--surface);
+      border: var(--border-width) solid var(--border-color);
+      border-radius: var(--radius-none);
+      box-shadow: var(--shadow-pixel);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    
+    .quiz-question-number {
+      font-size: var(--text-sm);
+      color: var(--action);
+      font-weight: var(--font-semibold);
+      margin-bottom: var(--space-2);
+    }
+    
+    .quiz-question-text {
+      font-size: var(--text-xl);
+      font-weight: var(--font-medium);
+      color: var(--primary);
+      margin-bottom: var(--space-6);
+      line-height: var(--leading-relaxed);
+    }
+    
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background-color: var(--canvas);
+      border: var(--border-width) solid var(--border-color);
+      border-radius: var(--radius-none);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    
+    .quiz-option:hover {
+      background-color: var(--surface-hover);
+      border-color: var(--structural-light);
+    }
+    
+    .quiz-option.selected {
+      border-color: var(--action);
+      background-color: var(--surface-active);
+    }
+    
+    .quiz-option-indicator {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: var(--font-bold);
+      border: 2px solid var(--structural);
+      border-radius: var(--radius-none);
+    }
+    
+    .quiz-option.selected .quiz-option-indicator {
+      border-color: var(--action);
+      color: var(--action);
+    }
+    
+    .quiz-option-text {
+      flex: 1;
+      font-size: var(--text-base);
+      color: var(--primary);
+    }
+    
+    .quiz-actions {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-top: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    /* AI Chat Panel */
+    .chat-panel {
+      width: 25%;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      border-left: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+    }
+    
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--border-color);
+    }
+    
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--agent-avatar);
+      border-radius: var(--radius-none);
+      font-size: 16px;
+    }
+    
+    .chat-title {
+      font-weight: var(--font-semibold);
+      font-size: var(--text-sm);
+    }
+    
+    .chat-status {
+      font-size: var(--text-xs);
+      color: var(--success);
+    }
+    
+    .chat-content {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-4);
+    }
+    
+    .chat-message {
+      margin-bottom: var(--space-4);
+    }
+    
+    .chat-message.ai {
+      display: flex;
+      gap: var(--space-3);
+    }
+    
+    .chat-message.user {
+      display: flex;
+      gap: var(--space-3);
+      flex-direction: row-reverse;
+    }
+    
+    .chat-bubble {
+      max-width: 85%;
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--text-sm);
+      line-height: var(--leading-normal);
+    }
+    
+    .chat-message.ai .chat-bubble {
+      background-color: var(--canvas);
+      border: var(--border-width) solid var(--border-color);
+      border-radius: var(--radius-none);
+    }
+    
+    .chat-message.user .chat-bubble {
+      background-color: var(--action);
+      color: white;
+      border-radius: var(--radius-none);
+    }
+    
+    .chat-hint {
+      margin-top: var(--space-2);
+      padding: var(--space-3);
+      background-color: var(--warning-bg);
+      border: var(--border-width) solid var(--warning);
+      border-radius: var(--radius-none);
+    }
+    
+    .chat-hint-title {
+      font-weight: var(--font-semibold);
+      color: var(--warning);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-2);
+    }
+    
+    .chat-hint-text {
+      font-size: var(--text-sm);
+      color: var(--primary);
+    }
+    
+    .chat-input-area {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--border-color);
+    }
+    
+    .chat-input {
+      width: 100%;
+      padding: var(--space-3);
+      font-size: var(--text-sm);
+      font-family: var(--font-ui);
+      color: var(--primary);
+      background-color: var(--canvas);
+      border: var(--border-width) solid var(--border-color);
+      border-radius: var(--radius-none);
+      resize: none;
+    }
+    
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--action);
+    }
+    
+    .chat-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+    
+    .footer {
+      height: var(--status-bar-height);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      border-top: var(--border-width) solid var(--border-color);
+      background-color: var(--surface);
+      font-size: var(--text-xs);
+      color: var(--secondary);
+    }
+    
+    .footer-left, .footer-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    
+    .footer-stat {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .activity-icon {
+      width: var(--touch-min);
+      height: var(--touch-min);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: var(--space-1);
+    }
+    
+    .activity-icon:hover {
+      color: var(--primary);
+      background-color: var(--surface-hover);
+    }
+    
+    .activity-icon.active {
+      color: var(--action);
+      border-left: 2px solid var(--action);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="flex items-center gap-4">
+        <span style="font-size: 20px;">📚</span>
+        <span class="font-bold" style="font-size: var(--text-lg);">Via-Gent Study</span>
+        <span class="text-muted" style="font-size: var(--text-sm); margin-left: var(--space-2);">/ React Hooks / Quiz + AI Tutor</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <span style="font-size: 24px;">🤖</span>
+          <span class="text-sm text-secondary">AI Tutor Active</span>
+        </div>
+        <div class="avatar">U</div>
+      </div>
+    </header>
+    
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- Activity Bar -->
+      <aside class="activity-bar">
+        <div class="activity-icon" title="Dashboard">📊</div>
+        <div class="activity-icon" title="Topics">📁</div>
+        <div class="activity-icon active" title="Quiz">❓</div>
+        <div class="activity-icon" title="Flashcards">🗂️</div>
+        <div class="activity-icon" title="Chat">💬</div>
+      </aside>
+      
+      <!-- Topics Tree Sidebar -->
+      <aside class="topics-tree">
+        <div class="tree-header">Topics</div>
+        <div class="tree-content">
+          <div class="tree-item">
+            <span class="tree-item-icon">📁</span>
+            <span>JavaScript</span>
+          </div>
+          <div class="tree-item-children">
+            <div class="tree-item">
+              <span class="tree-item-icon">📁</span>
+              <span>React</span>
+            </div>
+            <div class="tree-item selected">
+              <span class="tree-item-icon">📁</span>
+              <span>Hooks</span>
+            </div>
+            <div class="tree-item-children">
+              <div class="tree-item">
+                <span class="tree-item-icon">📄</span>
+                <span>useState</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-icon">📄</span>
+                <span>useEffect</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-icon">📄</span>
+                <span>useContext</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-icon">📄</span>
+                <span>useMemo</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tree-item">
+            <span class="tree-item-icon">📁</span>
+            <span>TypeScript</span>
+          </div>
+          
+          <div class="tree-item">
+            <span class="tree-item-icon">📁</span>
+            <span>Algorithms</span>
+          </div>
+        </div>
+      </aside>
+      
+      <!-- Quiz Area -->
+      <section class="quiz-area">
+        <div class="quiz-header">
+          <div class="flex items-center gap-3">
+            <span class="font-semibold">React Hooks Quiz</span>
+            <span class="badge badge-primary">AI-Assisted</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-secondary">⏱️ No time limit</span>
+            <button class="btn btn-ghost">End Session</button>
+          </div>
+        </div>
+        
+        <div class="quiz-progress">
+          <span class="quiz-progress-info">Question 3 of 5</span>
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" style="width: 60%;"></div>
+          </div>
+          <span class="quiz-progress-info" style="text-align: right;">Score: 2/2</span>
+        </div>
+        
+        <div class="quiz-content">
+          <!-- Question 1 -->
+          <div class="quiz-question-card">
+            <div class="quiz-question-number">Question 1 of 5 - Correct</div>
+            <div class="quiz-question-text">Which hook would you use to manage state in a functional component?</div>
+            <div class="quiz-options">
+              <div class="quiz-option correct">
+                <div class="quiz-option-indicator">A</div>
+                <div class="quiz-option-text">useState ✓</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">B</div>
+                <div class="quiz-option-text">useEffect</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Question 2 -->
+          <div class="quiz-question-card">
+            <div class="quiz-question-number">Question 2 of 5 - Correct</div>
+            <div class="quiz-question-text">What is the primary purpose of the useEffect hook?</div>
+            <div class="quiz-options">
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">A</div>
+                <div class="quiz-option-text">To create memoized values</div>
+              </div>
+              <div class="quiz-option correct">
+                <div class="quiz-option-indicator">B</div>
+                <div class="quiz-option-text">To handle side effects ✓</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Question 3 -->
+          <div class="quiz-question-card">
+            <div class="quiz-question-number">Question 3 of 5</div>
+            <div class="quiz-question-text">When does useEffect with an empty dependency array run?</div>
+            <div class="quiz-options">
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">A</div>
+                <div class="quiz-option-text">On every render</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">B</div>
+                <div class="quiz-option-text">When any state changes</div>
+              </div>
+              <div class="quiz-option selected">
+                <div class="quiz-option-indicator">C</div>
+                <div class="quiz-option-text">On mount and unmount only</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">D</div>
+                <div class="quiz-option-text">Never</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Question 4 -->
+          <div class="quiz-question-card">
+            <div class="quiz-question-number">Question 4 of 5</div>
+            <div class="quiz-question-text">Which hook is used to optimize expensive calculations?</div>
+            <div class="quiz-options">
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">A</div>
+                <div class="quiz-option-text">useCallback</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">B</div>
+                <div class="quiz-option-text">useRef</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">C</div>
+                <div class="quiz-option-text">useMemo</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">D</div>
+                <div class="quiz-option-text">useState</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Question 5 -->
+          <div class="quiz-question-card">
+            <div class="quiz-question-number">Question 5 of 5</div>
+            <div class="quiz-question-text">What does useCallback return?</div>
+            <div class="quiz-options">
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">A</div>
+                <div class="quiz-option-text">A memoized function</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">B</div>
+                <div class="quiz-option-text">A memoized value</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">C</div>
+                <div class="quiz-option-text">A ref object</div>
+              </div>
+              <div class="quiz-option">
+                <div class="quiz-option-indicator">D</div>
+                <div class="quiz-option-text">A state value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="quiz-actions">
+          <button class="btn btn-ghost">← Previous</button>
+          <button class="btn btn-primary">Submit Answer</button>
+          <button class="btn btn-ghost">Ask AI for Hint</button>
+        </div>
+      </section>
+      
+      <!-- AI Chat Panel -->
+      <aside class="chat-panel">
+        <div class="chat-header">
+          <div class="chat-avatar">🤖</div>
+          <div>
+            <div class="chat-title">AI Tutor</div>
+            <div class="chat-status">● Online</div>
+          </div>
+        </div>
+        
+        <div class="chat-content">
+          <div class="chat-message ai">
+            <div class="chat-avatar" style="width: 24px; height: 24px; font-size: 12px;">🤖</div>
+            <div class="chat-bubble">
+              Hi! I'm your AI study tutor. I'm here to help you understand React Hooks concepts. Feel free to ask me questions or request hints!
+            </div>
+          </div>
+          
+          <div class="chat-message user">
+            <div class="chat-avatar" style="width: 24px; height: 24px; font-size: 12px;">U</div>
+            <div class="chat-bubble">
+              Can you explain the difference between useMemo and useCallback?
+            </div>
+          </div>
+          
+          <div class="chat-message ai">
+            <div class="chat-avatar" style="width: 24px; height: 24px; font-size: 12px;">🤖</div>
+            <div class="chat-bubble">
+              Great question! <br><br>
+              <strong>useMemo</strong> memoizes a computed <em>value</em> - it recalculates only when dependencies change.<br><br>
+              <strong>useCallback</strong> memoizes a <em>function reference</em> - useful when passing callbacks to optimized child components.<br><br>
+              Think: useMemo = value, useCallback = function!
+            </div>
+          </div>
+          
+          <div class="chat-message user">
+            <div class="chat-avatar" style="width: 24px; height: 24px; font-size: 12px;">U</div>
+            <div class="chat-bubble">
+              When should I use useMemo over useCallback?
+            </div>
+          </div>
+          
+          <div class="chat-message ai">
+            <div class="chat-avatar" style="width: 24px; height: 24px; font-size: 12px;">🤖</div>
+            <div class="chat-bubble">
+              Use <strong>useMemo</strong> when:<br>
+              • You have expensive calculations<br>
+              • You're deriving data from state/props<br>
+              • You want to avoid recalculating on every render<br><br>
+              Use <strong>useCallback</strong> when:<br>
+              • You're passing functions to child components wrapped in React.memo<br>
+              • Functions are dependencies of other hooks<br>
+              • You need stable function references
+            </div>
+          </div>
+          
+          <div class="chat-hint">
+            <div class="chat-hint-title">💡 Hint for Question 3</div>
+            <div class="chat-hint-text">Think about when a component mounts vs re-renders. An empty array [] means "run once on mount". What about unmount?</div>
+          </div>
+        </div>
+        
+        <div class="chat-input-area">
+          <textarea class="chat-input" rows="3" placeholder="Ask a question..."></textarea>
+          <div class="chat-actions">
+            <button class="btn btn-primary" style="padding: var(--space-2) var(--space-4);">Send</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="footer-stat">
+          <span class="footer-stat-icon">📅</span>
+          <span>15 cards due</span>
+        </div>
+        <div class="footer-stat">
+          <span class="footer-stat-icon">❓</span>
+          <span>3/5 answered</span>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-stat">
+          <span class="footer-stat-icon">🎯</span>
+          <span>Score: 2/2</span>
+        </div>
+        <div class="footer-stat">
+          <span class="footer-stat-icon">🤖</span>
+          <span>AI active</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,323 @@
+# ============================================================================
+# TIME-BOXING ENFORCEMENT CONFIGURATION
+# ============================================================================
+# BMAD Core Governance Module
+#
+# Purpose: Enforce strict time limits on autonomous execution
+#          Prevent infinite loops and stuck workflows
+#          Trigger deep-investigation on timeout
+#          Enable cascade escalation (step → story → sprint)
+#
+# Governance: Tier 2 (Controlled & Iterative)
+# Last Updated: 2026-01-06T00:00:00+07:00
+# ============================================================================
+
+version: "1.0.0"
+last_updated: "2026-01-06T00:00:00+07:00"
+
+# ============================================================================
+# TIME-BOX DEFINITIONS
+# ============================================================================
+
+time_boxes:
+  step_execution:
+    name: "Atomic Step Execution"
+    max_duration: "5 minutes"
+    description: "Single atomic action within a story"
+    monitoring_interval: "30 seconds"
+
+    on_timeout_1x:
+      action: "LOG warning, continue monitoring"
+      threshold: "5 minutes"
+
+    on_timeout_2x:
+      action: "ESCALATE to story-level timeout"
+      reasoning: "Step taking too long, may indicate story complexity issue"
+      next: "Check story-level time-box"
+
+  story_implementation:
+    name: "Story Implementation"
+    max_duration: "30 minutes"
+    description: "Complete execution of a user story"
+    monitoring_interval: "1 minute"
+
+    on_timeout_1x:  # 30-45 minutes
+      action: "TRIGGER deep-investigation workflow"
+      duration: "15 minutes"
+      output: "investigation-report.md"
+      investigation_questions:
+        - "Why is story taking longer than expected?"
+        - "Is story more complex than estimated?"
+        - "Are there blocking dependencies?"
+        - "Is agent underperforming?"
+      next: "RESUME story with investigation insights"
+
+    on_timeout_2x:  # 45-60 minutes
+      action: "SPLIT story into smaller sub-stories"
+      reasoning: "Story complexity too high for single execution"
+      max_sub_stories: 3
+      new_duration_per_story: "15 minutes"
+      next: "ROUTE sub-stories to appropriate agents"
+
+    on_timeout_3x:  # >60 minutes
+      action: "PAUSE story and NOTIFY human"
+      reason: "Third timeout - requires intervention"
+      options_presented:
+        - "Adjust story scope (reduce complexity)"
+        - "Add dedicated research phase"
+        - "Architectural decision needed"
+        - "Different agent specialization required"
+      next: "WAIT for human approval to continue"
+
+  deep_investigation:
+    name: "Deep Investigation Workflow"
+    max_duration: "15 minutes"
+    description: "Root cause analysis when stories timeout"
+    monitoring_interval: "30 seconds"
+
+    output:
+      file: "investigation-report.md"
+      includes:
+        - "root_cause_analysis"
+        - "time_consumed_breakdown"
+        - "complexity_assessment"
+        - "recommendations"
+        - "estimated_remaining_effort"
+
+    on_complete:
+      decision_points:
+        - "Can story continue as-is? → YES: RESUME | NO: SPLIT"
+        - "Does story need more research? → YES: ADD RESEARCH PHASE | NO: CONTINUE"
+        - "Is different agent needed? → YES: REASSIGN | NO: CONTINUE"
+        - "Should story be split? → YES: SPLIT | NO: CONTINUE"
+
+  epic_execution:
+    name: "Epic Execution"
+    max_duration: "4 hours"
+    description: "Complete execution of an epic (multiple stories)"
+    checkpoint_frequency: "every 30 minutes"
+
+    on_checkpoint:
+      actions:
+        - "Update LOOP_STATE.yaml progress"
+        - "Validate health metrics (must be >70%)"
+        - "Check for integration points"
+        - "Adjust agent allocation if needed"
+        - "Log checkpoint to AGENT-STATE.yaml"
+
+    on_health_drop_30:
+      action: "PAUSE epic immediately"
+      reason: "Health degraded beyond safe threshold"
+      investigation: "TRIGGER comprehensive health analysis"
+      recovery: "RESUME only when health restored >80%"
+
+    on_timeout_1x:  # 4-5 hours
+      action: "ASSESS epic progress"
+      decision:
+        if: ">75% stories complete"
+          action: "CONTINUE to finish epic"
+        else: "EPIC at risk, NOTIFY human for guidance"
+
+    on_timeout_2x:  # >5 hours
+      action: "PAUSE epic and NOTIFY human"
+      reason: "Epic exceeding expected duration by >25%"
+      next: "WAIT for human intervention"
+
+  sprint_execution:
+    name: "Sprint Execution"
+    max_duration: "8 hours"  # 1 business day
+    description: "Complete sprint (multiple epics or stories)"
+    checkpoint_frequency: "every 1 hour"
+
+    on_checkpoint:
+      actions:
+        - "Update sprint-status.yaml progress"
+        - "Validate overall system health"
+        - "Check cross-team integration points"
+        - "Review autonomous decision quality"
+
+    on_health_drop_50:
+      action: "EMERGENCY PAUSE"
+      reason: "Sprint health critically degraded"
+      notification: "ALERT human immediately"
+      next: "COMPREHENSIVE system analysis required"
+
+# ============================================================================
+# CASCADE ESCALATION
+# ============================================================================
+
+cascade_escalation:
+  description: "Timeout handling across hierarchy levels"
+
+  step_to_story:
+    trigger: "Step timeout exceeds 2x (10 minutes)"
+    action: "ESCALATE to story-level timeout handling"
+    reasoning: "Step stuck indicates story may have complexity issues"
+
+  story_to_epic:
+    trigger: "Story timeout exceeds 2x (60 minutes)"
+    action: "ESCALATE to epic-level assessment"
+    reasoning: "Multiple story timeouts indicate epic-level issues"
+
+  epic_to_sprint:
+    trigger: "Epic health drops >30% OR epic timeout exceeds 1.5x"
+    action: "ESCALATE to sprint-level intervention"
+    reasoning: "Epic failures indicate sprint-level systemic issues"
+
+  sprint_to_emergency:
+    trigger: "Sprint health drops >50% OR critical failures cascade"
+    action: "EMERGENCY SHUTDOWN"
+    reasoning: "System-level failure requiring immediate intervention"
+
+# ============================================================================
+# MONITORING & TRACKING
+# ============================================================================
+
+monitoring:
+  tracked_metrics:
+    - "task_start_time: ISO timestamp"
+    - "task_duration: seconds"
+    - "timeout_count: per task level"
+    - "investigation_count: per session"
+    - "split_count: stories split due to complexity"
+    - "pause_count: autonomous pauses for health"
+
+  dashboards:
+    - "name: Time-Box Compliance"
+      metrics:
+        - "% stories completed within 30 min"
+        - "% stories triggering investigation"
+        - "% stories split"
+        - "Average story duration"
+
+    - "name: Health vs Duration"
+      metrics:
+        - "Health score trend over time"
+        - "Duration vs Health correlation"
+        - "Timeout frequency analysis"
+
+# ============================================================================
+# AUTONOMOUS ACTIONS ON TIMEOUT
+# ============================================================================
+
+autonomous_actions:
+  level_1_investigation:
+    trigger: "First story timeout (30-45 min)"
+    authority: "AUTONOMOUS - no approval needed"
+    actions:
+      - "Pause story execution"
+      - "Launch deep-investigation workflow"
+      - "Analyze root cause (agent? complexity? dependencies?)"
+      - "Generate investigation report"
+      - "Resume story with insights"
+    notification: "Log to AGENT-STATE.yaml, no human alert"
+
+  level_2_split:
+    trigger: "Second story timeout (45-60 min)"
+    authority: "AUTONOMOUS - no approval needed"
+    actions:
+      - "Pause story execution"
+      - "Analyze story structure"
+      - "Split into 2-3 sub-stories"
+      - "Route sub-stories independently"
+      - "Track parent-child relationships"
+    notification: "Log to AGENT-STATE.yaml, notify human AFTER completion"
+
+  level_3_pause:
+    trigger: "Third story timeout (>60 min)"
+    authority: "REQUIRES HUMAN APPROVAL"
+    actions:
+      - "PAUSE story execution"
+      - "Generate timeout analysis report"
+      - "Present options to human (scope adjustment, research, architectural decision)"
+      - "WAIT for human decision"
+      - "Resume based on human guidance"
+    notification: "IMMEDIATE human notification required"
+
+# ============================================================================
+# TIME-BOX VIOLATION RECOVERY
+# ============================================================================
+
+violation_recovery:
+  minor_violation:
+    threshold: "<10% over time-box"
+    action: "LOG warning, continue execution"
+    monitoring: "Increased monitoring frequency"
+
+  moderate_violation:
+    threshold: "10-50% over time-box"
+    action: "PAUSE, assess, adjust scope, continue"
+    notification: "Notify human after resolution"
+
+  severe_violation:
+    threshold: ">50% over time-box"
+    action: "PAUSE, comprehensive analysis, human approval"
+    notification: "IMMEDIATE human notification"
+
+  critical_violation:
+    threshold: ">100% over time-box OR cascading failures"
+    action: "EMERGENCY SHUTDOWN"
+    notification: "CRITICAL ALERT - immediate human intervention"
+
+# ============================================================================
+# CONFIGURATION FOR DIFFERENT STORY TYPES
+# ============================================================================
+
+story_type_config:
+  simple_story:
+    estimated_duration: "15 minutes"
+    max_duration: "30 minutes"
+    complexity: "low"
+    on_timeout: "Investigate immediately"
+
+  medium_story:
+    estimated_duration: "30 minutes"
+    max_duration: "45 minutes"
+    complexity: "medium"
+    on_timeout: "Consider splitting at 30 min"
+
+  complex_story:
+    estimated_duration: "45 minutes"
+    max_duration: "60 minutes"
+    complexity: "high"
+    on_timeout: "Split into sub-stories proactively"
+
+  research_story:
+    estimated_duration: "60 minutes"
+    max_duration: "90 minutes"
+    complexity: "high (research-intensive)"
+    on_timeout: "Assess research completeness, adjust scope"
+
+# ============================================================================
+# HEALTH-BASED TIME-BOX ADJUSTMENT
+# ============================================================================
+
+health_adjustments:
+  excellent_health: ">90%"
+    action: "Maintain standard time-boxes"
+    reasoning: "System performing optimally"
+
+  good_health: "70-90%"
+    action: "Maintain standard time-boxes, monitor closely"
+    reasoning: "System healthy, normal vigilance"
+
+  degraded_health: "50-70%"
+    action: "Extend time-boxes by 20%, increase monitoring"
+    reasoning: "System degradation slowing execution"
+
+  poor_health: "30-50%"
+    action: "Extend time-boxes by 50%, consider pausing non-critical work"
+    reasoning: "System struggling, prioritize health recovery"
+
+  critical_health: "<30%"
+    action: "PAUSE all execution, health recovery mode"
+    reasoning: "System critically degraded, recovery required"
+
+# ============================================================================
+# VERSION CONTROL
+# ============================================================================
+
+version:
+  config_version: "1.0.0"
+  schema_version: "1.0.0"
+  last_migration: "2026-01-06T00:00:00+07:00"

@@ -1,0 +1,23 @@
+{
+  "citation": {
+    "sidebar": {
+      "title": "Nguồn & Trích dẫn",
+      "ariaLabel": "Panel trích dẫn bên",
+      "close": "Đóng trích dẫn",
+      "searchPlaceholder": "Tìm kiếm trích dẫn...",
+      "searchAriaLabel": "Tìm kiếm trong các trích dẫn",
+      "filterBySource": "Lọc theo nguồn",
+      "selectAll": "Chọn tất cả",
+      "clearAll": "Xóa tất cả",
+      "empty": "Không có trích dẫn nào trong câu trả lời này",
+      "noResults": "Không có trích dẫn nào khớp với tìm kiếm",
+      "footer": "Nhấp vào trích dẫn để xem nguồn",
+      "citationListAriaLabel": "Danh sách trích dẫn",
+      "citationCardAriaLabel": "Trích dẫn {{id}} từ {{title}}"
+    },
+    "badge": {
+      "ariaLabel": "{{count}} trích dẫn",
+      "srCitations": "trích dẫn"
+    }
+  }
+}

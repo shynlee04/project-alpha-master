@@ -1,0 +1,216 @@
+---
+name: "checklists"
+type: "governance-config"
+purpose: "Consolidated checklists for all governance gates"
+version: "1.0.0"
+---
+
+# Governance Checklists
+
+**Purpose**: Consolidated checklists for all governance gates and validation points.
+
+## Story Start Gate
+
+```yaml
+story_start_checklist:
+  prerequisites:
+    - name: "Story assigned"
+      check: "story_key exists and status = pending"
+
+    - name: "Dependencies complete"
+      check: "all_blocked_by stories are done"
+
+    - name: "Context available"
+      check: "story context file exists"
+
+    - name: "Sprint capacity"
+      check: "sprint has capacity for story points"
+
+  governance:
+    - name: "Context scan passed"
+      check: "domain-scanner completed"
+
+    - name: "Expert analysis done"
+      check: "expert-analysis completed if needed"
+
+    - name: "Research complete"
+      check: "research-trigger completed if flagged"
+
+  ready_to_start:
+    all_required: true
+    allow_with_warnings: false
+```
+
+## Story Done Gate
+
+```yaml
+story_done_checklist:
+  implementation:
+    - name: "All acceptance criteria met"
+      check: "compare story requirements to implementation"
+
+    - name: "Code follows standards"
+      check: "coding-style standard met"
+
+    - name: "No obvious bugs"
+      check: "manual testing passed"
+
+  testing:
+    - name: "Tests written"
+      check: "test coverage >= 80% for new code"
+
+    - name: "Tests passing"
+      check: "all tests pass"
+
+    - name: "Edge cases covered"
+      check: "critical edge cases have tests"
+
+  documentation:
+    - name: "Code documented"
+      check: "complex functions have comments"
+
+    - name: "Changes documented"
+      check: "story context updated"
+
+  integration:
+    - name: "No regressions"
+      check: "existing tests still pass"
+
+    - name: "Build successful"
+      check: "production build works"
+
+    - name: "TypeScript valid"
+      check: "no type errors"
+
+  ready_to_mark_done:
+    all_required: true
+    allow_with_warnings: false
+```
+
+## Epic Done Gate
+
+```yaml
+epic_done_checklist:
+  completion:
+    - name: "All stories done"
+      check: "all epic stories status = done"
+
+    - name: "E2E tests pass"
+      check: "epic e2e test suite passes"
+
+    - name: "Documentation updated"
+      check: "relevant docs updated for epic"
+
+  quality:
+    - name: "No P0 bugs"
+      check: "zero P0 bugs from epic"
+
+    - name: "P1 bugs acceptable"
+      check: "P1 bugs < threshold"
+
+    - name: "Performance OK"
+      check: "no performance regressions"
+
+  governance:
+    - name: "Artifacts archived"
+      check: "planning artifacts moved to archive"
+
+    - name: "Retrospective done"
+      check: "epic retrospective completed"
+
+  ready_to_close_epic:
+    all_required: true
+    allow_with_warnings: true
+```
+
+## Sprint Rotation Gate
+
+```yaml
+sprint_rotation_checklist:
+  closing:
+    - name: "All done stories accepted"
+      check: "no stories in review state"
+
+    - name: "In-progress stories triaged"
+      check: "WIP stories moved or extended"
+
+    - name: "Sprint retrospective done"
+      check: "retrospective artifact created"
+
+  planning:
+    - name: "Next sprint stories identified"
+      check: "sprint backlog populated"
+
+    - name: "Capacity calculated"
+      check: "team velocity considered"
+
+    - name: "Dependencies checked"
+      check: "no blocked stories planned"
+
+  governance:
+    - name: "Governance report current"
+      check: "latest scan results available"
+
+    - name: "Artifact cleanup done"
+      check: "stale artifacts archived"
+
+  ready_to_rotate:
+    all_required: true
+    allow_with_warnings: true
+```
+
+## Artifact Freshness Gate
+
+```yaml
+artifact_freshness_checklist:
+  staleness:
+    - name: "No artifacts > 48 hours stale"
+      check: "scan shows fresh artifacts"
+
+    - name: "Orphaned files handled"
+      check: "orphans registered or archived"
+
+    - name: "Duplicates resolved"
+      check: "no duplicate artifacts in registry"
+
+  registry:
+    - name: "Registry accurate"
+      check: "file monitor shows no ghosts"
+
+    - name: "Dates current"
+      check: "timestamps within thresholds"
+
+  ready:
+    all_required: true
+    allow_with_warnings: false
+```
+
+## Configuration Usage
+
+```yaml
+usage:
+  load: "Include in workflow step definitions"
+  execute: "Check each item in order"
+  fail: "Stop if required item fails"
+  warn: "Continue if warning item fails"
+  pass: "All required items passed"
+```
+
+## Checklist Item Format
+
+```yaml
+checklist_item:
+  name: "{human-readable description}"
+  check: "{how to verify}"
+  required: {true|false}
+  auto_verify: {true|false}
+  manual_override: {true|false}
+```
+
+---
+
+`★ Insight ─────────────────────────────────────`
+1. Consolidated checklists prevent duplication
+2. Required vs warning items allow flexibility
+3. Auto-verification enables automation
+`─────────────────────────────────────────────────`

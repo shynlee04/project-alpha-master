@@ -1,0 +1,90 @@
+# Artifact Registry
+# Purpose: Track all BMAD artifacts with metadata for governance enforcement
+# Updated: 2026-01-06T00:00:00Z
+# Auto-sync: Enabled (updated by governance-agent on artifact creation)
+
+---
+registry_version: "1.0.0"
+last_updated: "2026-01-06T10:00:00Z"
+total_artifacts: 0
+active_artifacts: 0
+archived_artifacts: 0
+orphan_artifacts: 0
+
+# Artifact Index
+# All artifacts created must be registered here
+artifacts:
+  # Example entry format:
+  # - id: "ARC-STORE-001-handoff"
+  #   tier: 4
+  #   type: "handoff"
+  #   parent_id: "E2-STORE"
+  #   sequence_number: 1
+  #   created_at: "2026-01-06T10:00:00Z"
+  #   expires_at: "2026-01-11T10:00:00Z"
+  #   status: "ACTIVE"
+  #   path: "_bmad-output/handoffs/2026-01-06/ARC-STORE-001-handoff.md"
+  #   related_artifacts: ["ARC-STORE-001-validation"]
+  #   tags: ["store", "refactoring"]
+
+# Sequence Trackers
+# Used to generate next sequence number for each story
+sequences:
+  ARC-STORE: 0
+  E2-MODAL: 0
+  DS-SCAN: 0
+
+# Orphan Detection
+# Artifacts with broken parent references or sequence gaps
+orphans:
+  detected: []
+  last_scan: "2026-01-06T10:00:00Z"
+
+# Archive Summary
+archives:
+  tier_3_archived: 0
+  tier_4_archived: 0
+  last_archive_run: "2026-01-06T10:00:00Z"
+
+# Validation Status
+validation:
+  last_check: "2026-01-06T10:00:00Z"
+  naming_compliance: 100%
+  frontmatter_compliance: 100%
+  orphan_count: 0
+
+---
+# Registry Schema
+
+## Artifact Entry Schema
+
+```yaml
+id: string                    # Unique artifact identifier
+tier: 1 | 2 | 3 | 4          # Governance tier
+type: string                  # Artifact type
+parent_id: string | null      # Parent epic/story ID
+sequence_number: int          # Sequence in parent lineage
+created_at: ISO8601           # Creation timestamp
+expires_at: ISO8601           # Expiry timestamp
+status: ACTIVE | ARCHIVED     # Current status
+path: string                  # File path
+related_artifacts: string[]   # Connected artifacts
+tags: string[]                # Search tags
+```
+
+## Orphan Detection Rules
+
+An artifact is considered ORPHAN if:
+1. `parent_id` references a non-existent epic/story
+2. `sequence_number` has gaps (missing predecessor)
+3. `expires_at` < now AND `status` != ARCHIVED
+4. `path` references a non-existent file
+
+## Auto-Sync Rules
+
+When agent creates artifact:
+1. Generate artifact_id based on sequence tracker
+2. Add entry to `artifacts` array
+3. Increment sequence tracker
+4. Validate no orphan status
+5. Write registry with new `last_updated`

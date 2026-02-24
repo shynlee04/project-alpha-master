@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Hub - Projects Storage Binding</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Hub-specific layout styles */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--hub-bg);
+        }
+
+        .hub-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-6);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .hub-content {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .hub-tabs {
+            position: absolute;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-6);
+            border-bottom: var(--border-width) solid var(--border-color);
+            background-color: var(--hub-bg);
+            flex-shrink: 0;
+        }
+
+        .hub-tab {
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .hub-tab:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+
+        .hub-tab.active {
+            color: var(--action);
+            border-bottom-color: var(--action);
+        }
+
+        /* Left Panel - Projects Grid (40%) */
+        .projects-panel {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            min-width: 280px;
+            border-right: var(--border-width) solid var(--border-color);
+        }
+
+        .panel-header {
+            padding: var(--space-4);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-3);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .filter-tab {
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-tab:hover {
+            background-color: var(--surface-hover);
+        }
+
+        .filter-tab.active {
+            color: var(--action);
+            border-color: var(--action);
+        }
+
+        .projects-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            min-height: 0;
+        }
+
+        .project-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-pixel-lg);
+            border-color: var(--action);
+        }
+
+        .project-card.selected {
+            border-color: var(--action);
+            background-color: var(--surface-hover);
+        }
+
+        .project-name {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-1);
+        }
+
+        .project-meta {
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .project-tags {
+            display: flex;
+            gap: var(--space-1);
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            padding: var(--space-0-5) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        /* Middle Panel - Storage (30%) */
+        .storage-panel {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            min-width: 220px;
+            border-right: var(--border-width) solid var(--border-color);
+        }
+
+        .storage-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            min-height: 0;
+        }
+
+        .storage-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .storage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-3);
+        }
+
+        .storage-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+        }
+
+        .storage-value {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--action);
+        }
+
+        .progress {
+            width: 100%;
+            height: 16px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow: hidden;
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--action);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.success {
+            background-color: var(--success);
+        }
+
+        .progress-bar.warning {
+            background-color: var(--warning);
+        }
+
+        .storage-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .storage-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: var(--text-sm);
+        }
+
+        .storage-item-name {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .storage-color {
+            width: 12px;
+            height: 12px;
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        .storage-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .storage-size {
+            font-weight: var(--font-medium);
+        }
+
+        .storage-percent {
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        /* Right Panel - Binding (30%) */
+        .binding-panel {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            min-width: 220px;
+        }
+
+        .binding-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            min-height: 0;
+        }
+
+        .binding-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .binding-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-4);
+        }
+
+        .binding-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3);
+            border: var(--border-width) solid var(--border-color);
+            margin-bottom: var(--space-2);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .binding-item:hover {
+            background-color: var(--surface-hover);
+            border-color: var(--action);
+        }
+
+        .binding-item.active {
+            background-color: var(--surface-hover);
+            border-color: var(--action);
+        }
+
+        .binding-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-right: var(--space-3);
+        }
+
+        .binding-info {
+            flex: 1;
+        }
+
+        .binding-name {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            margin-bottom: var(--space-0-5);
+        }
+
+        .binding-path {
+            font-size: var(--text-xs);
+            color: var(--muted);
+            font-family: var(--font-mono);
+        }
+
+        .binding-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: var(--text-xs);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-none);
+        }
+
+        .status-dot.connected {
+            background-color: var(--success);
+        }
+
+        .status-dot.disconnected {
+            background-color: var(--error);
+        }
+
+        .binding-status.connected {
+            color: var(--success);
+        }
+
+        .binding-status.disconnected {
+            color: var(--error);
+        }
+
+        .binding-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+        }
+
+        .btn-bind {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-bind:hover {
+            background-color: var(--surface-hover);
+            transform: translate(-1px, -1px);
+            box-shadow: var(--shadow-pixel);
+        }
+
+        .btn-bind.primary {
+            background-color: var(--action);
+            border-color: var(--action);
+            color: white;
+        }
+
+        .btn-bind.primary:hover {
+            background-color: var(--action-hover);
+            border-color: var(--action-hover);
+        }
+
+        .hub-footer {
+            height: var(--status-bar-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-4);
+            border-top: var(--border-width) solid var(--border-color);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .storage-bar {
+            width: 60px;
+            height: 6px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow: hidden;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background-color: var(--action);
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+    Via-Gent Progressive Disclosure Wireframe
+    Workspace: Hub
+    Stack: 3 interfaces (Projects + Storage + Binding)
+    Device: Desktop
+    Language: en
+    -->
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="hub-header">
+            <div class="flex items-center gap-4">
+                <div class="icon icon-xl text-action">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">Via-Gent</span>
+                <span class="badge">Hub</span>
+            </div>
+            
+            <div class="flex items-center gap-4" style="flex: 1; max-width: 400px; margin: 0 var(--space-6);">
+                <div class="input flex items-center gap-2" style="background-color: var(--canvas);">
+                    <svg class="icon-sm text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <span class="text-muted">Search...</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="btn btn-primary">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    New Project
+                </button>
+                <div class="avatar">U</div>
+            </div>
+        </header>
+
+        <!-- NAVIGATION TABS -->
+        <div class="hub-tabs">
+            <button class="hub-tab active">Projects</button>
+            <button class="hub-tab">Stats</button>
+            <button class="hub-tab">Activities</button>
+            <button class="hub-tab">Binding</button>
+            <button class="hub-tab">Settings</button>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <main class="hub-content">
+            <!-- LEFT PANEL: Projects Grid (40%) -->
+            <section class="projects-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Projects</h2>
+                    <div class="filter-bar">
+                        <button class="filter-tab active">All</button>
+                        <button class="filter-tab">Recent</button>
+                        <button class="filter-tab">Favorites</button>
+                    </div>
+                </div>
+                <div class="projects-scroll">
+                    <!-- Project 1 -->
+                    <div class="project-card selected">
+                        <div class="project-name">📁 my-awesome-app</div>
+                        <div class="project-meta">TypeScript + React</div>
+                        <div class="project-tags">
+                            <span class="project-tag">TypeScript</span>
+                            <span class="project-tag">React</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card">
+                        <div class="project-name">🚀 via-gent</div>
+                        <div class="project-meta">Full-stack AI workspace</div>
+                        <div class="project-tags">
+                            <span class="project-tag">AI</span>
+                            <span class="project-tag">Full-stack</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card">
+                        <div class="project-name">📝 personal-blog</div>
+                        <div class="project-meta">Gatsby + Markdown</div>
+                        <div class="project-tags">
+                            <span class="project-tag">Gatsby</span>
+                            <span class="project-tag">Blog</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card">
+                        <div class="project-name">💼 work-project</div>
+                        <div class="project-meta">Node.js + PostgreSQL</div>
+                        <div class="project-tags">
+                            <span class="project-tag">Node.js</span>
+                            <span class="project-tag">PostgreSQL</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="project-card">
+                        <div class="project-name">📚 learning-ts</div>
+                        <div class="project-meta">TypeScript exercises</div>
+                        <div class="project-tags">
+                            <span class="project-tag">TypeScript</span>
+                            <span class="project-tag">Learning</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 6 -->
+                    <div class="project-card">
+                        <div class="project-name">🎮 game-engine</div>
+                        <div class="project-meta">Unity C# Game</div>
+                        <div class="project-tags">
+                            <span class="project-tag">Unity</span>
+                            <span class="project-tag">C#</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIDDLE PANEL: Storage (30%) -->
+            <section class="storage-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Storage</h2>
+                </div>
+                <div class="storage-content">
+                    <!-- Total Storage -->
+                    <div class="storage-card">
+                        <div class="storage-header">
+                            <span class="storage-title">Total Storage</span>
+                            <span class="storage-value">2.4 GB / 10 GB</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 24%;"></div>
+                        </div>
+                        <div class="storage-breakdown">
+                            <div class="storage-item">
+                                <div class="storage-item-name">
+                                    <div class="storage-color" style="background-color: var(--action);"></div>
+                                    <span>Projects</span>
+                                </div>
+                                <div class="storage-detail">
+                                    <span class="storage-size">1.2 GB</span>
+                                    <span class="storage-percent">50%</span>
+                                </div>
+                            </div>
+                            <div class="storage-item">
+                                <div class="storage-item-name">
+                                    <div class="storage-color" style="background-color: var(--success);"></div>
+                                    <span>Notes</span>
+                                </div>
+                                <div class="storage-detail">
+                                    <span class="storage-size">512 MB</span>
+                                    <span class="storage-percent">21%</span>
+                                </div>
+                            </div>
+                            <div class="storage-item">
+                                <div class="storage-item-name">
+                                    <div class="storage-color" style="background-color: var(--info);"></div>
+                                    <span>Assets</span>
+                                </div>
+                                <div class="storage-detail">
+                                    <span class="storage-size">448 MB</span>
+                                    <span class="storage-percent">19%</span>
+                                </div>
+                            </div>
+                            <div class="storage-item">
+                                <div class="storage-item-name">
+                                    <div class="storage-color" style="background-color: var(--warning);"></div>
+                                    <span>Other</span>
+                                </div>
+                                <div class="storage-detail">
+                                    <span class="storage-size">256 MB</span>
+                                    <span class="storage-percent">10%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Usage -->
+                    <div class="storage-card">
+                        <div class="storage-header">
+                            <span class="storage-title">AI Token Usage</span>
+                            <span class="storage-value">1.2M / 2M</span>
+                        </div>
+                        <div class="progress warning">
+                            <div class="progress-bar warning" style="width: 60%;"></div>
+                        </div>
+                        <div class="text-sm text-muted" style="margin-bottom: var(--space-2);">
+                            60% of monthly limit used
+                        </div>
+                    </div>
+
+                    <!-- Quota Warning -->
+                    <div class="storage-card" style="background-color: var(--warning-bg); border-color: var(--warning);">
+                        <div class="storage-title" style="color: var(--warning);">⚠️ Storage Warning</div>
+                        <p class="text-sm" style="color: var(--muted); margin-top: var(--space-2);">
+                            You've used 80% of your AI token quota. Consider upgrading your plan.
+                        </p>
+                        <button class="btn primary" style="margin-top: var(--space-3); width: 100%;">
+                            Upgrade Plan
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: Binding (30%) -->
+            <section class="binding-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Workspace Bindings</h2>
+                </div>
+                <div class="binding-content">
+                    <!-- IDE Binding -->
+                    <div class="binding-card">
+                        <h3 class="binding-title">IDE Workspace</h3>
+                        <div class="binding-item active">
+                            <div class="binding-icon">💻</div>
+                            <div class="binding-info">
+                                <div class="binding-name">my-awesome-app</div>
+                                <div class="binding-path">/Users/dev/projects/awesome-app</div>
+                            </div>
+                            <div class="binding-status connected">
+                                <span class="status-dot connected"></span>
+                                Connected
+                            </div>
+                        </div>
+                        <div class="binding-item">
+                            <div class="binding-icon">💻</div>
+                            <div class="binding-info">
+                                <div class="binding-name">via-gent</div>
+                                <div class="binding-path">/Users/dev/projects/via-gent</div>
+                            </div>
+                            <div class="binding-status disconnected">
+                                <span class="status-dot disconnected"></span>
+                                Not bound
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Binding -->
+                    <div class="binding-card">
+                        <h3 class="binding-title">Notes Workspace</h3>
+                        <div class="binding-item">
+                            <div class="binding-icon">📝</div>
+                            <div class="binding-info">
+                                <div class="binding-name">personal-blog-notes</div>
+                                <div class="binding-path">/Users/dev/notes/blog</div>
+                            </div>
+                            <div class="binding-status connected">
+                                <span class="status-dot connected"></span>
+                                Connected
+                            </div>
+                        </div>
+                        <div class="binding-item">
+                            <div class="binding-icon">📝</div>
+                            <div class="binding-info">
+                                <div class="binding-name">work-notes</div>
+                                <div class="binding-path">/Users/dev/notes/work</div>
+                            </div>
+                            <div class="binding-status connected">
+                                <span class="status-dot connected"></span>
+                                Connected
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Knowledge Binding -->
+                    <div class="binding-card">
+                        <h3 class="binding-title">Knowledge Base</h3>
+                        <div class="binding-item">
+                            <div class="binding-icon">📚</div>
+                            <div class="binding-info">
+                                <div class="binding-name">learning-ts</div>
+                                <div class="binding-path">/Users/dev/knowledge/learning</div>
+                            </div>
+                            <div class="binding-status connected">
+                                <span class="status-dot connected"></span>
+                                Connected
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Binding Actions -->
+                    <div class="binding-actions">
+                        <button class="btn-bind primary">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            New Binding
+                        </button>
+                        <button class="btn-bind">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                            Sync All
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="hub-footer">
+            <div class="footer-left">
+                <div class="footer-item">
+                    <span>v2.1.0</span>
+                </div>
+                <div class="footer-item">
+                    <span class="text-success">●</span>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-item">
+                    <span>Storage:</span>
+                    <div class="storage-bar">
+                        <div class="storage-fill" style="width: 24%;"></div>
+                    </div>
+                    <span>2.4 GB / 10 GB</span>
+                </div>
+                <button class="btn btn-ghost text-sm" style="padding: var(--space-1) var(--space-2);">
+                    Settings
+                </button>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Via-Gent | Notes - Editor (Phone)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        :root {
+            --header-height: 44px;
+            --bottom-nav-height: 56px;
+        }
+
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--notes-bg);
+        }
+
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active {
+            display: flex;
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        .editor-panel {
+            background: var(--notes-bg);
+        }
+
+        .editor-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 16px;
+            font-family: var(--font-prose);
+            font-size: var(--text-base);
+            line-height: 1.7;
+            color: var(--primary);
+        }
+
+        .editor-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: 16px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+        }
+
+        .editor-title::placeholder {
+            color: var(--muted);
+        }
+
+        .editor-body {
+            min-height: 200px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            color: var(--primary);
+        }
+
+        .editor-body::placeholder {
+            color: var(--muted);
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: var(--bottom-nav-height);
+            width: 280px;
+            background: var(--surface);
+            border-right: 2px solid var(--structural);
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+            z-index: 100;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .drawer-content {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .notes-section {
+            padding: 8px 0;
+        }
+
+        .notes-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .new-note-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--action);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+
+        .note-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px 12px 10px 24px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+
+        .note-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .note-item.selected {
+            background: var(--surface-active);
+        }
+
+        .note-item-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+
+        .note-item-preview {
+            font-size: var(--text-xs);
+            color: var(--muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .note-item-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .bottom-nav {
+            height: var(--bottom-nav-height);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            padding-bottom: env(safe-area-inset-bottom);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: var(--font-medium);
+        }
+
+        .drawer-content::-webkit-scrollbar,
+        .editor-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .drawer-content::-webkit-scrollbar-track,
+        .editor-content::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .drawer-content::-webkit-scrollbar-thumb,
+        .editor-content::-webkit-scrollbar-thumb {
+            background: var(--structural);
+            border-radius: 0;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 2px solid transparent;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: var(--font-bold);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--surface-hover);
+            color: var(--primary);
+        }
+
+        .toolbar-btn.active {
+            color: var(--action);
+            border-color: var(--action);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleDrawer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <span class="header-title">Notes</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="panel editor-panel active">
+                <div class="toolbar">
+                    <button class="toolbar-btn" title="Bold">B</button>
+                    <button class="toolbar-btn" title="Italic">I</button>
+                    <button class="toolbar-btn" title="Underline">U</button>
+                    <button class="toolbar-btn" title="Heading">H</button>
+                    <button class="toolbar-btn" title="List">≡</button>
+                    <button class="toolbar-btn" title="Link">🔗</button>
+                    <button class="toolbar-btn" title="Image">🖼</button>
+                    <button class="toolbar-btn" title="Code">&lt;/&gt;</button>
+                </div>
+                <div class="editor-content">
+                    <input type="text" class="editor-title" value="Getting Started with Via-Gent" placeholder="Untitled">
+                    <textarea class="editor-body" placeholder="Start writing...">Via-Gent is a powerful development environment that combines the best of code editing and note-taking.
+
+## Features
+
+- **Code Editor**: Full-featured code editor with syntax highlighting
+- **File Management**: Organize your projects with an intuitive file tree
+- **Preview**: See your changes instantly
+- **Terminal**: Run commands directly from the app
+
+## Quick Start
+
+1. Create a new project
+2. Start writing your code
+3. Preview your changes in real-time
+
+> Pro tip: Use keyboard shortcuts to speed up your workflow.
+
+```javascript
+const greeting = "Hello, Via-Gent!";
+console.log(greeting);
+```
+
+Happy coding! 🚀</textarea>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar-drawer" id="sidebar">
+            <div class="drawer-header">
+                <span class="drawer-title">All Notes</span>
+                <button class="close-btn" onclick="toggleDrawer()">×</button>
+            </div>
+            <div class="drawer-content">
+                <div class="notes-section">
+                    <div class="notes-section-header">
+                        <span>Recent</span>
+                        <button class="new-note-btn">+ New</button>
+                    </div>
+                    <div class="note-item selected">
+                        <span class="note-item-title">Getting Started with Via-Gent</span>
+                        <span class="note-item-preview">Via-Gent is a powerful development environment...</span>
+                        <div class="note-item-meta">
+                            <span>2 min ago</span>
+                            <span>•</span>
+                            <span>125 words</span>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-item-title">Project Ideas</span>
+                        <span class="note-item-preview">Here are some ideas for new features...</span>
+                        <div class="note-item-meta">
+                            <span>Yesterday</span>
+                            <span>•</span>
+                            <span>89 words</span>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-item-title">Meeting Notes - Sprint Planning</span>
+                        <span class="note-item-preview">Attendees: Team A and Team B...</span>
+                        <div class="note-item-meta">
+                            <span>2 days ago</span>
+                            <span>•</span>
+                            <span>234 words</span>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-item-title">Learning TypeScript</span>
+                        <span class="note-item-preview">TypeScript adds static typing to JavaScript...</span>
+                        <div class="note-item-meta">
+                            <span>Last week</span>
+                            <span>•</span>
+                            <span>312 words</span>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-item-title">React Best Practices</span>
+                        <span class="note-item-preview">Best practices for writing React components...</span>
+                        <div class="note-item-meta">
+                            <span>Last week</span>
+                            <span>•</span>
+                            <span>156 words</span>
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-item-title">API Design Guidelines</span>
+                        <span class="note-item-preview">RESTful API design best practices...</span>
+                        <div class="note-item-meta">
+                            <span>2 weeks ago</span>
+                            <span>•</span>
+                            <span>478 words</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="switchPanel('notes')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </span>
+                <span class="nav-label">Notes</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </span>
+                <span class="nav-label">Editor</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+                <span class="nav-label">Preview</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Chat</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('visible');
+        }
+
+        function switchPanel(panelName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Switch to panel:', panelName);
+        }
+    </script>
+</body>
+</html>

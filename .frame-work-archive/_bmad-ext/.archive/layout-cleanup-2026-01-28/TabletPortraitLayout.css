@@ -1,0 +1,417 @@
+/**
+ * @fileoverview Tablet Portrait Layout Styles
+ * @module components/layout/TabletPortraitLayout
+ * @created 2026-01-28
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-13
+ *
+ * 8-bit design compliant layout styling for tablet portrait mode:
+ * - Fixed header at 48px
+ * - Full-screen content area
+ * - Fixed bottom nav at 56px
+ * - Sharp corners (no border-radius)
+ * - Pixel shadows (no blur)
+ */
+
+/* ============================================================================
+   Tablet Portrait Layout Container
+   ============================================================================ */
+
+.tablet-portrait-layout {
+  /* Grid layout: Header + Content + BottomNav */
+  display: grid;
+  grid-template-rows: 48px 1fr 56px;
+  
+  /* Full viewport dimensions */
+  height: 100dvh;
+  width: 100dvw;
+  
+  /* Prevent overflow */
+  overflow: hidden;
+  
+  /* Background */
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* With optional status bar */
+.tablet-portrait-layout--with-status {
+  grid-template-rows: 48px 1fr auto 56px;
+}
+
+/* ============================================================================
+   Header Component
+   ============================================================================ */
+
+.tablet-portrait-header {
+  /* Grid row 1 */
+  grid-row: 1;
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  /* Dimensions */
+  height: 48px;
+  padding: 0 var(--space-3, 12px);
+  
+  /* 8-bit design: Solid background, sharp corners */
+  background-color: hsl(var(--card));
+  border-bottom: 2px solid hsl(var(--border));
+  
+  /* No rounded corners */
+  border-radius: 0;
+}
+
+/* Hamburger menu button */
+.tablet-portrait-header__menu-btn {
+  /* Touch-friendly size */
+  min-width: 44px;
+  min-height: 44px;
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Reset button styles */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  
+  /* Colors */
+  color: hsl(var(--foreground));
+  
+  /* Touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 8-bit: No rounded corners */
+  border-radius: 0;
+  
+  /* Transition */
+  transition: background-color 150ms ease;
+}
+
+.tablet-portrait-header__menu-btn:hover {
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.tablet-portrait-header__menu-btn:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px hsl(var(--ring));
+}
+
+/* Project title */
+.tablet-portrait-header__title {
+  /* Typography */
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  
+  /* Color */
+  color: hsl(var(--foreground));
+  
+  /* Truncate long names */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  
+  /* Reset heading styles */
+  margin: 0;
+}
+
+/* Actions container */
+.tablet-portrait-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 4px);
+}
+
+/* Action buttons */
+.tablet-portrait-header__action-btn {
+  /* Touch-friendly size */
+  min-width: 40px;
+  min-height: 40px;
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Reset button styles */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  
+  /* Colors */
+  color: hsl(var(--muted-foreground));
+  
+  /* Touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 8-bit: No rounded corners */
+  border-radius: 0;
+  
+  /* Transition */
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.tablet-portrait-header__action-btn:hover {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.tablet-portrait-header__action-btn:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px hsl(var(--ring));
+}
+
+/* ============================================================================
+   Content Area
+   ============================================================================ */
+
+.tablet-portrait-layout__content {
+  /* Grid row 2 */
+  grid-row: 2;
+  
+  /* Fill available space */
+  overflow: auto;
+  
+  /* Background */
+  background-color: hsl(var(--background));
+  
+  /* Ensure full-screen plugin rendering */
+  position: relative;
+  min-height: 0;
+}
+
+/* Status bar (optional) */
+.tablet-portrait-layout__status-bar {
+  /* Between content and nav */
+  border-top: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+/* ============================================================================
+   Bottom Navigation Area
+   ============================================================================ */
+
+.tablet-portrait-layout__nav {
+  /* Grid row 3 */
+  grid-row: 3;
+  
+  /* Position for fixed bottom nav */
+  position: relative;
+  z-index: 40;
+}
+
+/* Override bottom-nav to not be fixed inside this layout */
+.tablet-portrait-layout__nav .bottom-nav {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  right: auto;
+}
+
+/* ============================================================================
+   Sidebar Drawer
+   ============================================================================ */
+
+/* Overlay backdrop */
+.sidebar-drawer__overlay {
+  /* Fixed full screen */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  
+  /* Semi-transparent backdrop */
+  background-color: rgba(0, 0, 0, 0.5);
+  
+  /* Animation */
+  animation: fade-in 200ms ease-out;
+}
+
+/* Drawer panel */
+.sidebar-drawer {
+  /* Fixed left side */
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 51;
+  
+  /* Width */
+  width: 280px;
+  max-width: 80vw;
+  
+  /* 8-bit design: Solid background, sharp corners */
+  background-color: hsl(var(--card));
+  border-right: 2px solid hsl(var(--border));
+  border-radius: 0;
+  
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* 8-bit shadow: Pixel offset, no blur */
+  box-shadow: 4px 0 0 0 rgba(0, 0, 0, 0.5);
+  
+  /* Animation */
+  animation: slide-in-left 200ms ease-out;
+}
+
+/* Drawer header */
+.sidebar-drawer__header {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  /* Dimensions */
+  height: 48px;
+  padding: 0 var(--space-3, 12px);
+  
+  /* Border */
+  border-bottom: 2px solid hsl(var(--border));
+  
+  /* Flex shrink */
+  flex-shrink: 0;
+}
+
+/* Drawer title */
+.sidebar-drawer__title {
+  /* Typography */
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  font-size: 1rem;
+  font-weight: 600;
+  
+  /* Color */
+  color: hsl(var(--foreground));
+  
+  /* Reset */
+  margin: 0;
+}
+
+/* Close button */
+.sidebar-drawer__close-btn {
+  /* Touch-friendly size */
+  min-width: 40px;
+  min-height: 40px;
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Reset button styles */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  
+  /* Colors */
+  color: hsl(var(--muted-foreground));
+  
+  /* Touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* 8-bit: No rounded corners */
+  border-radius: 0;
+  
+  /* Transition */
+  transition: color 150ms ease;
+}
+
+.sidebar-drawer__close-btn:hover {
+  color: hsl(var(--foreground));
+}
+
+.sidebar-drawer__close-btn:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px hsl(var(--ring));
+}
+
+/* Drawer content */
+.sidebar-drawer__content {
+  /* Fill available space */
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* Padding */
+  padding: var(--space-3, 12px);
+}
+
+/* ============================================================================
+   More Actions Menu
+   ============================================================================ */
+
+.tablet-portrait-layout__more-menu {
+  padding: var(--space-4, 16px);
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================================
+   Reduced Motion Preference
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-drawer__overlay,
+  .sidebar-drawer {
+    animation: none;
+  }
+  
+  .tablet-portrait-header__menu-btn,
+  .tablet-portrait-header__action-btn,
+  .sidebar-drawer__close-btn {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Responsive Visibility
+   ============================================================================ */
+
+/* Only show this layout in tablet portrait range (600-767px) */
+@media (max-width: 599px) {
+  /* Hide on phone - phone uses MobileIDELayout */
+  .tablet-portrait-layout {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Hide on tablet landscape+ - use WorkspaceLayout */
+  .tablet-portrait-layout {
+    display: none;
+  }
+}

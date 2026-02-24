@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "projectId": "proj_1769589742742_t7s890hdp",
+  "exclusionPatterns": [
+    "node_modules",
+    ".git",
+    ".next",
+    "dist",
+    "build",
+    "coverage",
+    ".cache",
+    ".turbo",
+    "out",
+    ".viagent"
+  ],
+  "scan": {
+    "maxDepth": 20,
+    "warningDepth": 15,
+    "maxFiles": 50000,
+    "showProgress": true
+  },
+  "updatedAt": "2026-01-28T08:42:23.034Z"
+}

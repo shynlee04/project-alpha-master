@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent IDE - Tablet Stacked (3 Interfaces)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --primary: #fafafa;
+      --action: #f97316;
+      --border: #3f3f46;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+    }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .ide-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      flex-direction: column;
+    }
+    .header {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+    .header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .header-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 0;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+    }
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .tab {
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      min-width: 100px;
+    }
+    .tab:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+    .tab.active {
+      background: var(--canvas);
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--action);
+    }
+    .workspace-stack {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid var(--border);
+      min-height: 300px;
+    }
+    .preview-panel {
+      height: 250px;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      padding: 8px 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+    }
+    .editor-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .line-numbers {
+      padding: 12px 8px;
+      text-align: right;
+      color: var(--text-muted);
+      user-select: none;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      width: 40px;
+      font-size: 11px;
+    }
+    .code-content {
+      flex: 1;
+      padding: 12px;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      overflow-y: auto;
+    }
+    .keyword { color: #c084fc; }
+    .function { color: #f97316; }
+    .string { color: #4ade80; }
+    .preview-content {
+      flex: 1;
+      background: white;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .preview-content h1 {
+      color: #f97316;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .preview-content button {
+      background: #f97316;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-weight: bold;
+    }
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      color: var(--canvas);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="ide-container">
+    <header class="header">
+      <div class="header-title">💻 Via-Gent IDE</div>
+      <div class="header-actions">
+        <button class="btn">▶ Run</button>
+      </div>
+    </header>
+
+    <main class="workspace-stack">
+      <div class="tabs">
+        <div class="tab active">📄 App.tsx</div>
+        <div class="tab">📄 index.tsx</div>
+      </div>
+
+      <div class="editor-panel">
+        <div class="panel-header">
+          <span>📝 Editor</span>
+        </div>
+        <div class="editor-container">
+          <div class="line-numbers">
+            1 2 3 4 5 6 7 8 9 10 11 12
+          </div>
+          <div class="code-content">
+<span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;
+<span class="keyword">export function</span> <span class="function">App</span>() {
+  <span class="keyword">return</span> (
+    <span class="keyword">&lt;</span>div<span class="keyword">&gt;</span>
+      <span class="keyword">&lt;</span>h1<span class="keyword">&gt;</span>Via-Gent<span class="keyword">&lt;/</span>h1<span class="keyword">&gt;</span>
+      <span class="keyword">&lt;</span>button<span class="keyword">&gt;</span>Click<span class="keyword">&lt;/</span>button<span class="keyword">&gt;</span>
+    <span class="keyword">&lt;/</span>div<span class="keyword">&gt;</span>
+  );
+}
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-panel">
+        <div class="panel-header">
+          <span>👁 Preview</span>
+        </div>
+        <div class="preview-content">
+          <h1>Via-Gent</h1>
+          <button>Click</button>
+        </div>
+      </div>
+    </main>
+
+    <div class="status-bar">
+      <span>⟳ Auto-refresh</span>
+      <span>Ln 8, Col 12</span>
+      <span>TypeScript</span>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

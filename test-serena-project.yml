@@ -1,0 +1,14 @@
+# Test project configuration for Serena
+name: project-alpha-test
+language: typescript
+root_path: .
+include_patterns:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+exclude_patterns:
+  - "**/node_modules/**"
+  - "**/.git/**"
+  - "**/dist/**"
+  - "**/build/**"

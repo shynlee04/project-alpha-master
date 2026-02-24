@@ -1,0 +1,94 @@
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Sparkles, PlayCircle, X } from 'lucide-react'
+import { PitchDeck } from './PitchDeck'
+
+const ONBOARDING_COMPLETED_KEY = 'via-gent-onboarding-completed'
+const ONBOARDING_SKIPPED_KEY = 'via-gent-onboarding-skipped'
+
+export function Onboarding() {
+    const { t } = useTranslation()
+    const [showPitch, setShowPitch] = useState(false)
+    const [showOnboarding, setShowOnboarding] = useState(true)
+
+    useEffect(() => {
+        // Check if user has already completed or skipped onboarding
+        const completed = localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true'
+        const skipped = localStorage.getItem(ONBOARDING_SKIPPED_KEY) === 'true'
+        
+        if (completed || skipped) {
+            setShowOnboarding(false)
+        }
+    }, [])
+
+    const handleCompleteOnboarding = () => {
+        localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true')
+        setShowOnboarding(false)
+    }
+
+    const handleSkipOnboarding = () => {
+        localStorage.setItem(ONBOARDING_SKIPPED_KEY, 'true')
+        setShowOnboarding(false)
+    }
+
+    if (!showOnboarding) return null
+
+    return (
+        <>
+            <div className="relative group overflow-hidden rounded-none bg-card border border-border p-8 mb-8 shadow-pixel transition-all hover:border-primary/30 hover:shadow-primary/10">
+                {/* Background Effects - 8-bit style solid orbs */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-primary/20 to-warning/20 rounded-none -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity duration-700 opacity-70" />
+                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
+
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="space-y-4 text-center md:text-left">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-none bg-primary/95 border border-primary/30 text-primary-foreground text-sm font-medium animate-fade-in-up">
+                            <Sparkles size={14} className="animate-pulse" />
+                            <span>v0.1.0 Alpha Release</span>
+                        </div>
+
+                        <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight">
+                            {t('onboarding.slides.intro.title')}
+                        </h1>
+                        <p className="text-xl text-muted-foreground font-light max-w-xl leading-relaxed">
+                            {t('onboarding.slides.intro.desc')}
+                        </p>
+
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setShowPitch(true)}
+                                className="group/btn inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-none font-bold text-lg hover:scale-105 hover:shadow-[0_0_40px_var(--shadow-color)] transition-all duration-300 shadow-[2px_2px_0px_0px_var(--shadow-color)]"
+                            >
+                                {t('onboarding.launch')}
+                                <PlayCircle size={24} className="group-hover/btn:fill-primary-foreground group-hover/btn:text-primary transition-colors" />
+                            </button>
+                            <button
+                                onClick={handleSkipOnboarding}
+                                className="inline-flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground rounded-none font-medium hover:bg-accent transition-all border border-border"
+                                title={t('onboarding.skip')}
+                            >
+                                <X size={20} />
+                                <span className="hidden md:inline">{t('onboarding.skip')}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Visual Graphic */}
+                    <div className="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0 animate-float">
+                        <img src="/via-gent-logo.svg" alt="Via-gent" className="w-full h-full drop-shadow-[0_0_50px_var(--primary)]" />
+                        {/* Decorative Rings - Primary themed */}
+                        <div className="absolute inset-0 border border-primary/20 rounded-full scale-110 animate-spin-slow-reverse" />
+                        <div className="absolute inset-0 border border-warning/20 rounded-full scale-150 animate-spin-slow" />
+                    </div>
+                </div>
+            </div>
+
+            <PitchDeck
+                isOpen={showPitch}
+                onClose={() => setShowPitch(false)}
+                onComplete={handleCompleteOnboarding}
+            />
+        </>
+    )
+}
+

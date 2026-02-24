@@ -1,0 +1,241 @@
+---
+name: "gates"
+type: "governance-config"
+purpose: "Define gate criteria for workflow transitions"
+version: "1.0.0"
+---
+
+# Governance Gates
+
+**Purpose**: Define gate criteria that must be met before workflow transitions.
+
+## Gate Types
+
+```yaml
+gate_types:
+  entry_gate:
+    purpose: "Verify prerequisites before starting"
+    location: "Before workflow step 1"
+
+  exit_gate:
+    purpose: "Verify completion before moving on"
+    location: "After final workflow step"
+
+  phase_gate:
+    purpose: "Verify phase completion"
+    location: "Between major phases"
+
+  quality_gate:
+    purpose: "Verify quality standards met"
+    location: "Before marking work complete"
+```
+
+## Gate Definitions
+
+### Story Start Gate
+
+```yaml
+story_start_gate:
+  type: "entry_gate"
+  applies_to: "story-cycle workflow"
+
+  criteria:
+    required:
+      - "Story assigned to sprint"
+      - "Story context file exists"
+      - "Blocking stories complete"
+      - "Dependencies available"
+
+    optional:
+      - "Design mockups ready"
+      - "API contracts defined"
+      - "Test plan documented"
+
+  failures:
+    - action: "Block story start"
+      notify: "Product owner"
+      reason: "Prerequisites not met"
+```
+
+### Story Done Gate
+
+```yaml
+story_done_gate:
+  type: "exit_gate"
+  applies_to: "story-cycle workflow"
+
+  criteria:
+    required:
+      - "All acceptance criteria met"
+      - "Code reviewed"
+      - "Tests written (>= 80% coverage)"
+      - "Tests passing"
+      - "TypeScript valid"
+      - "No P0 bugs"
+
+    optional:
+      - "E2E tests pass"
+      - "Documentation updated"
+      - "Performance OK"
+
+  failures:
+    - action: "Block story completion"
+      notify: "Developer + QA"
+      reason: "Quality standards not met"
+```
+
+### Governance Gate
+
+```yaml
+governance_gate:
+  type: "phase_gate"
+  applies_to: "Before any development work"
+
+  criteria:
+    required:
+      - "Context scan completed"
+      - "No high-risk context issues"
+      - "Expert analysis passed (if needed)"
+      - "Research complete (if flagged)"
+
+    warnings:
+      - "Some stale artifacts detected"
+      - "Minor boundary violations"
+
+  failures:
+    - action: "Block development"
+      notify: "Governance agent"
+      reason: "Governance checks failed"
+      remediation: "Run correct-course workflow"
+```
+
+### Phase Transition Gate
+
+```yaml
+phase_transition_gate:
+  type: "phase_gate"
+  applies_to: "All phase transitions"
+
+  criteria:
+    required:
+      - "Current phase complete"
+      - "All quality gates passed"
+      - "Next phase prerequisites met"
+      - "User approval obtained"
+
+    automated_checks:
+      - "No blocking issues"
+      - "Tests passing"
+      - "Build successful"
+
+  failures:
+    - action: "Stay in current phase"
+      notify: "Project lead"
+      reason: "Phase not ready to transition"
+```
+
+## Gate Scoring
+
+```yaml
+scoring:
+  pass:
+    threshold: "100% of required criteria"
+    result: "PROCEED"
+
+  pass_with_warnings:
+    threshold: "100% required, some warnings"
+    result: "PROCEED WITH CAUTION"
+
+  fail:
+    threshold: "Any required criteria missing"
+    result: "DO NOT PROCEED"
+
+  waiver:
+    condition: "User explicitly overrides"
+    requires: "Document justification"
+```
+
+## Gate Enforcement
+
+```yaml
+enforcement:
+  strict_gates:
+    - "governance_gate"
+    - "story_done_gate"
+    - "phase_transition_gate"
+    enforcement: "Cannot proceed without pass"
+
+  advisory_gates:
+    - "story_start_gate"
+    - "quality_gate"
+    enforcement: "Warn but allow override"
+
+  bypass:
+    allowed: false
+    except: "User explicit override"
+    requires: "Justification documentation"
+```
+
+## Gate Reports
+
+```yaml
+gate_report:
+  gate_name: "{gate_name}"
+  timestamp: "{when}"
+
+  result: "{pass|pass_with_warnings|fail}"
+
+  criteria:
+    required:
+      passed: {count}
+      failed: {count}
+      total: {count}
+
+    optional:
+      passed: {count}
+      failed: {count}
+      total: {count}
+
+  warnings: [list]
+  blocking_issues: [list]
+
+  recommendation: "{proceed|proceed_with_caution|do_not_proceed}"
+```
+
+## Gate Chains
+
+```yaml
+gate_chains:
+  development_chain:
+    - governance_gate
+    - story_start_gate
+    - quality_gate
+    - story_done_gate
+
+  phase_transition_chain:
+    - phase_complete_gate
+    - quality_gate
+    - phase_transition_gate
+
+  deployment_chain:
+    - quality_gate
+    - security_gate
+    - performance_gate
+    - deployment_gate
+```
+
+## Integration
+
+**Used By**: All workflows with gates
+
+**Evaluated By**: stage-gate workflow
+
+**Location**: `_bmad-ext/modules/governance/config/gates.yaml`
+
+---
+
+`★ Insight ─────────────────────────────────────`
+1. Gates enforce quality standards at key points
+2. Strict gates prevent bypassing critical checks
+3. Advisory gates allow flexibility with warnings
+`─────────────────────────────────────────────────`

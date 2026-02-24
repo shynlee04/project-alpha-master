@@ -1,0 +1,416 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-18T14:30:00Z",
+    "cycle": 4,
+    "phase": "Refactor Surgeon",
+    "input_artifact": "_bmad-ext/.architecture-investigation/cycle1-map-hypotheses/state-analysis.json",
+    "target_threshold": 120
+  },
+  "refactor_targets": [
+    {
+      "file": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "current_lines": 496,
+      "target_lines": 0,
+      "type": "facade_removal",
+      "status": "deprecated_facade",
+      "priority": "medium",
+      "issues": [
+        "Backward compatibility facade with complex mapping logic",
+        "Maps unified store state to legacy format",
+        "Contains type mappers and facade implementation",
+        "Technical debt until removed"
+      ],
+      "proposed_slices": [],
+      "backward_compatibility": {
+        "facade_preserved": false,
+        "migration_strategy": "Direct consumer migration to useUnifiedChatStore",
+        "deprecation_date": "2026-02-01"
+      },
+      "pr_sequence": [
+        {
+          "step": 1,
+          "action": "Audit all consumers of useConversationStore",
+          "files_modified": [],
+          "files_created": [],
+          "description": "Find all imports of useConversationStore across codebase"
+        },
+        {
+          "step": 2,
+          "action": "Migrate consumers to useUnifiedChatStore",
+          "files_modified": [],
+          "files_created": [],
+          "description": "Update each consumer to use unified store directly"
+        },
+        {
+          "step": 3,
+          "action": "Delete useConversationStore.ts facade",
+          "files_deleted": ["src/infrastructure/persistence/stores/conversation/useConversationStore.ts"],
+          "description": "Remove facade after all consumers migrated"
+        },
+        {
+          "step": 4,
+          "action": "Update conversation/index.ts exports",
+          "files_modified": ["src/infrastructure/persistence/stores/conversation/index.ts"],
+          "description": "Remove facade exports, re-export from unified store"
+        }
+      ],
+      "characterization_tests_needed": [
+        "test_facade_equivalence",
+        "test_consumer_migration",
+        "test_type_mapper_coverage"
+      ],
+      "estimated_effort_hours": 8,
+      "risk_level": "high",
+      "rollback_strategy": "Restore facade from git if migration fails"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/terminal-store.ts",
+      "current_lines": 317,
+      "target_lines": 120,
+      "type": "slice_extraction",
+      "status": "god_store",
+      "priority": "high",
+      "issues": [
+        "Single file >300 lines",
+        "No slice pattern applied",
+        "Contains terminal session management, xterm integration, and persistence"
+      ],
+      "proposed_slices": [
+        {
+          "name": "terminal-tabs-slice",
+          "file": "src/infrastructure/persistence/stores/terminal/terminal-tabs-slice.ts",
+          "responsibility": "Tab CRUD, active tab, naming, history, cwd tracking",
+          "estimated_lines": 90
+        },
+        {
+          "name": "terminal-panel-slice",
+          "file": "src/infrastructure/persistence/stores/terminal/terminal-panel-slice.ts",
+          "responsibility": "Visibility, height, maximize state",
+          "estimated_lines": 50
+        },
+        {
+          "name": "terminal-settings-slice",
+          "file": "src/infrastructure/persistence/stores/terminal/terminal-settings-slice.ts",
+          "responsibility": "Font size, theme, scrollback, shell config",
+          "estimated_lines": 60
+        },
+        {
+          "name": "terminal-types",
+          "file": "src/infrastructure/persistence/stores/terminal/terminal-types.ts",
+          "responsibility": "TerminalTab, TerminalSettings, TerminalState interfaces",
+          "estimated_lines": 40
+        },
+        {
+          "name": "terminal-store",
+          "file": "src/infrastructure/persistence/stores/terminal/index.ts",
+          "responsibility": "Combined store with persistence, re-exports",
+          "estimated_lines": 80
+        }
+      ],
+      "backward_compatibility": {
+        "facade_preserved": true,
+        "facade_file": "src/infrastructure/persistence/stores/terminal-store.ts",
+        "migration_strategy": "Create new slices, update facade to delegate, then migrate consumers"
+      },
+      "pr_sequence": [
+        {
+          "step": 1,
+          "action": "Create terminal-types.ts",
+          "files_created": ["src/infrastructure/persistence/stores/terminal/terminal-types.ts"],
+          "description": "Extract interfaces and types"
+        },
+        {
+          "step": 2,
+          "action": "Create terminal-tabs-slice.ts",
+          "files_created": ["src/infrastructure/persistence/stores/terminal/terminal-tabs-slice.ts"],
+          "description": "Extract tab management logic"
+        },
+        {
+          "step": 3,
+          "action": "Create terminal-panel-slice.ts",
+          "files_created": ["src/infrastructure/persistence/stores/terminal/terminal-panel-slice.ts"],
+          "description": "Extract panel visibility/height logic"
+        },
+        {
+          "step": 4,
+          "action": "Create terminal-settings-slice.ts",
+          "files_created": ["src/infrastructure/persistence/stores/terminal/terminal-settings-slice.ts"],
+          "description": "Extract settings management logic"
+        },
+        {
+          "step": 5,
+          "action": "Create terminal/index.ts combined store",
+          "files_created": ["src/infrastructure/persistence/stores/terminal/index.ts"],
+          "description": "Combine slices with persistence"
+        },
+        {
+          "step": 6,
+          "action": "Update terminal-store.ts facade",
+          "files_modified": ["src/infrastructure/persistence/stores/terminal-store.ts"],
+          "description": "Delegate to new store, maintain exports"
+        },
+        {
+          "step": 7,
+          "action": "Migrate consumers to new store",
+          "files_modified": [],
+          "description": "Update imports to use new terminal/index.ts"
+        },
+        {
+          "step": 8,
+          "action": "Delete terminal-store.ts",
+          "files_deleted": ["src/infrastructure/persistence/stores/terminal-store.ts"],
+          "description": "Remove legacy facade after migration"
+        }
+      ],
+      "characterization_tests_needed": [
+        "test_tab_crud",
+        "test_panel_visibility",
+        "test_settings_persistence",
+        "test_command_history"
+      ],
+      "estimated_effort_hours": 6,
+      "risk_level": "medium",
+      "rollback_strategy": "Restore terminal-store.ts from git"
+    },
+    {
+      "file": "src/infrastructure/persistence/dexie-db.ts",
+      "current_lines": 1165,
+      "target_lines": 150,
+      "type": "module_split",
+      "status": "god_file",
+      "priority": "high",
+      "issues": [
+        "1165 lines - massive helper file",
+        "Contains 100+ helper functions",
+        "Mixes concerns: project helpers, sync helpers, file metadata helpers, conversation helpers, source/collection helpers"
+      ],
+      "proposed_modules": [
+        {
+          "name": "ide-helpers",
+          "file": "src/infrastructure/persistence/helpers/ide-helpers.ts",
+          "responsibility": "IDE state CRUD, recent projects",
+          "functions": ["getIDEState", "saveIDEState", "deleteIDEState", "getRecentProjects"],
+          "estimated_lines": 50
+        },
+        {
+          "name": "sync-helpers",
+          "file": "src/infrastructure/persistence/helpers/sync-helpers.ts",
+          "responsibility": "Sync status CRUD, statistics, cleanup",
+          "functions": ["getSyncStatus", "setSyncStatus", "updateSyncStatus", "deleteSyncStatus", "getSyncStatusByStatus", "getPendingSyncStatus", "getErrorSyncStatus", "clearOldSyncStatus", "getSyncStatusStats"],
+          "estimated_lines": 100
+        },
+        {
+          "name": "file-metadata-helpers",
+          "file": "src/infrastructure/persistence/helpers/file-metadata-helpers.ts",
+          "responsibility": "File metadata CRUD, bulk operations, sync detection",
+          "functions": ["getFileMetadata", "getAllFileMetadata", "upsertFileMetadata", "bulkUpsertFileMetadata", "deleteFileMetadata", "clearProjectFileMetadata", "getFilesNeedingSync", "getChangedFilesSince", "clearFileMetadataCache"],
+          "estimated_lines": 80
+        },
+        {
+          "name": "tool-execution-helpers",
+          "file": "src/infrastructure/persistence/helpers/tool-execution-helpers.ts",
+          "responsibility": "Tool execution log CRUD, approval tracking, cleanup",
+          "functions": ["addToolExecutionLog", "getToolExecutionLogs", "getToolExecutionLog", "updateToolExecutionLog", "getApprovedTools", "clearOldToolExecutionLogs", "clearToolExecutionLogs"],
+          "estimated_lines": 70
+        },
+        {
+          "name": "fsa-handle-helpers",
+          "file": "src/infrastructure/persistence/helpers/fsa-handle-helpers.ts",
+          "responsibility": "FSA handle persistence, permissions, privacy",
+          "functions": ["storeFSAHandle", "getFSAHandle", "updateFSAHandleStatus", "deleteFSAHandle", "updateFSAHandlePermission", "clearAllFSAHandles", "getAllValidFSAHandles"],
+          "estimated_lines": 60
+        },
+        {
+          "name": "session-snapshot-helpers",
+          "file": "src/infrastructure/persistence/helpers/session-snapshot-helpers.ts",
+          "responsibility": "Session snapshot CRUD, expiration management",
+          "functions": ["saveSessionSnapshot", "getLatestSessionSnapshot", "deleteSessionSnapshot", "clearExpiredSessionSnapshots", "clearProjectSessionSnapshots"],
+          "estimated_lines": 50
+        },
+        {
+          "name": "conversation-helpers",
+          "file": "src/infrastructure/persistence/helpers/conversation-helpers.ts",
+          "responsibility": "Conversation thread CRUD, scroll position",
+          "functions": ["getConversationThread", "saveConversationThread", "getMostRecentThread", "getThreadsForProject", "deleteConversationThread", "updateThreadScrollPosition"],
+          "estimated_lines": 60
+        },
+        {
+          "name": "knowledge-helpers",
+          "file": "src/infrastructure/persistence/helpers/knowledge-helpers.ts",
+          "responsibility": "Source and collection CRUD, search, stats",
+          "functions": ["getSource", "saveSource", "getSourcesForProject", "getSourcesByType", "deleteSource", "clearProjectSources", "searchSources", "getSourceStats", "getCollectionsForProject", "getCollection", "saveCollection", "createCollection", "deleteCollection", "addSourceToCollection", "removeSourceFromCollection", "getSourcesForCollection"],
+          "estimated_lines": 120
+        },
+        {
+          "name": "index",
+          "file": "src/infrastructure/persistence/helpers/index.ts",
+          "responsibility": "Re-export all helpers, maintain backward compatibility",
+          "estimated_lines": 100
+        }
+      ],
+      "backward_compatibility": {
+        "facade_preserved": true,
+        "facade_file": "src/infrastructure/persistence/dexie-db.ts",
+        "migration_strategy": "Create new helper modules, re-export from index, gradually migrate consumers"
+      },
+      "pr_sequence": [
+        {
+          "step": 1,
+          "action": "Create helpers directory",
+          "files_created": ["src/infrastructure/persistence/helpers/"],
+          "description": "Create directory structure"
+        },
+        {
+          "step": 2,
+          "action": "Create ide-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/ide-helpers.ts"],
+          "description": "Extract IDE state helpers"
+        },
+        {
+          "step": 3,
+          "action": "Create sync-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/sync-helpers.ts"],
+          "description": "Extract sync status helpers"
+        },
+        {
+          "step": 4,
+          "action": "Create file-metadata-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/file-metadata-helpers.ts"],
+          "description": "Extract file metadata helpers"
+        },
+        {
+          "step": 5,
+          "action": "Create tool-execution-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/tool-execution-helpers.ts"],
+          "description": "Extract tool execution helpers"
+        },
+        {
+          "step": 6,
+          "action": "Create fsa-handle-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/fsa-handle-helpers.ts"],
+          "description": "Extract FSA handle helpers"
+        },
+        {
+          "step": 7,
+          "action": "Create session-snapshot-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/session-snapshot-helpers.ts"],
+          "description": "Extract session snapshot helpers"
+        },
+        {
+          "step": 8,
+          "action": "Create conversation-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/conversation-helpers.ts"],
+          "description": "Extract conversation thread helpers"
+        },
+        {
+          "step": 9,
+          "action": "Create knowledge-helpers.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/knowledge-helpers.ts"],
+          "description": "Extract source and collection helpers"
+        },
+        {
+          "step": 10,
+          "action": "Create helpers/index.ts",
+          "files_created": ["src/infrastructure/persistence/helpers/index.ts"],
+          "description": "Re-export all helpers"
+        },
+        {
+          "step": 11,
+          "action": "Update dexie-db.ts to re-export from helpers",
+          "files_modified": ["src/infrastructure/persistence/dexie-db.ts"],
+          "description": "Delegate to new helper modules"
+        },
+        {
+          "step": 12,
+          "action": "Migrate consumers to new helper modules",
+          "files_modified": [],
+          "description": "Update imports to use specific helper modules"
+        },
+        {
+          "step": 13,
+          "action": "Clean up dexie-db.ts",
+          "files_modified": ["src/infrastructure/persistence/dexie-db.ts"],
+          "description": "Remove inline implementations, keep only re-exports"
+        }
+      ],
+      "characterization_tests_needed": [
+        "test_ide_state_crud",
+        "test_sync_status_operations",
+        "test_file_metadata_crud",
+        "test_tool_execution_logging",
+        "test_fsa_handle_persistence",
+        "test_session_snapshots",
+        "test_conversation_threads",
+        "test_knowledge_sources_collections"
+      ],
+      "estimated_effort_hours": 12,
+      "risk_level": "high",
+      "rollback_strategy": "Restore original dexie-db.ts from git"
+    }
+  ],
+  "additional_refactor_targets": [
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "current_lines": 227,
+      "target_lines": 120,
+      "type": "slice_extraction",
+      "status": "needs_slice_refactor",
+      "priority": "low",
+      "proposed_slices": [
+        {
+          "name": "workspace-crud-slice",
+          "file": "src/infrastructure/persistence/stores/workspace/workspace-crud-slice.ts",
+          "responsibility": "Workspace CRUD operations",
+          "estimated_lines": 60
+        },
+        {
+          "name": "workspace-state-slice",
+          "file": "src/infrastructure/persistence/stores/workspace/workspace-state-slice.ts",
+          "responsibility": "Active workspace, layout state",
+          "estimated_lines": 50
+        }
+      ],
+      "estimated_effort_hours": 3
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/rag/rag-store.ts",
+      "current_lines": 120,
+      "target_lines": 120,
+      "type": "slice_extraction",
+      "status": "needs_slice_refactor",
+      "priority": "low",
+      "proposed_slices": [
+        {
+          "name": "rag-chat-slice",
+          "file": "src/infrastructure/persistence/stores/rag/rag-chat-slice.ts",
+          "responsibility": "RAG chat state",
+          "estimated_lines": 50
+        },
+        {
+          "name": "rag-search-slice",
+          "file": "src/infrastructure/persistence/stores/rag/rag-search-slice.ts",
+          "responsibility": "RAG search operations",
+          "estimated_lines": 50
+        }
+      ],
+      "estimated_effort_hours": 2
+    }
+  ],
+  "summary": {
+    "total_god_stores": 3,
+    "total_lines_current": 1978,
+    "total_lines_target": 270,
+    "reduction_percentage": 86,
+    "estimated_total_effort_hours": 26,
+    "priority_order": [
+      "dexie-db.ts (module_split)",
+      "useTerminalStore (slice_extraction)",
+      "useConversationStore (facade_removal)"
+    ],
+    "prerequisites": [
+      "Characterization tests for each store",
+      "Consumer audit for deprecated facade",
+      "Backup strategy defined"
+    ]
+  }
+}

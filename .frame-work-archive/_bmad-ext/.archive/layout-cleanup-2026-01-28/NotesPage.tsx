@@ -1,0 +1,1102 @@
+/**
+ * NotesPage.tsx
+ *
+ * Main notes page with import/export functionality and chat panel.
+ * Part of NR-06, NR-08: FileSync Binding and Markdown Import/Export UI
+ * Part of E1-1: UnifiedChatPanel integration
+ */
+
+import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
+import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
+import { MainLayout } from '@/presentation/components/layout/MainLayout';
+import { Button } from '@/presentation/components/ui/button';
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+} from '@/presentation/components/ui/resizable';
+import { Plus, Notebook, ArrowLeft, MessageSquare } from 'lucide-react';
+import { NoteSidebar } from './NoteSidebar';
+import { NotesMobileLayout } from './NotesMobileLayout';
+import { MarkdownImportDialog } from './MarkdownImportDialog';
+import { MarkdownExportDialog } from './MarkdownExportDialog';
+import { NotesFilePicker } from './NotesFilePicker';
+import { SlashCommandsDialog } from './SlashCommandsDialog';
+// 43-03: Prompt Refinement Dialog for 2-step workflow
+import { PromptRefinementDialog } from './PromptRefinementDialog';
+// Note: PromptSuggestionsPanel is now integrated inside NoteEditor.tsx (43-04)
+// R3 FIX: Re-enabled SyncStatusPanel import after noteStoreConfig memoization fixed infinite loop
+import { SyncStatusPanel } from '@/presentation/components/ide/SyncStatusPanel';
+// E1-1: UnifiedChatPanel integration
+import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPanel';
+// NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
+// import { createNoteFileSyncService } from '@/lib/notes';
+
+// FS-01 FIX: Direct import - no lazy() needed since route is already lazy-loaded
+// Nested lazy loading (createLazyFileRoute + React.lazy) causes chunk resolution failures
+import { NoteEditor } from './NoteEditor';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import { useResponsive } from '@/hooks/useResponsive';
+// AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
+import { AgentManager } from '@/presentation/components/agent';
+// STORAGE-3-2: Project Selector
+import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
+import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
+// P0-3: File Sync Service Initialization
+import { useFileSyncService } from '@/lib/filesync/hooks/use-file-sync-service';
+import type { UseFileSyncServiceResult } from '@/lib/filesync/hooks/use-file-sync-service';
+import type { NotesFileSyncService } from '@/infrastructure/sync/workspace-services/notes/notes-file-sync-service';
+// CHAT-006: Thread management
+import { ThreadManager } from '@/presentation/components/chat/ThreadManager';
+import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useShallow } from 'zustand/react/shallow';
+
+// P2-7: Import Knowledge → Notes event types
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import type { SynthesisExportData } from '@/infrastructure/events/event-bus';
+import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
+import { toast } from 'sonner';
+// Use ProjectContext for projectId instead of IDE store
+import { useProjectContext } from '@/infrastructure/context/project-context';
+// UJ-004: Cross-workspace reactivity - subscribe to FILE_SAVED events
+import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
+import type { FileSavedPayload } from '@/lib/events/store-events';
+// WB-8.3: Cross-workspace event subscriptions for state synchronization
+import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
+
+/**
+ * PERF-07: NotesPage wrapped with React.memo to prevent unnecessary re-renders
+ * from parent component updates. This is a large component (700+ lines) that
+ * benefits significantly from memoization.
+ */
+export const NotesPage = React.memo(function NotesPage() {
+    const { t } = useTranslation();
+    const { isMobile } = useResponsive();
+    const navigate = useNavigate();
+
+    // Get projectId from ProjectContext (set by route)
+    const { project } = useProjectContext();
+
+    console.log('[NotesPage] Component mounted!', { projectId: project?.id, project });
+    
+    // FIX TB-15: Don't fallback to 'default' - use actual project ID or browser-mode ID
+    // The route component should ensure project is loaded before rendering NotesPage
+    // For browser-mode (/notes route), project will be the browser-mode project
+    const projectId = project?.id;
+    
+    // FIX TB-15: Show loading state if project context not yet available
+    // This handles edge case where component renders before project loads
+    if (!projectId) {
+        return (
+            <div className="h-full flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground">Loading notes...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // REMOVED: Navigation loop caused by IDE store sync
+    // URL is the source of truth - when user navigates to /notes/$projectId,
+    // that's the project they want to view. No auto-sync from IDE store.
+
+    // STORAGE-3-2: Project Selector Logic
+    const { projects, activeProject } = useWorkspaceProjects({
+        workspaceType: 'notes'
+    });
+
+    const handleProjectSelect = (newProjectId: string) => {
+        navigate({ to: `/notes/${newProjectId}` });
+    };
+
+    const {
+        notesArray,
+        currentProjectId,
+        loadNotes,
+        loadAllNotes,
+        createNote,
+        setActiveNote,
+        activeNoteId,
+        toggleFavorite
+    } = useNoteStore();
+
+    const activeNote = useActiveNote();
+    const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
+    // UX-02: Mobile content/nav tabs - moved from conditional to fix Rules of Hooks violation
+    const [mobileContentTab, setMobileContentTab] = useState('all');
+    const [mobileNavTab, setMobileNavTab] = useState('notes');
+
+    // CHAT-006: Get thread info for mobile layout
+    const { activeConversationId, setActiveThread } = useConversationStore(
+        useShallow((state) => ({
+            activeConversationId: state.activeConversationId,
+            setActiveThread: state.setActiveThread,
+        }))
+    );
+
+    // CHAT-006: Get active thread count for mobile badge
+    const mobileThreadCount = useConversationStore((state) => {
+        const threads = Object.values(state.threads).filter(
+            t => t.status === 'active' && t.conversationId === activeConversationId
+        );
+        return threads.length;
+    });
+
+    // P2-4: Panel collapse state (persisted in IDE store)
+    const noteSidebarCollapsed = useIDEStore((s) => s.panelCollapsed['notes-sidebar'] ?? false);
+    const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
+
+    // E1-1: Chat panel collapse state (persisted in IDE store)
+    const notesChatCollapsed = useIDEStore((s) => s.panelCollapsed['notes-chat'] ?? false);
+    const notesChatVisible = useIDEStore((s) => s.chatVisible ?? true);
+
+    // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop
+    // Ensures Notes workspace reacts to changes from IDE, Knowledge, Study workspaces
+    useAllCrossWorkspaceEvents();
+    // Also subscribe to workspace changed events for agent filtering
+    useWorkspaceChangedEvents();
+
+    // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Check for Cmd/Ctrl + [ (left bracket)
+            if ((event.metaKey || event.ctrlKey) && event.key === '[') {
+                event.preventDefault();
+                setPanelCollapsed('notes-sidebar', !noteSidebarCollapsed);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [noteSidebarCollapsed, setPanelCollapsed]);
+
+    // Import/Export dialog state (NR-06, NR-08)
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+
+    // File sync state (CW-1.4)
+    const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
+
+    // Slash Commands dialog state (43-01)
+    const [isSlashCommandsDialogOpen, setIsSlashCommandsDialogOpen] = useState(false);
+
+    // CRITICAL FIX: Memoize noteStore config to prevent infinite loop
+    // The noteStore object passed to useFileSyncService was recreated on every render,
+    // causing initializeService callback to be recreated continuously, triggering infinite re-renders
+    const noteStoreConfig = useMemo(
+        () => ({
+            notes: useNoteStore.getState().notes,
+            notesArray: notesArray,
+            updateNote: useNoteStore.getState().updateNote,
+            createNote: useNoteStore.getState().createNote,
+            loadNotes: useNoteStore.getState().loadNotes,
+            loadAllNotes: useNoteStore.getState().loadAllNotes,
+        }),
+        [notesArray] // Only recreate when notesArray changes
+    );
+
+    // P0-3: Initialize file sync service with storage type selection
+    const {
+        service: notesSyncService,
+        isInitializing: isNotesSyncInitializing,
+        error: notesSyncError,
+        initializeService: initializeNotesSync,
+        isReady: isNotesSyncReady,
+        isSupported: isNotesSyncSupported,
+    } = useFileSyncService({
+        projectId,
+        workspaceType: 'notes',
+        storageType: project?.storageType ?? 'indexeddb',
+        noteStore: noteStoreConfig,
+    }) as UseFileSyncServiceResult;
+
+    // S-007: File loading state for auto-import
+    const [isImportingFiles, setIsImportingFiles] = useState(false);
+    const [importProgress, setImportProgress] = useState({ current: 0, total: 0, currentFile: '' });
+    
+    // BUG-016 FIX: Track if auto-init has been attempted to prevent infinite retries
+    const autoInitAttemptedRef = useRef(false);
+
+    // FIX-2026-01-20: Use ref for import guard to prevent infinite loop
+    // Ref doesn't trigger re-render, so it won't cause effect to re-run
+    const isImportingRef = useRef(false);
+
+    // FIX-2026-01-20: Track imported projects per session
+    const getImportKey = (pid: string) => `notes_imported_${pid}`;
+    const hasImportedThisSession = (pid: string) => sessionStorage.getItem(getImportKey(pid)) === 'done';
+    const markImportedThisSession = (pid: string) => sessionStorage.setItem(getImportKey(pid), 'done');
+
+    // PHASE-2-V4 FIX: Use ONLY stable primitives for canAutoImport
+    // Service existence is checked INSIDE the effect, not in dependencies
+    const canAutoImport = isNotesSyncReady && !!projectId;
+
+    // FIX-2026-01-21: Migrate old sessionStorage keys after project ID migration (v27)
+    // Old format: notes_imported_notes:proj_xxx → New format: notes_imported_proj_xxx
+    useEffect(() => {
+        if (!projectId) return;
+
+        // Check if old key format exists (from before migration v27)
+        const oldFormats = [
+            `notes_imported_notes:${projectId}`,
+            `notes_imported_ide:${projectId}`,
+            `notes_imported_knowledge:${projectId}`,
+            `notes_imported_study:${projectId}`,
+        ];
+
+        for (const oldKey of oldFormats) {
+            if (sessionStorage.getItem(oldKey) === 'done') {
+                // Migrate to new format
+                const newKey = `notes_imported_${projectId}`;
+                sessionStorage.setItem(newKey, 'done');
+                sessionStorage.removeItem(oldKey);
+                console.log(`[NotesPage] Migrated sessionStorage key: ${oldKey} → ${newKey}`);
+            }
+        }
+    }, [projectId]);
+
+    // BUG-FIX: Reset UI state when project changes, but NOT the import guard
+    useEffect(() => {
+        setIsImportingFiles(false);
+        // PHASE-2-V4 FIX: Do NOT reset isImportingRef here!
+        // It should only be reset after import completes (in finally block)
+        // Resetting here causes the effect to run again on remount
+        autoInitAttemptedRef.current = false;
+
+        // Check if already imported this session
+        if (projectId && hasImportedThisSession(projectId)) {
+            console.log('[NotesPage] Project already imported this session, skipping reset');
+        }
+    }, [projectId]);
+
+    // DEBUG: Log import state changes (remove after fix verified)
+    useEffect(() => {
+        console.log('[NotesPage DEBUG] Import state:', {
+            projectId,
+            canAutoImport,
+            isImportingRef: isImportingRef.current,
+            hasImported: projectId ? hasImportedThisSession(projectId) : 'no-project',
+            isNotesSyncReady,
+            hasService: Boolean(notesSyncService),
+        });
+    }, [projectId, canAutoImport, isNotesSyncReady, notesSyncService]);
+
+    // 45-04: Load notes based on project mode
+    // - Browser mode: load all notes from all projects
+    useEffect(() => {
+        console.log('[NotesPage useEffect]', {
+            projectId,
+            currentProjectId,
+            isBrowserMode: project?.isBrowserMode,
+            shouldLoadNotes: projectId && currentProjectId !== projectId,
+            shouldLoadAll: project?.isBrowserMode
+        });
+
+        if (project?.isBrowserMode) {
+            // Browser mode: show notes from all projects
+            console.log('[NotesPage] Loading all notes (browser mode)');
+            loadAllNotes();
+        } else if (projectId && currentProjectId !== projectId) {
+            // Project mode: show notes for specific project
+            console.log('[NotesPage] Loading notes for project:', projectId);
+            loadNotes(projectId);
+        }
+    }, [projectId, currentProjectId, loadNotes, loadAllNotes, project?.isBrowserMode]);
+
+    // BUG-016 FIX: Auto-initialize file sync for FSA projects
+    // This ensures handle restoration is attempted when entering Notes workspace
+    useEffect(() => {
+        if (!projectId || !project) return;
+        
+        // Only for FSA/Desktop
+        if (project.storageType !== 'fsa') return;
+        
+        // If we haven't attempted auto-init yet, and service is not ready
+        if (!autoInitAttemptedRef.current && isNotesSyncSupported && !notesSyncService && !isNotesSyncInitializing) {
+             console.log('[NotesPage] Auto-initializing file sync service for FSA project...');
+             autoInitAttemptedRef.current = true;
+             initializeNotesSync().catch(err => {
+                 console.error('[NotesPage] Auto-init failed:', err);
+             });
+        }
+    }, [projectId, project, isNotesSyncSupported, notesSyncService, isNotesSyncInitializing, initializeNotesSync]);
+
+    // S-007: Auto-import project files when file sync service becomes ready
+    // BUG-FIX-003: Added timeout and cleanup to prevent infinite spinning
+    // PHASE0-2: Use Dexie hash tracking for idempotent imports
+    // PHASE-2-V4 FIX: Add early checks INSIDE effect, not in dependencies
+    useEffect(() => {
+        let mounted = true;
+        let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+        // Early exit conditions (before any async work)
+        if (!projectId) return;
+        if (!canAutoImport) return;
+        if (!notesSyncService) return;  // FIX: Check service HERE
+        if (isImportingRef.current) return;  // FIX: Check ref HERE
+        if (hasImportedThisSession(projectId)) {
+            console.log('[NotesPage] Import skipped - already imported this session:', projectId);
+            return;
+        }
+
+        // ✅ CRITICAL FIX: Mark as imported IMMEDIATELY, BEFORE any async work
+        // This survives component unmount/remount - prevents infinite loop
+        markImportedThisSession(projectId);
+        console.log('[NotesPage] Marked project as imported (before async work):', projectId);
+
+        const autoImportFiles = async () => {
+            // Double-check ref guard (in case of race)
+            if (isImportingRef.current) {
+                console.log('[NotesPage] Import skipped - already in progress');
+                return;
+            }
+
+            if (!mounted) return;
+
+            setIsImportingFiles(true);
+            isImportingRef.current = true;
+            setImportProgress({ current: 0, total: 0, currentFile: '' });
+
+            // BUG-FIX-003: Create a timeout promise (30 seconds max)
+            const importTimeout = new Promise((_, reject) => {
+                timeoutId = setTimeout(() => {
+                    reject(new Error('Import timeout after 30 seconds - operation cancelled'));
+                }, 30000);
+            });
+
+            try {
+                console.log('[NotesPage] Auto-importing project files for:', projectId);
+
+                // BUG-FIX-003: Race between import and timeout
+                const result = await Promise.race([
+                    (notesSyncService as NotesFileSyncService).importDirectory(
+                        '', // Root directory
+                        (current: number, total: number, currentFile: string) => {
+                            if (mounted) {
+                                setImportProgress({ current, total, currentFile });
+                            }
+                        }
+                    ),
+                    importTimeout,
+                ]) as Awaited<ReturnType<typeof NotesFileSyncService.prototype.importDirectory>>;
+
+                // Clear timeout on success
+                if (timeoutId) clearTimeout(timeoutId);
+
+                if (!mounted) return;
+
+                console.log('[NotesPage] Auto-import complete:', result);
+
+                // Handle skipped imports (both 'unchanged' and 'no-files')
+                if (result.skipped) {
+                    if (result.skipReason === 'unchanged') {
+                        console.log('[NotesPage] Import skipped - files unchanged');
+                    } else if (result.skipReason === 'no-files') {
+                        console.log('[NotesPage] Import skipped - no markdown files in folder');
+                    }
+                    // Still load notes to show any existing notes
+                    if (projectId) await loadNotes(projectId);
+                    return;  // Exit early for skipped imports
+                } else {
+                    // Reload notes after successful import
+                    if (projectId) {
+                        await loadNotes(projectId);
+                    }
+                }
+            } catch (error) {
+                if (!mounted) return;
+
+                const err = error as Error;
+                console.error('[NotesPage] Auto-import failed:', err);
+
+                // BUG-FIX-003: Show specific error for timeout
+                const isTimeout = err.message.includes('timeout');
+                toast.error(t('notes.import_failed', 'Failed to auto-import files'), {
+                    description: isTimeout
+                        ? t('notes.import_timeout', 'Import took too long. The folder may be too large or access was denied.')
+                        : err.message,
+                });
+            } finally {
+                if (mounted) {
+                    isImportingRef.current = false;
+                    setIsImportingFiles(false);
+                    // sessionStorage already set at effect start - NO NEED to set here
+                }
+            }
+        };
+
+        autoImportFiles();
+
+        // BUG-FIX-003: Cleanup function to prevent state updates after unmount
+        return () => {
+            mounted = false;
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    // FIX-2026-01-21: Use stable boolean instead of service reference
+    // V3-FIX-001: Remove notesSyncService from deps to prevent re-trigger
+    }, [canAutoImport, projectId, loadNotes, t]);
+
+    // Sync mobile view with active note
+    useEffect(() => {
+        if (isMobile) {
+            setMobileView(activeNote ? 'editor' : 'list');
+        }
+    }, [activeNote, isMobile]);
+
+    // P2-7: Listen to Knowledge synthesis export events
+    // FIX: Use refs to stabilize createNote and setActiveNote callback access
+    // This prevents infinite useEffect loops when callback references change
+    const createNoteRef = useRef(createNote);
+    const setActiveNoteRef = useRef(setActiveNote);
+    useEffect(() => {
+        createNoteRef.current = createNote;
+    }, [createNote]);
+    useEffect(() => {
+        setActiveNoteRef.current = setActiveNote;
+    }, [setActiveNote]);
+
+    useEffect(() => {
+        console.log('[NotesPage] Setting up Knowledge export event listener');
+
+        /**
+         * Handle Synthesis Export Requested event from Knowledge workspace
+         * Creates a new Note in Notes workspace from synthesis content
+         */
+        const handleSynthesisExport = (event: any) => {
+            const exportData: SynthesisExportData = event;
+            console.log('[NotesPage] KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED event received:', exportData);
+
+            // Transform synthesis data to Note format
+            const noteTitle = exportData.data.title || 'Untitled Synthesis';
+
+            // Create a simple blocks array from Markdown content
+            // TODO: Phase 4 - Use proper Markdown to BlockNote parser
+            // For now, create note without content blocks (Phase 4 will implement proper parser)
+            const blocks = undefined; // Block[] type requires BlockNote library structure
+
+            // Create note with synthesis data
+            createNoteRef.current({
+                title: noteTitle,
+                emoji: '📝', // Knowledge-sourced note
+                blocks,
+            }).then((noteId) => {
+                // Set as active note
+                setActiveNoteRef.current(noteId);
+
+                // Show toast notification
+                toast.success('Note created from Knowledge workspace', {
+                    description: noteTitle,
+                    action: {
+                        label: 'View',
+                        onClick: () => {
+                            // Note is already set as active
+                            console.log('[NotesPage] Viewing note:', noteId);
+                        },
+                    },
+                });
+
+                console.log('[NotesPage] Note created from synthesis:', noteId);
+            }).catch((error) => {
+                console.error('[NotesPage] Failed to create note from synthesis:', error);
+                toast.error('Failed to create note', {
+                    description: error instanceof Error ? error.message : 'Unknown error',
+                });
+            });
+        };
+
+        // Register Knowledge export event listener
+        const unsubscribe = eventBus.on(
+            DomainEventType.KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED,
+            handleSynthesisExport as any
+        );
+
+        console.log('[NotesPage] Knowledge export event listener registered');
+
+        // Cleanup: remove listener on unmount
+        return () => {
+            console.log('[NotesPage] Cleaning up Knowledge export event listener');
+            unsubscribe();
+        };
+    }, [eventBus]);
+
+    // UJ-004: Listen to FILE_SAVED events for cross-workspace reactivity
+    // When IDE files are saved, refresh notes if they're markdown files
+    // Use ref to debounce rapid FILE_SAVED events to prevent infinite loops
+    const lastFileSaveRef = useRef<number>(0);
+    const FILE_SAVED_DEBOUNCE_MS = 1000; // 1 second debounce
+
+    useStoreEvent<FileSavedPayload>(
+        STORE_EVENTS.FILE_SAVED,
+        (payload) => {
+            // Only react to IDE file saves, not notes saves (avoid infinite loop)
+            if (payload.workspaceType === 'ide') {
+                console.log('[NotesPage] FILE_SAVED event received from IDE:', payload);
+
+                // Check if the saved file is a markdown file that might be a note
+                if (payload.filePath.endsWith('.md') || payload.filePath.endsWith('.markdown')) {
+                    const now = Date.now();
+
+                    // Debounce: only refresh if enough time has passed since last refresh
+                    if (now - lastFileSaveRef.current > FILE_SAVED_DEBOUNCE_MS) {
+                        lastFileSaveRef.current = now;
+                        console.log('[NotesPage] Markdown file saved in IDE, refreshing notes list');
+                        // Refresh notes list to pick up changes from IDE
+                        if (projectId) {
+                            loadNotes(projectId);
+                        }
+                    } else {
+                        console.log('[NotesPage] FILE_SAVED event debounced (too frequent)');
+                    }
+                }
+            }
+        },
+        [projectId, loadNotes]
+    );
+
+    const handleCreateNote = async () => {
+        try {
+            await createNote({
+                title: 'Untitled Note',
+                blocks: []
+            });
+            // Switch to editor view on mobile after creating
+            if (isMobile) {
+                setMobileView('editor');
+            }
+        } catch (error) {
+            console.error('Failed to create note:', error);
+            toast.error(t('notes.create_failed', 'Failed to create note'), {
+                description: error instanceof Error ? error.message : String(error),
+            });
+        }
+    };
+
+    const handleNoteSelect = (noteId: string) => {
+        setActiveNote(noteId);
+    };
+
+    const handleFavoriteToggle = async (noteId: string) => {
+        try {
+            await toggleFavorite(noteId);
+        } catch (error) {
+            console.error('Failed to toggle favorite:', error);
+            toast.error(t('notes.favorite_failed', 'Failed to update favorite'), {
+                description: error instanceof Error ? error.message : String(error),
+            });
+        }
+    };
+
+    const handleImportComplete = (_noteIds: string[]) => {
+        // Refresh notes list
+        if (projectId) {
+            loadNotes(projectId);
+        }
+    };
+
+    // P2-8: Index notes for RAG in Knowledge workspace
+    const handleIndexForRAG = async (noteIds?: string[]) => {
+        const notesToIndex = noteIds || notesArray.map(n => n.id);
+
+        if (notesToIndex.length === 0) {
+            toast.error('No notes to index');
+            return;
+        }
+
+        // Publish event to cross-workspace event bus
+        const indexData: NotesRAGIndexData = {
+            workspaceType: 'notes',
+            noteIds: notesToIndex,
+            timestamp: new Date(),
+            projectId,
+            mode: noteIds ? 'incremental' : 'batch',
+        };
+
+        eventBus.emit(DomainEventType.NOTES_RAG_INDEX_REQUESTED, indexData);
+
+        toast.success('Indexing notes for RAG', {
+            description: `Indexing ${notesToIndex.length} note${notesToIndex.length > 1 ? 's' : ''}...`,
+        });
+
+        console.log('[NotesPage] RAG index requested:', indexData);
+    };
+
+    const handleExport = () => {
+        setIsExportDialogOpen(true);
+    };
+
+    const handleImport = () => {
+        setIsImportDialogOpen(true);
+    };
+
+    // PHASE0-2: Handle manual re-import with force option
+    const handleReImport = async () => {
+        if (!notesSyncService || !projectId) return;
+
+        try {
+            setIsImportingFiles(true);
+            setImportProgress({ current: 0, total: 0, currentFile: '' });
+
+            console.log('[NotesPage] Manual re-import triggered for:', projectId);
+
+            const result = await (notesSyncService as NotesFileSyncService).importDirectory(
+                '', // Root directory
+                (current: number, total: number, currentFile: string) => {
+                    setImportProgress({ current, total, currentFile });
+                },
+                { force: true } // PHASE0-2: Force re-import
+            );
+
+            console.log('[NotesPage] Manual re-import complete:', result);
+
+            // Reload notes after import
+            if (projectId) {
+                await loadNotes(projectId);
+            }
+
+            toast.success('Re-import completed');
+        } catch (error) {
+            const err = error as Error;
+            console.error('[NotesPage] Manual re-import failed:', err);
+            toast.error('Failed to re-import files', {
+                description: err.message,
+            });
+        } finally {
+            setIsImportingFiles(false);
+        }
+    };
+
+    // Mobile Layout: Use NotesMobileLayout component
+    // EPIC-MOBILE: MOBILE-INT-01 Integration
+    // UX-02: useState moved to top level to fix Rules of Hooks violation
+    if (isMobile) {
+        // Filter notes based on content tab
+        const filteredNotes = notesArray.filter((note: any) => {
+            if (mobileContentTab === 'favorites') return note.isFavorite;
+            if (mobileContentTab === 'tags') return note.tags && note.tags.length > 0;
+            return true;
+        });
+
+        // Render note list content
+        const renderNoteList = () => (
+            <div className="space-y-2">
+                {filteredNotes.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                        <Notebook className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No notes yet</p>
+                        <p className="text-sm">Tap + to create your first note</p>
+                    </div>
+                ) : (
+                    filteredNotes.map((note: any) => (
+                        <div
+                            key={note.id}
+                            onClick={() => handleNoteSelect(note.id)}
+                            className="p-4 bg-card border border-border touch-target-min cursor-pointer"
+                        >
+                            <div className="flex items-start justify-between">
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span>{note.emoji || '📝'}</span>
+                                        <h3 className="font-medium truncate">{note.title || 'Untitled'}</h3>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {note.preview || 'No content'}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleFavoriteToggle(note.id);
+                                    }}
+                                    className="p-2 touch-target-min"
+                                >
+                                    {note.isFavorite ? (
+                                        <span className="text-warning">⭐</span>
+                                    ) : (
+                                        <span className="text-muted-foreground">☆</span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        );
+
+        // Render editor content
+        const renderEditor = () => (
+            <div className="h-full flex flex-col">
+                {/* Editor Header with Back Button */}
+                <div className="p-3 border-b border-border sticky top-0 bg-background z-10 flex items-center gap-2">
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setMobileView('list')}
+                        className="px-2"
+                    >
+                        <ArrowLeft size={18} />
+                    </Button>
+                    <div className="flex-1 min-w-0">
+                        <p className="font-mono text-sm font-bold truncate">
+                            {activeNote?.emoji} {activeNote?.title || 'Untitled'}
+                        </p>
+                    </div>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => activeNote && handleFavoriteToggle(activeNote.id)}
+                        className="px-2"
+                    >
+                        {activeNote?.isFavorite ? (
+                            <span className="text-warning">⭐</span>
+                        ) : (
+                            <span className="text-muted-foreground">☆</span>
+                        )}
+                    </Button>
+                </div>
+
+                {/* Editor */}
+                <div className="flex-1 bg-background">
+                    <NoteEditor
+                        key={activeNote?.id || 'empty'}
+                        noteId={activeNote?.id || ''}
+                        className="h-full"
+                    />
+                </div>
+            </div>
+        );
+
+        return (
+            <MainLayout>
+                {/* S-007: Import Progress Overlay */}
+                {/* FS-04: Fixed backdrop styling - use semi-transparent background instead of solid bg-card */}
+                {isImportingFiles && (
+                    <div className="fixed inset-0 bg-background z-50 flex items-center justify-center">
+                        <div className="bg-card border border-border rounded-none p-6 max-w-sm w-full mx-4 shadow-pixel">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+                                <h3 className="font-semibold">Importing Notes</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Loading project files...
+                            </p>
+                            {importProgress.total > 0 && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-muted-foreground">
+                                        <span>{importProgress.current} / {importProgress.total}</span>
+                                        <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
+                                    </div>
+                                    <div className="w-full bg-muted rounded-none h-2 overflow-hidden">
+                                        <div
+                                            className="bg-primary h-full transition-all duration-300"
+                                            style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground truncate">
+                                        {importProgress.currentFile}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* S-007: Mobile fallback for file sync */}
+                {!isNotesSyncSupported && (
+                    <div className="bg-muted/50 border-b border-border p-3">
+                        <div className="flex items-start gap-2">
+                            <div className="text-warning mt-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium">Desktop-only feature</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    File sync requires a desktop browser (Chrome, Edge, Opera). You can create notes manually on mobile.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Use NotesMobileLayout for consistent mobile UX */}
+                <NotesMobileLayout
+                    activeContentTab={mobileContentTab}
+                    onContentTabChange={setMobileContentTab}
+                    activeNavTab={mobileNavTab}
+                    onNavTabChange={setMobileNavTab}
+                    onCreateNote={handleCreateNote}
+                    threadCount={mobileThreadCount}
+                >
+                    {/* Render content based on nav tab */}
+                    {mobileNavTab === 'notes' && (
+                        mobileView === 'list' ? renderNoteList() : renderEditor()
+                    )}
+                    {mobileNavTab === 'search' && (
+                        <div className="text-center py-12 text-muted-foreground">
+                            <p>Search coming soon</p>
+                        </div>
+                    )}
+                    {mobileNavTab === 'ai' && (
+                        <div className="h-full">
+                            <UnifiedChatPanel
+                                mode="agent"
+                                projectId={projectId}
+                                projectName={project?.name || projectId}
+                                workspaceType="notes"
+                                className="h-full"
+                            />
+                        </div>
+                    )}
+                    {mobileNavTab === 'threads' && (
+                        <div className="h-full">
+                            <ThreadManager
+                                workspaceType="notes"
+                                conversationId={activeConversationId || undefined}
+                                onThreadSelect={(threadId) => {
+                                    setActiveThread(threadId);
+                                    setMobileNavTab('ai'); // Switch to chat after selecting thread
+                                }}
+                            />
+                        </div>
+                    )}
+                </NotesMobileLayout>
+
+                {/* Import Dialog */}
+                <MarkdownImportDialog
+                    open={isImportDialogOpen}
+                    onOpenChange={setIsImportDialogOpen}
+                    onImportComplete={handleImportComplete}
+                />
+
+                {/* Export Dialog */}
+                <MarkdownExportDialog
+                    open={isExportDialogOpen}
+                    onOpenChange={setIsExportDialogOpen}
+                    notes={notesArray as any}
+                    syncService={notesSyncService}
+                    onInitialize={initializeNotesSync}
+                    isInitializing={isNotesSyncInitializing}
+                    error={notesSyncError}
+                    isReady={isNotesSyncReady}
+                    isSupported={isNotesSyncSupported}
+                />
+
+                {/* Sync Status Panel - UX-06: Hidden on mobile to avoid covering chat input */}
+                {/* Uses md breakpoint (>=768px) to show panel only on desktop/tablet */}
+                <div className="fixed bottom-4 right-4 z-[var(--z-panel)] w-96 max-w-[calc(100vw-2rem)] hidden md:block">
+                    <SyncStatusPanel />
+                </div>
+            </MainLayout>
+        );
+    }
+
+    // Desktop Layout: 3-Column Resizable (NoteSidebar + Editor + Chat)
+    // E1-1: Added chat panel (30% default, collapsible)
+    return (
+        <MainLayout>
+            {/* S-007: Import Progress Overlay */}
+            {/* FS-04: Fixed backdrop styling - use semi-transparent background instead of solid bg-card */}
+            {isImportingFiles && (
+                <div className="fixed inset-0 bg-background z-50 flex items-center justify-center">
+                    <div className="bg-card border border-border rounded-none p-6 max-w-md w-full mx-4 shadow-pixel">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+                            <h3 className="font-semibold">Importing Notes</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Loading project files into Notes workspace...
+                        </p>
+                        {importProgress.total > 0 && (
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>{importProgress.current} / {importProgress.total} files</span>
+                                    <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
+                                </div>
+                                <div className="w-full bg-muted rounded-none h-2 overflow-hidden">
+                                    <div
+                                        className="bg-primary h-full transition-all duration-300"
+                                        style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground truncate">
+                                    {importProgress.currentFile}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
+                {/* Note Sidebar - 20% (min 18%, max 35%) - Content-aware min 220px for controls */}
+                <ResizablePanel
+                    id="notes-sidebar"
+                    defaultSize={20}
+                    minSize={18}
+                    maxSize={35}
+                    minPixelSize={220}
+                    collapsible={true}
+                    collapsedSize={3}
+                    onCollapse={(collapsed) => setPanelCollapsed('notes-sidebar', collapsed)}
+                >
+                    {noteSidebarCollapsed ? (
+                        <div className="h-full flex items-center justify-center border-r border-border bg-muted/30">
+                            <div className="text-center">
+                                <Notebook className="mx-auto h-4 w-4 text-muted-foreground mb-1" />
+                                <span className="text-xs text-muted-foreground">
+                                    {t('notes.notes', 'Notes')}
+                                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <NoteSidebar
+                            notes={notesArray as any}
+                            activeNoteId={activeNoteId}
+                            onNoteSelect={handleNoteSelect}
+                            onCreateNote={handleCreateNote}
+                            onImport={handleImport}
+                            onExport={handleExport}
+                            onReImport={handleReImport} // PHASE0-2: Pass re-import handler
+                            onIndexForRAG={handleIndexForRAG}
+                            onFileSync={() => setIsFilePickerOpen(true)}
+                            onSlashCommands={() => setIsSlashCommandsDialogOpen(true)}
+                            agentSelectorSlot={
+                                <AgentManager
+                                    variant="compact"
+                                    workspaceType="notes"
+                                />
+                            }
+                            projectSelectorSlot={
+                                <ProjectSelector
+                                    projects={projects}
+                                    activeProject={activeProject}
+                                    onSelect={handleProjectSelect}
+                                    variant="default"
+                                    className="w-full"
+                                />
+                            }
+                            projectId={projectId}
+                            projectName={project?.name || projectId}
+                            isBrowserMode={project?.isBrowserMode}
+                        />
+                    )}
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                {/* Main Editor Area - 50% (min 35%) - Content-aware min 400px for Monaco editor */}
+                <ResizablePanel
+                    id="notes-editor"
+                    defaultSize={50}
+                    minSize={35}
+                    minPixelSize={400}
+                >
+                    <div className="h-full bg-background flex flex-col">
+                        {activeNote ? (
+                            <NoteEditor
+                                key={activeNote.id}
+                                noteId={activeNote.id}
+                                className="h-full"
+                            />
+                        ) : (
+                            <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-4">
+                                <Notebook size={48} className="opacity-20" />
+                                <p>{t('notes.select_or_create', 'Select or create a note to start writing')}</p>
+                                <Button onClick={handleCreateNote}>
+                                    <Plus size={16} className="mr-2" />
+                                    {t('notes.create_new', 'Create New Note')}
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                {/* Chat Panel - 30% (min 22%, max 45%) - Content-aware min 280px for chat UI */}
+                {notesChatVisible && (
+                    <ResizablePanel
+                        id="notes-chat"
+                        defaultSize={30}
+                        minSize={22}
+                        maxSize={45}
+                        minPixelSize={280}
+                        collapsible={true}
+                        collapsedSize={3}
+                        onCollapse={(collapsed) => setPanelCollapsed('notes-chat', collapsed)}
+                    >
+                        {notesChatCollapsed ? (
+                            <div className="h-full flex items-center justify-center border-l border-border bg-muted/30">
+                                <div className="text-center">
+                                    <MessageSquare className="mx-auto h-4 w-4 text-muted-foreground mb-1" />
+                                    <span className="text-xs text-muted-foreground">
+                                        {t('chat.chat', 'Chat')}
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            <UnifiedChatPanel
+                                mode="agent"
+                                projectId={projectId}
+                                projectName={project?.name || projectId}
+                                workspaceType="notes"
+                                className="h-full"
+                            />
+                        )}
+                    </ResizablePanel>
+                )}
+            </ResizablePanelGroup>
+
+            {/* Import Dialog */}
+            <MarkdownImportDialog
+                open={isImportDialogOpen}
+                onOpenChange={setIsImportDialogOpen}
+                onImportComplete={handleImportComplete}
+            />
+
+            {/* Export Dialog */}
+            <MarkdownExportDialog
+                open={isExportDialogOpen}
+                onOpenChange={setIsExportDialogOpen}
+                notes={notesArray as any}
+                syncService={notesSyncService}
+                onInitialize={initializeNotesSync}
+                isInitializing={isNotesSyncInitializing}
+                error={notesSyncError}
+                isReady={isNotesSyncReady}
+                isSupported={isNotesSyncSupported}
+            />
+
+            {/* File Picker Dialog (CW-1.4) */}
+            <NotesFilePicker
+                open={isFilePickerOpen}
+                onOpenChange={setIsFilePickerOpen}
+                fileSyncService={notesSyncService}
+                onInitialize={initializeNotesSync}
+                isInitializing={isNotesSyncInitializing}
+                error={notesSyncError}
+                isReady={isNotesSyncReady}
+                isSupported={isNotesSyncSupported}
+            />
+
+            {/* Slash Commands Dialog (43-01) */}
+            <SlashCommandsDialog
+                open={isSlashCommandsDialogOpen}
+                onOpenChange={setIsSlashCommandsDialogOpen}
+            />
+
+            {/* Prompt Refinement Dialog (43-03: 2-step workflow) */}
+            <PromptRefinementDialog />
+
+            {/* Sync Status Panel - UX-06: Hidden on mobile to avoid covering chat input */}
+            {/* Uses md breakpoint (>=768px) to show panel only on desktop/tablet */}
+            <div className="fixed bottom-4 right-4 z-[var(--z-panel)] w-96 max-w-[calc(100vw-2rem)] hidden md:block">
+                <SyncStatusPanel />
+            </div>
+        </MainLayout>
+    );
+});

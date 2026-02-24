@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Via-Gent | IDE - Tree Editor (Phone)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Phone-specific overrides */
+        :root {
+            --header-height: 44px;
+            --bottom-nav-height: 56px;
+        }
+
+        /* App Container - fills viewport */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--ide-bg);
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Panel Container */
+        .panel {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active {
+            display: flex;
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        /* Editor Panel */
+        .editor-panel {
+            background: var(--ide-bg);
+        }
+
+        .editor-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 12px;
+            font-family: var(--font-code);
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            color: var(--primary);
+        }
+
+        .code-line {
+            display: flex;
+            min-height: 24px;
+        }
+
+        .line-number {
+            width: 32px;
+            color: var(--muted);
+            text-align: right;
+            padding-right: 12px;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .line-content {
+            flex: 1;
+            white-space: pre;
+        }
+
+        .keyword { color: #c084fc; }
+        .function { color: #60a5fa; }
+        .variable { color: #f472b6; }
+        .string { color: #4ade80; }
+        .comment { color: #52525b; }
+        .type { color: #fbbf24; }
+
+        /* Sidebar Drawer */
+        .sidebar-drawer {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: var(--bottom-nav-height);
+            width: 280px;
+            background: var(--surface);
+            border-right: 2px solid var(--structural);
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+            z-index: 100;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .drawer-content {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        /* Tree Items */
+        .tree-section {
+            padding: 8px 0;
+        }
+
+        .tree-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px 8px 24px;
+            font-size: var(--text-sm);
+            color: var(--primary);
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+
+        .tree-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .tree-item.selected {
+            background: var(--surface-active);
+            color: var(--action);
+        }
+
+        .tree-item.depth-1 { padding-left: 24px; }
+        .tree-item.depth-2 { padding-left: 36px; }
+        .tree-item.depth-3 { padding-left: 48px; }
+
+        .tree-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tree-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            height: var(--bottom-nav-height);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            padding-bottom: env(safe-area-inset-bottom);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: var(--font-medium);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Tab Bar in Editor */
+        .tab-bar {
+            display: flex;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background: transparent;
+            border: none;
+            border-right: 2px solid var(--structural);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+
+        .tab.active {
+            background: var(--surface-active);
+            color: var(--primary);
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0;
+            background: transparent;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .tab-close:hover {
+            background: var(--surface-hover);
+            color: var(--error);
+        }
+
+        /* Scrollbar styling */
+        .drawer-content::-webkit-scrollbar,
+        .editor-content::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .drawer-content::-webkit-scrollbar-track,
+        .editor-content::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .drawer-content::-webkit-scrollbar-thumb,
+        .editor-content::-webkit-scrollbar-thumb {
+            background: var(--structural);
+            border-radius: 0;
+        }
+
+        .drawer-content::-webkit-scrollbar-thumb:hover,
+        .editor-content::-webkit-scrollbar-thumb:hover {
+            background: var(--structural-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Via-Gent Progressive Disclosure Wireframe -->
+    <!-- Workspace: IDE | Stack: 2 interfaces | Device: Phone -->
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleDrawer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <span class="header-title">App.tsx</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3v18M3 12h18"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Editor Panel (Active) -->
+            <div class="panel editor-panel active">
+                <div class="tab-bar">
+                    <button class="tab active">
+                        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        App.tsx
+                        <span class="tab-close">×</span>
+                    </button>
+                    <button class="tab">
+                        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        index.css
+                    </button>
+                </div>
+                <div class="editor-content">
+                    <div class="code-line"><span class="line-number">1</span><span class="line-content"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span></div>
+                    <div class="code-line"><span class="line-number">2</span><span class="line-content"></span></div>
+                    <div class="code-line"><span class="line-number">3</span><span class="line-content"><span class="keyword">interface</span> <span class="type">Props</span> {</span></div>
+                    <div class="code-line"><span class="line-number">4</span><span class="line-content">  <span class="variable">title</span>: <span class="type">string</span>;</span></div>
+                    <div class="code-line"><span class="line-number">5</span><span class="line-content">  <span class="variable">onClick</span>: () => <span class="keyword">void</span>;</span></div>
+                    <div class="code-line"><span class="line-number">6</span><span class="line-content">}</span></div>
+                    <div class="code-line"><span class="line-number">7</span><span class="line-content"></span></div>
+                    <div class="code-line"><span class="line-number">8</span><span class="line-content"><span class="keyword">export</span> <span class="keyword">const</span> <span class="function">App</span>: React.FC<span class="type">&lt;Props&gt;</span> = ({</span></div>
+                    <div class="code-line"><span class="line-number">9</span><span class="line-content">  <span class="variable">title</span>,</span></div>
+                    <div class="code-line"><span class="line-number">10</span><span class="line-content">  <span class="variable">onClick</span>,</span></div>
+                    <div class="code-line"><span class="line-number">11</span><span class="line-content">}) => {</span></div>
+                    <div class="code-line"><span class="line-number">12</span><span class="line-content">  <span class="keyword">return</span> (</span></div>
+                    <div class="code-line"><span class="line-number">13</span><span class="line-content">    <span class="keyword">&lt;div</span> <span class="variable">className</span>=<span class="string">"app"</span><span class="keyword">&gt;</span></span></div>
+                    <div class="code-line"><span class="line-number">14</span><span class="line-content">      <span class="keyword">&lt;h1&gt;</span>{title}<span class="keyword">&lt;/h1&gt;</span></span></div>
+                    <div class="code-line"><span class="line-number">15</span><span class="line-content">      <span class="keyword">&lt;button</span> <span class="variable">onClick</span>={onClick}<span class="keyword">&gt;</span></span></div>
+                    <div class="code-line"><span class="line-number">16</span><span class="line-content">        Click me</span></div>
+                    <div class="code-line"><span class="line-number">17</span><span class="line-content">      <span class="keyword">&lt;/button&gt;</span></span></div>
+                    <div class="code-line"><span class="line-number">18</span><span class="line-content">    <span class="keyword">&lt;/div&gt;</span></span></div>
+                    <div class="code-line"><span class="line-number">19</span><span class="line-content">  );</span></div>
+                    <div class="code-line"><span class="line-number">20</span><span class="line-content">};</span></div>
+                    <div class="code-line"><span class="line-number">21</span><span class="line-content"></span></div>
+                    <div class="code-line"><span class="line-number">22</span><span class="line-content"><span class="comment">// TODO: Add more components</span></span></div>
+                    <div class="code-line"><span class="line-number">23</span><span class="line-content"><span class="comment">// FIXME: Fix the layout issue</span></span></div>
+                    <div class="code-line"><span class="line-number">24</span><span class="line-content"><span class="comment">// HACK: Temporary fix for production</span></span></div>
+                    <div class="code-line"><span class="line-number">25</span><span class="line-content"><span class="keyword">export</span> <span class="keyword">default</span> App;</span></div>
+                    <div class="code-line"><span class="line-number">26</span><span class="line-content"></span></div>
+                    <div class="code-line"><span class="line-number">27</span><span class="line-content"><span class="keyword">function</span> <span class="function">calculateTotal</span>(</span></div>
+                    <div class="code-line"><span class="line-number">28</span><span class="line-content">  <span class="variable">items</span>: <span class="type">Array</span>&lt;{<span class="variable">price</span>: <span class="type">number</span>}&gt;</span></div>
+                    <div class="code-line"><span class="line-number">29</span><span class="line-content">): <span class="type">number</span> {</span></div>
+                    <div class="code-line"><span class="line-number">30</span><span class="line-content">  <span class="keyword">return</span> <span class="variable">items</span>.<span class="function">reduce</span>((<span class="variable">sum</span>, <span class="variable">item</span>) =></span></div>
+                    <div class="code-line"><span class="line-number">31</span><span class="line-content">    <span class="variable">sum</span> + <span class="variable">item</span>.<span class="variable">price</span>, <span class="string">0</span>);</span></div>
+                    <div class="code-line"><span class="line-number">32</span><span class="line-content">}</span></div>
+                    <div class="code-line"><span class="line-number">33</span><span class="line-content"></span></div>
+                    <div class="code-line"><span class="line-number">34</span><span class="keyword">async function</span> <span class="function">fetchData</span>&lt;<span class="type">T</span>&gt;(</span></div>
+                    <div class="code-line"><span class="line-number">35</span><span class="line-content">  <span class="variable">url</span>: <span class="type">string</span></span></div>
+                    <div class="code-line"><span class="line-number">36</span><span class="line-content">): <span class="type">Promise</span>&lt;<span class="type">T</span>&gt; {</span></div>
+                    <div class="code-line"><span class="line-number">37</span><span class="line-content">  <span class="keyword">const</span> <span class="variable">response</span> = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="variable">url</span>);</span></div>
+                    <div class="code-line"><span class="line-number">38</span><span class="line-content">  <span class="keyword">if</span> (!<span class="variable">response</span>.<span class="function">ok</span>) {</span></div>
+                    <div class="code-line"><span class="line-number">39</span><span class="line-content">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="function">Error</span>(<span class="string">'Failed'</span>);</span></div>
+                    <div class="code-line"><span class="line-number">40</span><span class="line-content">  }</span></div>
+                    <div class="code-line"><span class="line-number">41</span><span class="line-content">  <span class="keyword">return</span> <span class="variable">response</span>.<span class="function">json</span>();</span></div>
+                    <div class="code-line"><span class="line-number">42</span><span class="line-content">}</span></div>
+                    <div class="code-line"><span class="line-number">43</span><span class="line-content"></span></div>
+                    <div class="code-line"><span class="line-number">44</span><span class="line-content"><span class="keyword">const</span> <span class="variable">styles</span> = {</span></div>
+                    <div class="code-line"><span class="line-number">45</span><span class="line-content">  <span class="variable">container</span>: {</span></div>
+                    <div class="code-line"><span class="line-number">46</span><span class="line-content">    <span class="variable">padding</span>: <span class="string">'16px'</span>,</span></div>
+                    <div class="code-line"><span class="line-number">47</span><span class="line-content">    <span class="variable">margin</span>: <span class="string">'0 auto'</span>,</span></div>
+                    <div class="code-line"><span class="line-number">48</span><span class="line-content">    <span class="variable">maxWidth</span>: <span class="string">'600px'</span>,</span></div>
+                    <div class="code-line"><span class="line-number">49</span><span class="line-content">  },</span></div>
+                    <div class="code-line"><span class="line-number">50</span><span class="line-content">};</span></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Drawer -->
+        <aside class="sidebar-drawer" id="sidebar">
+            <div class="drawer-header">
+                <span class="drawer-title">Explorer</span>
+                <button class="close-btn" onclick="toggleDrawer()">×</button>
+            </div>
+            <div class="drawer-content">
+                <div class="tree-section">
+                    <div class="tree-section-header">PROJECT</div>
+                    <div class="tree-item depth-0">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </span>
+                        <span>src</span>
+                    </div>
+                    <div class="tree-item depth-1">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </span>
+                        <span>components</span>
+                    </div>
+                    <div class="tree-item depth-2">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>Button.tsx</span>
+                    </div>
+                    <div class="tree-item depth-2">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>Header.tsx</span>
+                    </div>
+                    <div class="tree-item depth-2 selected">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>App.tsx</span>
+                    </div>
+                    <div class="tree-item depth-1">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>index.tsx</span>
+                    </div>
+                    <div class="tree-item depth-0">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>package.json</span>
+                    </div>
+                    <div class="tree-item depth-0">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>tsconfig.json</span>
+                    </div>
+                    <div class="tree-item depth-0">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>README.md</span>
+                    </div>
+                    <div class="tree-item depth-0">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </span>
+                        <span>.gitignore</span>
+                    </div>
+                    <div class="tree-item depth-0">
+                        <span class="tree-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </span>
+                        <span>node_modules</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="switchPanel('files')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Files</span>
+            </button>
+            <button class="nav-item active" onclick="switchPanel('editor')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </span>
+                <span class="nav-label">Editor</span>
+            </button>
+            <button class="nav-item" onclick="switchPanel('preview')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+                <span class="nav-label">Preview</span>
+            </button>
+            <button class="nav-item" onclick="switchPanel('terminal')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Terminal</span>
+            </button>
+            <button class="nav-item" onclick="switchPanel('chat')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Chat</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('visible');
+        }
+
+        function switchPanel(panelName) {
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // In a real app, this would switch panels
+            console.log('Switch to panel:', panelName);
+        }
+    </script>
+</body>
+</html>

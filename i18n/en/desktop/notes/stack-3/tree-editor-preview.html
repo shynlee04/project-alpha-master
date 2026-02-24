@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent - Notes - Editor Preview</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f0f1a;
+      --bg-preview: #ffffff;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --text-dark: #1a1a1a;
+      --accent: #00d9ff;
+      --accent-secondary: #ff6b6b;
+      --border: #2a2a4e;
+      --success: #4ecdc4;
+      --warning: #ffe66d;
+      --note-yellow: #f9c74f;
+      --shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.5);
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    body {
+      font-family: var(--font-mono);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-primary);
+    }
+
+    .header {
+      height: 44px;
+      background: var(--bg-tertiary);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: bold;
+      color: var(--note-yellow);
+      font-size: 15px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: var(--bg-secondary);
+      border-right: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .new-note-btn {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--accent);
+      color: var(--bg-primary);
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+    }
+
+    .nav-item {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .nav-item.active {
+      background: var(--border);
+      color: var(--accent);
+    }
+
+    .tree-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .tree-section {
+      padding: 8px 12px 4px;
+    }
+
+    .tree-section-title {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .tree-item {
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .tree-item.selected {
+      background: var(--border);
+      color: var(--accent);
+    }
+
+    .resize-handle-v {
+      width: 4px;
+      background: var(--border);
+      cursor: col-resize;
+      flex-shrink: 0;
+    }
+
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 200px;
+      min-height: 0;
+    }
+
+    .editor-header {
+      height: 44px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .editor-title-input {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: bold;
+      flex: 1;
+      outline: none;
+    }
+
+    .content-area {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      padding: 24px;
+    }
+
+    .note-content {
+      max-width: 800px;
+    }
+
+    .note-paragraph {
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .note-heading {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 24px 0 16px;
+      color: var(--accent);
+    }
+
+    .note-list {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    .note-list-item {
+      margin-bottom: 8px;
+    }
+
+    .note-code {
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .note-block {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin: 16px 0;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .preview-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      min-height: 0;
+      background: var(--bg-preview);
+    }
+
+    .preview-header {
+      height: 32px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .preview-tab {
+      padding: 4px 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .preview-tab.active {
+      color: var(--accent);
+      background: var(--bg-secondary);
+    }
+
+    .preview-content {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      padding: 24px;
+      background: var(--bg-preview);
+      color: var(--text-dark);
+    }
+
+    .preview-article {
+      max-width: 600px;
+    }
+
+    .preview-h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: #1a1a1a;
+    }
+
+    .preview-h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 24px 0 12px;
+      color: #333;
+    }
+
+    .preview-p {
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 16px;
+      color: #444;
+    }
+
+    .preview-ul {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    .preview-li {
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 8px;
+      color: #444;
+    }
+
+    .preview-code-block {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      padding: 16px;
+      margin: 16px 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      overflow-x: auto;
+    }
+
+    .status-bar {
+      height: 24px;
+      background: var(--bg-tertiary);
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .status-left, .status-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 0;
+    }
+
+    .status-dot.success { background: var(--success); }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border: 2px solid var(--bg-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">📝 Via-Gent</span>
+        <span class="project-name">personal-workspace</span>
+      </div>
+      <div class="header-right">
+        <button class="header-btn">
+          <span>📥</span>
+          <span>Import</span>
+        </button>
+        <button class="header-btn">
+          <span>🤖</span>
+          <span>AI</span>
+        </button>
+        <button class="header-btn">
+          <span>⚙️</span>
+          <span>Settings</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <button class="new-note-btn">➕ New Note</button>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="nav-item active">📄 Recent</div>
+          <div class="nav-item">⭐ Favorites</div>
+          <div class="nav-item">📁 Folders</div>
+        </nav>
+        <div class="tree-content">
+          <div class="tree-section">
+            <div class="tree-section-title">Today</div>
+          </div>
+          <div class="tree-item selected">📄 React Component Design.md</div>
+          <div class="tree-item">📄 8-bit Design Notes.md</div>
+          <div class="tree-section">
+            <div class="tree-section-title">Yesterday</div>
+          </div>
+          <div class="tree-item">📄 API Documentation.md</div>
+        </div>
+      </aside>
+
+      <div class="resize-handle-v"></div>
+
+      <section class="editor-panel">
+        <div class="editor-header">
+          <input type="text" class="editor-title-input" value="React Component Design">
+        </div>
+        <div class="content-area">
+          <div class="note-content">
+            <h1 class="note-heading">React Component Design</h1>
+            <p class="note-paragraph">
+              In this project, we will apply modern component design principles
+              with TypeScript and React 19.
+            </p>
+            <h2 class="note-heading" style="font-size: 16px;">Key Principles</h2>
+            <ul class="note-list">
+              <li class="note-list-item">Single Responsibility</li>
+              <li class="note-list-item">Reusable & Testable</li>
+              <li class="note-list-item">Accessible (WCAG AA)</li>
+            </ul>
+            <div class="note-block">
+              <pre><code><span class="keyword">interface</span> <span class="type">ButtonProps</span> {
+  <span class="variable">variant</span>: <span class="string">'primary'</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="resize-handle-v"></div>
+
+      <section class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-tab active">Preview</div>
+          <div class="preview-tab">Source</div>
+        </div>
+        <div class="preview-content">
+          <article class="preview-article">
+            <h1 class="preview-h1">React Component Design</h1>
+            <p class="preview-p">
+              In this project, we will apply modern component design principles
+              with TypeScript and React 19.
+            </p>
+            <h2 class="preview-h2">Key Principles</h2>
+            <ul class="preview-ul">
+              <li class="preview-li">Single Responsibility - Each component does one thing</li>
+              <li class="preview-li">Reusable - Components can be reused</li>
+              <li class="preview-li">Testable - Easy to write unit tests</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="status-bar">
+      <div class="status-left">
+        <div class="status-item">
+          <span>📄 12 words</span>
+        </div>
+      </div>
+      <div class="status-right">
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>🟢 Saved</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "projectId": "ide:proj_1768658110871_hhofuiki9",
+  "root": {
+    "path": ".",
+    "kind": "directory",
+    "size": 0,
+    "lastModified": 1768658110876,
+    "isExcluded": false,
+    "children": []
+  },
+  "fileCount": 0,
+  "directoryCount": 0,
+  "maxDepth": 0,
+  "exclusionPatterns": [
+    "node_modules",
+    ".git",
+    ".next",
+    "dist",
+    "build",
+    "coverage",
+    ".cache",
+    ".turbo",
+    "out",
+    ".viagent"
+  ],
+  "createdAt": "2026-01-17T13:55:10.876Z",
+  "isStale": true,
+  "scanDurationMs": 0
+}

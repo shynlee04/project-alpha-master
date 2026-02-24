@@ -1,0 +1,22 @@
+# Test spike specific ignores
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.DS_Store
+*.local
+
+# Test outputs
+test-results/
+playwright-report/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp

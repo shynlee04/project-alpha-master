@@ -1,0 +1,284 @@
+step: 1
+story: EP01-WS-01
+status: completed
+
+evidence:
+  stores_found:
+    - path: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
+      lines: 235
+      god_store: false
+      description: "Unified IDE workspace store with 6 composed slices"
+    - path: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+      lines: 226
+      god_store: false
+      description: "Single global workspace state store - CONTAMINATION POINT"
+    - path: "src/infrastructure/persistence/stores/chat/chat-settings-store.ts"
+      lines: 200
+      god_store: false
+      description: "Workspace-scoped chat settings (correct pattern)"
+    - path: "src/infrastructure/persistence/stores/notes/slash-commands/index.ts"
+      lines: 563
+      god_store: true
+      threshold_exceeded: "+263 lines over 300 limit"
+      description: "God store - exceeds 300 line threshold"
+
+  routes_found:
+    - path: "src/routes/ide.$projectId.tsx"
+      imports: ["useWorkspaceStore", "useIDEStore"]
+      contamination_pattern: "useWorkspaceStore.getState().setCurrentProject(_projectId) at line 88"
+      workspace_type: "ide"
+      evidence: ["Line 24: import useWorkspaceStore", "Line 88: useWorkspaceStore.getState().setCurrentProject(_projectId)"]
+    - path: "src/routes/notes.$projectId.lazy.tsx"
+      imports: ["useWorkspaceStore"]
+      contamination_pattern: "useWorkspaceStore.getState().setCurrentProject(_projectId)"
+      workspace_type: "notes"
+      evidence: ["Line 56: useWorkspaceStore.getState().setCurrentProject(_projectId)"]
+    - path: "src/routes/study.$projectId.lazy.tsx"
+      imports: ["useWorkspaceStore"]
+      contamination_pattern: "useWorkspaceStore.getState().setCurrentProject(_projectId)"
+      workspace_type: "study"
+      evidence: ["Line 56: useWorkspaceStore.getState().setCurrentProject(_projectId)"]
+    - path: "src/routes/knowledge.$projectId.lazy.tsx"
+      imports: ["useWorkspaceStore"]
+      contamination_pattern: "useWorkspaceStore.getState().setCurrentProject(_projectId)"
+      workspace_type: "knowledge"
+      evidence: ["Line 56: useWorkspaceStore.getState().setCurrentProject(_projectId)"]
+    - path: "src/routes/settings.tsx"
+      imports: ["useAllProjects", "useLayoutStore", "useAppStore"]
+      contamination_pattern: "None - settings is not a workspace route"
+      workspace_type: "settings"
+      note: "Settings does not use workspace store - acceptable"
+
+  grep_results:
+    - pattern: "useIDEStore"
+      matches: 42
+      key_locations: [
+        "src/presentation/components/knowledge/KnowledgePage.tsx:24 - Knowledge workspace imports useIDEStore",
+        "src/presentation/components/knowledge/KnowledgePage.tsx:73 - const ideProjectId = useIDEStore((s) => s.projectId)",
+        "src/presentation/components/knowledge/KnowledgePage.tsx:103 - const sourceLibraryCollapsed = useIDEStore((s) => s.panelCollapsed)",
+        "src/infrastructure/persistence/stores/ide/useIDEStore.ts:62 - export const useIDEStore = create<CombinedIDEState>()",
+        "Multiple test files with mocks"
+      ]
+    - pattern: "useWorkspaceStore"
+      matches: 30+
+      key_locations: [
+        "All 4 workspace routes (ide, notes, study, knowledge) import and call",
+        "src/routes/ide.$projectId.tsx:24 - import",
+        "src/routes/ide.$projectId.tsx:88 - setState call",
+        "src/routes/notes.$projectId.lazy.tsx:56 - setState call",
+        "src/routes/study.$projectId.lazy.tsx:56 - setState call",
+        "src/routes/knowledge.$projectId.lazy.tsx:56 - setState call",
+        "src/infrastructure/persistence/stores/workspace/workspace-store.ts:81 - const useWorkspaceStore = create<WorkspaceState>()"
+      ]
+    - pattern: "composite key pattern"
+      matches: 20+
+      key_locations: [
+        "src/infrastructure/persistence/dexie-db-migrations.ts:751 - fileMetadata uses composite key pattern",
+        "src/infrastructure/persistence/dexie-db-migrations.ts:757 - fileSnapshots uses composite key pattern",
+        "src/infrastructure/persistence/dexie-db-migrations.ts:758 - fileContentCache uses composite key pattern",
+        "src/infrastructure/persistence/dexie-db-migrations.ts:766 - notes uses composite indexes",
+        "All Dexie migrations use composite keys for workspace isolation",
+        "NO composite keys found in store layer - Zustand stores use global singleton pattern"
+      ]
+    - pattern: "STUB|TODO.*persistence|FIXME.*Dexie"
+      matches: 15+
+      key_locations: [
+        "src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts:35 - TODO: Add Dexie persistence",
+        "src/infrastructure/persistence/stores/filesystem/snapshot-cache-slice.ts:55 - TODO: Add Dexie persistence",
+        "src/infrastructure/persistence/stores/filesystem/useFileSnapshotStore.ts:68 - TODO: Add Dexie storage adapter",
+        "src/infrastructure/persistence/stores/filesystem/snapshot-bulk-ops-slice.ts:100 - TODO: Add Dexie persistence",
+        "src/infrastructure/persistence/stores/study/quiz/slices/quiz-query-slice.ts:30 - TODO: Load from project context"
+      ]
+
+  cross_impact:
+    - route: "workspace-store (global singleton)"
+      contaminates: ["ide", "notes", "study", "knowledge"]
+      via: "useWorkspaceStore.getState().setCurrentProject(_projectId)"
+      mechanism: |
+        All 4 workspace routes (ide, notes, study, knowledge) call same global
+        useWorkspaceStore.getState().setCurrentProject(_projectId). This causes:
+        1. When user switches from Notes → IDE: Notes workspace state is LOST (overwritten by IDE)
+        2. When user switches from IDE → Knowledge: IDE workspace state is LOST (overwritten by Knowledge)
+        3. Each workspace switch destroys previous workspace's state
+        4. No isolation between workspaces
+        5. User data loss on every workspace switch
+      evidence: [
+        "ide.$projectId.tsx:88 - useWorkspaceStore.getState().setCurrentProject(_projectId)",
+        "notes.$projectId.lazy.tsx:56 - useWorkspaceStore.getState().setCurrentProject(_projectId)",
+        "study.$projectId.lazy.tsx:56 - useWorkspaceStore.getState().setCurrentProject(_projectId)",
+        "knowledge.$projectId.lazy.tsx:56 - useWorkspaceStore.getState().setCurrentProject(_projectId)"
+      ]
+    - route: "useIDEStore (IDE workspace store)"
+      contaminates: ["knowledge"]
+      via: "Direct import in KnowledgePage component"
+      mechanism: |
+        KnowledgePage imports and uses useIDEStore directly, which is an IDE-specific
+        store. This creates cross-workspace contamination where Knowledge workspace
+        state depends on IDE workspace state.
+      evidence: [
+        "src/presentation/components/knowledge/KnowledgePage.tsx:24 - import useIDEStore",
+        "src/presentation/components/knowledge/KnowledgePage.tsx:73 - const ideProjectId = useIDEStore((s) => s.projectId)"
+      ]
+    - data_layer: "Dexie DB (IndexedDB)"
+      has_composite_keys: true
+      pattern: "[projectId+workspaceId+path]"
+      note: |
+        Database layer correctly uses composite keys for workspace isolation.
+        Example: fileMetadata table uses '[projectId+workspaceId+path]' key.
+        However, store layer (Zustand) uses global singleton pattern,
+        creating mismatch between DB and store architecture.
+
+  conflicts:
+    - type: "Architecture Mismatch - DB vs Store"
+      description: |
+        Dexie DB uses composite keys [projectId+workspaceId+path] for workspace isolation,
+        but Zustand stores use global singleton pattern. This creates architectural inconsistency.
+      db_evidence: "src/infrastructure/persistence/dexie-db-migrations.ts:751 - composite key pattern"
+      store_evidence: "src/infrastructure/persistence/stores/workspace/workspace-store.ts:81 - const useWorkspaceStore = create<WorkspaceState>() (global singleton)"
+      adr_violation: "ADR-033 D6 - Composite keys should be consistent across all layers"
+    - type: "God Store Violations"
+      description: "Multiple stores exceed 300 line threshold, requiring refactoring"
+      locations: [
+        "src/infrastructure/persistence/stores/notes/slash-commands/index.ts:563 lines (+263 over limit)",
+        "src/infrastructure/persistence/stores/providers/migration-backup.ts:561 lines (+261 over limit)",
+        "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts:548 lines (+248 over limit)",
+        "src/infrastructure/persistence/stores/conversation/useConversationStore.ts:495 lines (+195 over limit)"
+      ]
+      governance_rule: "AGENTS.md: God stores (>300 lines) are prohibited"
+    - type: "STUB Implementations"
+      description: "Incomplete implementations in filesystem snapshot stores"
+      locations: [
+        "src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts:35 - TODO: Add Dexie persistence",
+        "src/infrastructure/persistence/stores/filesystem/snapshot-cache-slice.ts:55 - TODO: Add Dexie persistence",
+        "src/infrastructure/persistence/stores/filesystem/useFileSnapshotStore.ts:68 - TODO: Add Dexie storage adapter",
+        "src/infrastructure/persistence/stores/filesystem/snapshot-bulk-ops-slice.ts:100 - TODO: Add Dexie persistence"
+      ]
+      impact: "File system persistence is incomplete, causing data loss"
+    - type: "Legacy Code in Active Paths"
+      description: "Legacy imports and deprecated code still referenced"
+      locations: [
+        "src/infrastructure/persistence/stores/study-store.ts:5 - DEPRECATED comment",
+        "src/infrastructure/persistence/stores/flashcard/index.ts:90,95,97 - @deprecated markers"
+      ]
+      governance_rule: "ADR-033 Clean Architecture - Remove legacy code after migration"
+    - type: "Cross-Workspace Dependency"
+      description: "Knowledge workspace depends on IDE workspace store"
+      location: "src/presentation/components/knowledge/KnowledgePage.tsx:24"
+      issue: "Knowledge imports useIDEStore (IDE-specific), violating workspace isolation"
+      governance_rule: "ADR-033 - Workspaces should be isolated"
+
+  dead_code:
+    - path: "src/infrastructure/persistence/stores/providers/migration-backup.ts"
+      reason: "Migration code should be archived after successful migration"
+      lines: 561
+      action: "Archive to _bmad-ext/.archive/ with timestamp"
+    - path: "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts"
+      reason: "Migration code should be archived after successful migration"
+      lines: 548
+      action: "Archive to _bmad-ext/.archive/ with timestamp"
+
+  recommendations:
+    - id: "R1"
+      priority: "P0 - CRITICAL"
+      title: "Create Workspace-Scoped Store Factory"
+      description: |
+        Implement factory pattern to create isolated Zustand store instances per workspace.
+        Each workspace (ide, notes, study, knowledge) gets its own store instance
+        with composite key [workspaceId+projectId].
+      location: "src/infrastructure/persistence/stores/workspace-store-factory.ts (NEW)"
+      acceptance_criteria: [
+        "Factory accepts workspaceId and projectId parameters",
+        "Each call returns isolated store instance",
+        "Composite keys enforce data isolation",
+        "TypeScript types enforce composite key usage"
+      ]
+    - id: "R2"
+      priority: "P0 - CRITICAL"
+      title: "Update All 4 Workspace Routes"
+      description: |
+        Replace useWorkspaceStore import with workspace-scoped store factory calls.
+        Each route (ide, notes, study, knowledge) should use factory.
+      files_to_update: [
+        "src/routes/ide.$projectId.tsx",
+        "src/routes/notes.$projectId.lazy.tsx",
+        "src/routes/study.$projectId.lazy.tsx",
+        "src/routes/knowledge.$projectId.lazy.tsx"
+      ]
+      implementation_pattern: |
+        const workspaceStore = createWorkspaceStore({
+          workspaceId: 'ide',
+          projectId: _projectId
+        });
+    - id: "R3"
+      priority: "P0 - CRITICAL"
+      title: "Fix Cross-Workspace Dependency"
+      description: |
+        Remove useIDEStore import from KnowledgePage, enforce isolation.
+      location: "src/presentation/components/knowledge/KnowledgePage.tsx"
+      action: "Replace useIDEStore with knowledge-scoped store"
+    - id: "R4"
+      priority: "P1 - HIGH"
+      title: "Implement Facade Pattern for Backward Compatibility"
+      description: |
+        Create facade re-exports for old useWorkspaceStore import path.
+        Allows gradual migration without breaking existing components.
+      location: "src/infrastructure/persistence/stores/workspace/index.ts (update)"
+      pattern: "export const useWorkspaceStore = createFacade facade pattern"
+    - id: "R5"
+      priority: "P1 - HIGH"
+      title: "Archive Migration Code"
+      description: "Move migration and backup code to archive."
+      files: [
+        "src/infrastructure/persistence/stores/providers/migration-backup.ts",
+        "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts"
+      ]
+      action: "Archive with timestamp and create re-export for history"
+    - id: "R6"
+      priority: "P1 - HIGH"
+      title: "Split God Stores"
+      description: "Extract focused slices from stores >300 lines."
+      files: [
+        "src/infrastructure/persistence/stores/notes/slash-commands/index.ts (563 lines)",
+        "src/infrastructure/persistence/stores/conversation/useConversationStore.ts (495 lines)"
+      ]
+      action: "Slice extraction with orchestrator pattern (<=120 lines per slice)"
+
+  architecture_analysis:
+    db_layer:
+      composite_keys: true
+      pattern: "[projectId+workspaceId+path]"
+      isolation: "WORKSPACE-ISOLATED (correct)"
+      evidence: "Dexie migrations use composite keys consistently"
+    store_layer:
+      composite_keys: false
+      pattern: "global singleton useWorkspaceStore"
+      isolation: "GLOBAL-SHARED (incorrect)"
+      evidence: "All workspace routes call same useWorkspaceStore.getState()"
+    mismatch_severity: "CRITICAL"
+    impact: |
+      User switches between workspaces, previous workspace state is overwritten
+      and lost. Cross-workspace contamination prevents maintaining separate
+      workspace states simultaneously.
+    solution_architecture: |
+      Factory pattern: createWorkspaceStore({ workspaceId, projectId }) -> ScopedStore
+      Each scoped store has composite key [workspaceId+projectId]
+      Dexie persistence uses same composite key pattern
+      Workspace isolation enforced at store creation time
+
+  summary:
+    total_store_files: 228
+    god_stores_found: 4
+    workspace_routes_analyzed: 4
+    contamination_points: "1 (global useWorkspaceStore singleton)"
+    cross_workspace_dependencies: "1 (Knowledge -> IDE)"
+    architecture_mismatch: "DB composite keys vs Store global singleton"
+    primary_issue: "Workspace switching destroys user data due to global store pattern"
+    solution: "Create workspace-scoped store factory with composite key isolation"
+
+  metadata:
+    analysis_method: "grep + glob + line counting + evidence collection"
+    files_scanned: "228+ store files, 6 route files"
+    evidence_lines: "100+ specific file:line references"
+    timebox_compliance: true
+    governance_compliance: "ADR-033 violations documented"
+    next_step: "Await orchestrator decision for Step 1a (User Journey)"

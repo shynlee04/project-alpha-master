@@ -1,0 +1,447 @@
+# TypeScript Type System Deep Scan Evidence
+# Scan Date: 2026-01-30
+# Task ID: ARCH-00-TYPES
+# Agent: deep-scan-types-scanner
+# Status: COMPLETE
+
+scan_metadata:
+  timestamp: "2026-01-30T00:00:00+07:00"
+  scan_targets:
+    - "src/**/*.ts"
+    - "src/**/*.tsx"
+  total_type_definitions: 2279
+  findings_severity: CRITICAL
+
+# ============================================================================
+# SYNONYM GROUPS - CRITICAL AGENT CONFUSION RISK
+# ============================================================================
+
+type_synonyms:
+  # CRITICAL: WorkspaceType defined 10 TIMES identically
+  - concept: "WorkspaceType"
+    severity: CRITICAL
+    count: 10
+    definitions:
+      - location: "src/domain/types/project-ids.ts:32"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: true
+      - location: "src/domain/value-objects/workspace-type.ts:31"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: false
+      - location: "src/domain/entities/workspace.ts:14"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: false
+      - location: "src/domain/entities/chat.ts:17"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: false
+      - location: "src/infrastructure/sync/core/sync-core-types.ts:13"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: false
+      - location: "src/infrastructure/sync/workspace-services/file-sync-service.ts:53"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: false
+      - location: "src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts:8"
+        value: "'ide' | 'knowledge' | 'study' | 'notes'"
+        canonical: false
+      - location: "src/infrastructure/persistence/stores/chat/chat-settings-store.ts:23"
+        value: "'ide' | 'notes' | 'knowledge' | 'study'"
+        canonical: false
+        note: "ORDER DIFFERS - potential bug"
+      - location: "src/presentation/components/ide/AgentChatPanel.tsx:13"
+        value: "'ide' | 'notes' | 'knowledge' | 'study'"
+        canonical: false
+        note: "ORDER DIFFERS - potential bug"
+      - location: "src/presentation/components/ide/AgentChatPanel/AgentChatToolFacades.tsx:13"
+        value: "'ide' | 'notes' | 'knowledge' | 'study'"
+        canonical: false
+        note: "ORDER DIFFERS - potential bug"
+    recommendation: |
+      CONSOLIDATE to single canonical export from:
+        src/domain/types/project-ids.ts
+      All 9 other locations MUST import from canonical source.
+      WARNING: 3 locations have different element ORDER which could cause subtle bugs.
+
+  # CRITICAL: SyncStatus/SyncStatusType defined 8 TIMES with DIFFERENT values
+  - concept: "SyncStatus"
+    severity: CRITICAL
+    count: 8
+    definitions:
+      - location: "src/lib/workspace/workspace-types.ts:11"
+        value: "'idle' | 'syncing' | 'error'"
+      - location: "src/lib/workspace/file-sync-status-store/types.ts:7"
+        value: "'idle' | 'syncing' | 'complete' | 'error'"
+        note: "ADDS 'complete'"
+      - location: "src/presentation/components/ide/SyncStatusIndicator.tsx:22"
+        value: "'idle' | 'syncing' | 'error'"
+      - location: "src/infrastructure/sync/types/sync-types.ts:15"
+        value: "'idle' | 'syncing' | 'error'"
+      - location: "src/presentation/components/layout/StatusBar.tsx:48"
+        value: "'synced' | 'syncing' | 'error'"
+        note: "USES 'synced' not 'idle'"
+      - location: "src/infrastructure/sync/core/sync-core-types.ts:49"
+        value: "'idle' | 'syncing' | 'complete' | 'error' | 'conflict'"
+        note: "ADDS 'conflict'"
+      - location: "src/infrastructure/persistence/stores/statusbar-store.ts:41"
+        value: "'idle' | 'syncing' | 'synced' | 'error'"
+        note: "MIXES 'idle' AND 'synced'"
+    recommendation: |
+      CONSOLIDATE to single canonical SyncStatus type.
+      Current inconsistency means different parts of app have INCOMPATIBLE status values.
+      This WILL cause type errors when types are properly connected.
+
+  # HIGH: ProviderType defined 4 TIMES with DIFFERENT values
+  - concept: "ProviderType"
+    severity: HIGH
+    count: 4
+    definitions:
+      - location: "src/domain/types/llm/provider-types.ts:37"
+        value: "Full enum with many providers"
+        canonical: true
+      - location: "src/lib/agent/providers/index.ts:10"
+        value: "'openai' | 'anthropic' | 'google' | 'local' | 'openai-compatible'"
+        note: "DIFFERENT from domain type"
+      - location: "src/lib/agent/providers/types.ts:55"
+        value: "string"
+        note: "COMPLETELY UNTYPED"
+      - location: "src/shared/types/index.ts:21"
+        value: "Partial enum"
+    recommendation: |
+      CONSOLIDATE to src/domain/types/llm/provider-types.ts as canonical.
+      lib/agent/providers/types.ts using 'string' defeats type safety entirely.
+
+  # HIGH: ChatMessage defined 5 TIMES
+  - concept: "ChatMessage"
+    severity: HIGH
+    count: 5
+    definitions:
+      - location: "src/domain/entities/chat.ts:67"
+        value: "Full interface with role, content, metadata"
+        canonical: true
+      - location: "src/domain/types/llm/adapter-types.ts:81"
+        value: "Simplified adapter interface"
+        note: "Different shape"
+      - location: "src/presentation/hooks/useChatExport.ts:25"
+        value: "Export-specific interface"
+      - location: "src/lib/rag/types.ts:461"
+        value: "RAG-specific interface"
+      - location: "src/presentation/components/ide/hooks/useAgentChatMessages.ts:22"
+        value: "UI-specific interface"
+    recommendation: |
+      Establish clear hierarchy:
+        - Domain: ChatMessage (canonical)
+        - Adapter: AdapterChatMessage (derived)
+        - UI: Remove local definitions, use domain
+
+  # HIGH: FileEntry/FileEvent defined in multiple places
+  - concept: "FileEntry"
+    severity: HIGH
+    count: 5
+    definitions:
+      - location: "src/domain/interfaces/storage-gateway.interface.ts:32"
+        value: "Gateway interface"
+      - location: "src/lib/notes/__tests__/mocks/mock-fsa-adapter.ts:21"
+        value: "Test mock"
+      - location: "src/lib/notes/export/note-exporter.ts:73"
+        value: "Export interface"
+      - location: "src/domain/services/file-crud/file-crud-types.ts:196"
+        value: "CRUD interface"
+      - location: "src/lib/notes/sync/note-crud-operations.ts:41"
+        value: "FileAdapter (similar concept)"
+    recommendation: |
+      Consolidate to domain/interfaces/storage-gateway.interface.ts
+
+  # HIGH: FileChangeEvent defined in 4 places
+  - concept: "FileChangeEvent"
+    severity: HIGH  
+    count: 4
+    definitions:
+      - location: "src/domain/interfaces/storage-gateway.interface.ts:56"
+      - location: "src/domain/interfaces/storage-adapter.interface.ts:60"
+      - location: "src/lib/watcher/file-watcher.ts:21"
+      - location: "src/lib/events/cross-workspace-event-bus.ts:39"
+    recommendation: |
+      Consolidate to single domain interface
+
+  # HIGH: TreeNode defined 3 TIMES
+  - concept: "TreeNode"
+    severity: HIGH
+    count: 3
+    definitions:
+      - location: "src/plugins/filetree/FileTreePlugin.tsx:44"
+      - location: "src/lib/notes/note-tree-utils.ts:16"
+      - location: "src/presentation/components/ide/FileTree/types.ts:15"
+    recommendation: |
+      Create generic TreeNode in domain, derive specific versions
+
+  # MEDIUM: ProviderConfig defined 3 TIMES
+  - concept: "ProviderConfig"
+    severity: MEDIUM
+    count: 3
+    definitions:
+      - location: "src/domain/types/llm/provider-types.ts:53"
+      - location: "src/lib/agent/providers/index.ts:12"
+      - location: "src/lib/agent/providers/types.ts:12"
+
+  # MEDIUM: Project/ProjectMetadata scattered
+  - concept: "Project"
+    severity: MEDIUM
+    count: 4
+    definitions:
+      - location: "src/domain/entities/project.ts:49"
+        canonical: true
+      - location: "src/infrastructure/persistence/stores/project/project-types.ts:36"
+        value: "extends DomainProject"
+      - location: "src/lib/workspace/project-types.ts:32"
+        value: "ProjectMetadata (different shape)"
+      - location: "src/presentation/components/hub/ProjectMetadataDialog.tsx:16"
+        value: "UI-specific"
+
+  # MEDIUM: ConversationState defined multiple times
+  - concept: "ConversationState"
+    severity: MEDIUM
+    count: 3
+    definitions:
+      - location: "src/domain/entities/chat.ts:226"
+      - location: "src/infrastructure/persistence/stores/conversation/conversation-types.ts:40"
+      - location: "src/infrastructure/persistence/stores/workspace/workspace-context.ts:67"
+
+  # MEDIUM: AgentStatus defined 2 TIMES with DIFFERENT values
+  - concept: "AgentStatus"
+    severity: MEDIUM
+    count: 2
+    definitions:
+      - location: "src/domain/entities/agent.ts:17"
+        value: "'online' | 'offline' | 'busy' | 'error'"
+      - location: "src/presentation/components/layout/StatusBar.tsx:43"
+        value: "'idle' | 'working' | 'error'"
+        note: "INCOMPATIBLE with domain"
+
+# ============================================================================
+# TYPE SUPPRESSIONS - TECHNICAL DEBT INDICATORS
+# ============================================================================
+
+type_suppressions:
+  summary:
+    total_any_usage: 245
+    total_as_any_casts: 471
+    total_ts_nocheck: 13
+    total_ts_ignore: 22
+    total_ts_expect_error: 31
+    combined_suppression_count: 782
+
+  files_with_ts_nocheck:
+    - file: "src/lib/workspace/workspace-transition-manager.ts"
+      reason: "Legacy code, entire file untyped"
+    - file: "src/lib/rag/incremental-indexing-service.ts"
+      reason: "RAG legacy code"
+    - file: "src/lib/rag/hybrid-retriever.ts"
+      reason: "RAG legacy code"
+    - file: "src/lib/notes/ai-image-service.ts"
+      reason: "AI service untyped"
+    - file: "src/domain/services/universal-adapter-factory.ts"
+      reason: "Adapter factory untyped"
+    - file: "src/routes/api/chat.ts"
+      reason: "API route with 2 @ts-nocheck"
+    - file: "src/routeTree.gen.ts"
+      reason: "Generated file"
+
+  top_any_offenders:
+    - file: "src/presentation/components/notes/AISlashCommand.tsx"
+      any_count: 46
+      severity: CRITICAL
+    - file: "src/infrastructure/persistence/stores/__tests__/schema-migrations.test.ts"
+      any_count: 37
+      severity: HIGH
+    - file: "src/__tests__/chat.test.ts"
+      any_count: 26
+      severity: HIGH
+    - file: "src/presentation/components/notes/NoteEditor.tsx"
+      any_count: 20
+      severity: HIGH
+    - file: "src/routeTree.gen.ts"
+      any_count: 17
+      note: "Generated file, expected"
+    - file: "src/lib/webcontainer/__tests__/terminal-adapter.test.ts"
+      any_count: 17
+      severity: MEDIUM
+    - file: "src/lib/plugins/plugin-hooks.ts"
+      any_count: 16
+      severity: MEDIUM
+    - file: "src/infrastructure/persistence/stores/filesystem/snapshot-quota-slice.ts"
+      any_count: 15
+      severity: MEDIUM
+    - file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+      any_count: 14
+      severity: MEDIUM
+    - file: "src/lib/filesystem/__tests__/directory-walker.test.ts"
+      any_count: 13
+      severity: MEDIUM
+
+  eslint_any_suppressions:
+    - file: "src/infrastructure/persistence/stores/agents/slices/index.ts"
+      lines: [43, 44, 54, 55, 63, 64, 71, 72, 79, 80]
+      pattern: "StateCreator<any, [], [], any>"
+      note: "Zustand slice typing workaround"
+    - file: "src/infrastructure/persistence/stores/providers/index.ts"
+      lines: [55, 56, 66, 67, 76, 77]
+      pattern: "StateCreator<any, [], [], any>"
+    - file: "src/infrastructure/persistence/stores/conversation/conversation-helpers.ts"
+      lines: [12-16]
+      pattern: "Function types with any"
+
+  provider_types_any_abuse:
+    file: "src/infrastructure/persistence/stores/providers/types.ts"
+    lines: [27, 29, 30, 34, 35]
+    issue: |
+      Core provider state uses 'any' for critical fields:
+        providers: any[]
+        modelSettings: Record<string, any>
+        availableModels: Record<string, any[]>
+        modelCache: Record<string, any>
+        keyMetadata: Record<string, any>
+    severity: CRITICAL
+    recommendation: |
+      Replace with proper typed interfaces from domain/types/llm/
+
+# ============================================================================
+# RE-EXPORT ISSUES
+# ============================================================================
+
+re_export_issues:
+  - index: "src/presentation/components/hub/index.ts"
+    issue: "Exports WorkspaceId from 3 different sources"
+    types:
+      - "WorkspaceId from './WorkspaceBindingDialog.types'"
+      - "WorkspaceId as ToggleWorkspaceId from './WorkspaceBindingToggle'"
+      - "WorkspaceId as WorkspaceIdLegacy from '@/lib/workspace'"
+    severity: HIGH
+    recommendation: "Consolidate to single WorkspaceId export"
+
+  - index: "src/core/entities/index.ts"
+    issue: "Re-exports from multiple layers"
+    types:
+      - "ConversationMetadata from infrastructure/persistence"
+      - "ProviderType from shared/types"
+      - "WorkspaceType from domain/value-objects"
+    severity: MEDIUM
+    note: "Core should not import from infrastructure"
+
+  - index: "src/infrastructure/persistence/stores/agents/index.ts"
+    issue: "Re-exports from sibling stores"
+    types:
+      - "AppState, ProviderState from '../types'"
+    note: "Circular dependency risk"
+
+# ============================================================================
+# ORPHAN/DEPRECATED TYPES
+# ============================================================================
+
+orphan_types:
+  legacy_types:
+    - name: "LegacyProjectId"
+      location: "src/domain/types/project-ids.ts:62"
+      status: "Marked as DEPRECATED in comments"
+      
+  files_with_deprecated_markers:
+    - "src/lib/filesync/hooks.ts"
+    - "src/lib/pdf/pdf-vision-capture.ts"
+    - "src/lib/pdf/pdf-vision-manager.ts"
+    - "src/lib/snippets/snippet-store.ts"
+    - "src/lib/study/quiz-generator.ts"
+    - "src/lib/study/quiz-session.ts"
+
+  unknown_placeholder_types:
+    - location: "src/lib/agent/providers/types.ts"
+      types:
+        - "ProviderKeyMetadata = unknown"
+        - "ModelSettings = unknown"
+        - "StoredCredential = unknown"
+        - "AdapterConfig = unknown"
+        - "ModalityType = string"
+      severity: HIGH
+      note: "These should have proper types"
+
+# ============================================================================
+# RECOMMENDATIONS - PRIORITY ORDER
+# ============================================================================
+
+recommendations:
+  immediate:
+    - priority: 1
+      action: "Create canonical WorkspaceType export"
+      effort: "Low"
+      impact: "High"
+      details: |
+        1. Keep src/domain/types/project-ids.ts as canonical
+        2. Delete WorkspaceType from 9 other locations
+        3. Add re-export in src/domain/types/index.ts
+        4. Update all imports to use @/domain/types
+
+    - priority: 2
+      action: "Consolidate SyncStatus types"
+      effort: "Medium"
+      impact: "High"
+      details: |
+        Current 8 definitions with INCOMPATIBLE values will cause runtime issues.
+        Create single SyncStatus: 'idle' | 'syncing' | 'synced' | 'complete' | 'error' | 'conflict'
+
+    - priority: 3
+      action: "Fix provider/types.ts any abuse"
+      effort: "Medium"
+      impact: "High"
+      details: |
+        Replace any[] and Record<string, any> with proper types from domain/types/llm/
+
+  short_term:
+    - priority: 4
+      action: "Remove @ts-nocheck from production files"
+      effort: "High"
+      impact: "Medium"
+      details: |
+        6 production files have @ts-nocheck (excluding generated).
+        Add proper types incrementally.
+
+    - priority: 5
+      action: "Consolidate ChatMessage types"
+      effort: "Medium"
+      impact: "Medium"
+      details: |
+        Use domain ChatMessage as base, create adapter/ui variants
+
+  long_term:
+    - priority: 6
+      action: "Create Type Registry"
+      effort: "High"
+      impact: "High"
+      details: |
+        Establish _type-registry/ folder with:
+        - Canonical domain types
+        - Type derivation rules
+        - Agent guidance on which type to use
+
+# ============================================================================
+# SUMMARY METRICS
+# ============================================================================
+
+summary:
+  total_type_definitions: 2279
+  synonym_groups_found: 12
+  duplicate_definitions: 47
+  type_suppression_count: 782
+  files_with_any_abuse: 30
+  files_with_ts_nocheck: 13
+  re_export_conflicts: 3
+  
+  health_score: 35
+  health_grade: "D"
+  
+  primary_issue: |
+    WorkspaceType is defined IDENTICALLY in 10 locations.
+    SyncStatus is defined with INCOMPATIBLE values in 8 locations.
+    This causes agent confusion and type system chaos.
+
+  agent_confusion_risk: CRITICAL
+  reason: |
+    When agents see "WorkspaceType" they cannot know which of 10 definitions to use.
+    When agents fix SyncStatus issues in one file, other files break.
+    The 782 type suppressions indicate systematic type safety breakdown.

@@ -1,0 +1,210 @@
+/**
+ * @fileoverview BottomSheet Component Styles
+ * @module components/layout/BottomSheet
+ * @created 2026-01-28
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-12
+ *
+ * 8-bit design compliant bottom sheet styling:
+ * - Sharp corners (no border-radius)
+ * - Pixel shadows (4px offset)
+ * - Solid colors (no gradients/blur)
+ * - Touch-optimized targets (48px min)
+ */
+
+/* Overlay backdrop */
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: var(--z-modal, 50);
+  /* 8-bit: No backdrop-filter blur */
+}
+
+/* Sheet container */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-modal) + 1);
+  
+  /* 8-bit design: Sharp corners */
+  border-radius: 0;
+  border-top: 2px solid hsl(var(--border));
+  
+  background-color: hsl(var(--card));
+  color: hsl(var(--foreground));
+  
+  /* 8-bit shadow: Pixel offset, no blur */
+  box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.3);
+  
+  /* Safe area for notched devices */
+  padding-bottom: env(safe-area-inset-bottom);
+  
+  /* Max height constraint */
+  max-height: 70vh;
+  overflow: hidden;
+  
+  /* Animation */
+  transform: translateY(100%);
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-sheet.bottom-sheet--open {
+  transform: translateY(0);
+}
+
+/* Drag handle */
+.bottom-sheet__handle {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 8px;
+}
+
+.bottom-sheet__handle-bar {
+  width: 40px;
+  height: 4px;
+  background-color: hsl(var(--muted-foreground));
+  /* 8-bit: Sharp corners */
+  border-radius: 0;
+}
+
+/* Header */
+.bottom-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 12px;
+  border-bottom: 2px solid hsl(var(--border));
+}
+
+.bottom-sheet__title {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--foreground));
+}
+
+.bottom-sheet__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  touch-action: manipulation;
+  
+  transition: color 150ms;
+}
+
+.bottom-sheet__close:hover,
+.bottom-sheet__close:active {
+  color: hsl(var(--foreground));
+}
+
+.bottom-sheet__close:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Content area */
+.bottom-sheet__content {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  max-height: calc(70vh - 80px);
+  padding: 16px;
+}
+
+/* Menu list styling */
+.bottom-sheet__menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bottom-sheet__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  font-family: var(--font-sans);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  
+  /* 48px min touch target */
+  min-height: 48px;
+  
+  /* 8-bit border between items */
+  border-bottom: 1px solid hsl(var(--border));
+  
+  transition: background-color 150ms, color 150ms;
+}
+
+.bottom-sheet__menu-item:last-child {
+  border-bottom: none;
+}
+
+.bottom-sheet__menu-item:hover,
+.bottom-sheet__menu-item:active {
+  background-color: hsl(var(--accent));
+}
+
+.bottom-sheet__menu-item:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: -2px;
+}
+
+.bottom-sheet__menu-item--active {
+  color: hsl(var(--primary));
+  background-color: hsl(var(--accent));
+}
+
+.bottom-sheet__menu-item-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: hsl(var(--muted-foreground));
+}
+
+.bottom-sheet__menu-item--active .bottom-sheet__menu-item-icon {
+  color: hsl(var(--primary));
+}
+
+.bottom-sheet__menu-item-label {
+  flex: 1;
+}
+
+.bottom-sheet__menu-item-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  /* 8-bit: Sharp corners */
+  border-radius: 0;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-sheet {
+    transition: none;
+  }
+}

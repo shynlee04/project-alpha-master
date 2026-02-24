@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hybrid IDE + Notes + AI Chat - Stack 3</title>
+  <style>
+    :root {
+      /* 8-bit Design Tokens */
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f0f23;
+      --structural: #2d2d44;
+      --border-light: #3d3d5c;
+      
+      --text-primary: #e8e8f0;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6c6c88;
+      
+      --accent-primary: #7c3aed;
+      --accent-secondary: #a78bfa;
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-error: #ef4444;
+      
+      --code-bg: #0d1117;
+      --code-string: #a5d6ff;
+      --code-keyword: #c792ea;
+      --code-comment: #6a737d;
+      --code-function: #d2a8ff;
+      --code-variable: #ffa657;
+      --code-number: #79c0ff;
+      --code-type: #ffa657;
+      --code-bracket: #e8e8f0;
+      --code-operator: #e8e8f0;
+      
+      --notes-bg: #ffffff;
+      --notes-text: #1f2937;
+      --notes-heading: #111827;
+      --notes-code: #f3f4f6;
+      --notes-border: #e5e7eb;
+      
+      --chat-bg: #1a1a2e;
+      --chat-message-user: #2d2d44;
+      --chat-message-ai: #16213e;
+      --chat-input-bg: #0f0f23;
+      
+      --header-height: 48px;
+      --footer-height: 24px;
+      --activity-bar-width: 48px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      height: var(--header-height);
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mode-badges {
+      display: flex;
+      gap: 8px;
+    }
+
+    .mode-badge {
+      padding: 4px 12px;
+      border-radius: 0;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .mode-badge.ide {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .mode-badge.notes {
+      background: var(--accent-success);
+      color: white;
+    }
+
+    .mode-badge.ai {
+      background: var(--accent-secondary);
+      color: var(--bg-primary);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 0;
+      background: var(--accent-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .activity-bar {
+      width: var(--activity-bar-width);
+      background: var(--bg-tertiary);
+      border-right: 2px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .activity-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .activity-icon:hover {
+      background: var(--structural);
+      color: var(--text-primary);
+    }
+
+    .activity-icon.active {
+      color: var(--accent-secondary);
+      border-left: 2px solid var(--accent-secondary);
+    }
+
+    .activity-spacer {
+      flex: 1;
+    }
+
+    /* Hybrid Content - Three Columns */
+    .hybrid-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* IDE Section */
+    .ide-section {
+      flex: 1;
+      display: flex;
+      min-width: 300px;
+      border-right: 2px solid var(--structural);
+    }
+
+    .ide-editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: var(--code-bg);
+    }
+
+    .tab-bar {
+      height: 36px;
+      background: var(--bg-secondary);
+      display: flex;
+      border-bottom: 1px solid var(--structural);
+    }
+
+    .tab {
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--structural);
+      color: var(--text-muted);
+      transition: all 0.1s;
+    }
+
+    .tab:hover {
+      background: var(--structural);
+    }
+
+    .tab.active {
+      background: var(--code-bg);
+      color: var(--text-primary);
+      border-top: 2px solid var(--accent-primary);
+    }
+
+    .tab-icon {
+      font-size: 14px;
+    }
+
+    .tab-close {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .tab:hover .tab-close {
+      opacity: 1;
+    }
+
+    .tab-close:hover {
+      background: var(--accent-error);
+    }
+
+    .breadcrumb {
+      height: 28px;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--structural);
+    }
+
+    .breadcrumb-item {
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-separator {
+      margin: 0 8px;
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-current {
+      color: var(--text-primary);
+    }
+
+    .code-area {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .code-line {
+      display: flex;
+      min-height: 21px;
+    }
+
+    .line-number {
+      width: 50px;
+      padding: 0 12px;
+      text-align: right;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+      border-right: 1px solid var(--structural);
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .line-content {
+      padding: 0 16px;
+      white-space: pre;
+    }
+
+    .code-keyword { color: var(--code-keyword); }
+    .code-string { color: var(--code-string); }
+    .code-comment { color: var(--code-comment); font-style: italic; }
+    .code-function { color: var(--code-function); }
+    .code-variable { color: var(--code-variable); }
+    .code-number { color: var(--code-number); }
+    .code-type { color: var(--code-type); }
+    .code-bracket { color: var(--code-bracket); }
+    .code-operator { color: var(--code-operator); }
+    .code-property { color: #79c0ff; }
+    .code-param { color: #ffa657; }
+
+    /* Notes Section */
+    .notes-section {
+      width: 40%;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      background: var(--notes-bg);
+      border-right: 2px solid var(--structural);
+    }
+
+    .notes-toolbar {
+      height: 36px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--notes-border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .notes-toolbar-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid var(--notes-border);
+      border-radius: 0;
+      background: white;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .notes-toolbar-btn:hover {
+      background: var(--notes-code);
+    }
+
+    .notes-toolbar-btn.active {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    .notes-toolbar-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--notes-border);
+    }
+
+    .notes-title-input {
+      flex: 1;
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      outline: none;
+      color: var(--notes-heading);
+      background: transparent;
+    }
+
+    .notes-editor {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 16px 24px;
+      background: var(--notes-bg);
+      color: var(--notes-text);
+    }
+
+    .notes-content {
+      min-height: 100%;
+      outline: none;
+    }
+
+    .notes-content h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--notes-heading);
+      border-bottom: 2px solid var(--accent-primary);
+      padding-bottom: 8px;
+    }
+
+    .notes-content h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--notes-heading);
+    }
+
+    .notes-content h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: var(--notes-heading);
+    }
+
+    .notes-content p {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .notes-content ul {
+      margin: 12px 0;
+      padding-left: 24px;
+    }
+
+    .notes-content li {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .notes-content code {
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      background: var(--notes-code);
+      padding: 2px 6px;
+      border-radius: 0;
+    }
+
+    .notes-content pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 0;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    .notes-content pre code {
+      background: transparent;
+      padding: 0;
+      color: var(--code-string);
+    }
+
+    .notes-content .highlight {
+      background: #fef3c7;
+      padding: 2px 4px;
+    }
+
+    /* AI Chat Section */
+    .chat-section {
+      width: 24%;
+      min-width: 240px;
+      display: flex;
+      flex-direction: column;
+      background: var(--chat-bg);
+      border-left: 2px solid var(--structural);
+    }
+
+    .chat-header {
+      height: 36px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+
+    .chat-title {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-badge {
+      background: var(--accent-secondary);
+      color: var(--bg-primary);
+      padding: 2px 6px;
+      border-radius: 0;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .message.user {
+      align-items: flex-end;
+    }
+
+    .message.ai {
+      align-items: flex-start;
+    }
+
+    .message-content {
+      max-width: 100%;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      border-radius: 0;
+    }
+
+    .message.user .message-content {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .message.ai .message-content {
+      background: var(--chat-message-ai);
+      color: var(--text-primary);
+      border: 1px solid var(--structural);
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .message.user .message-meta {
+      text-align: right;
+    }
+
+    .message code {
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 4px;
+      border-radius: 0;
+    }
+
+    .chat-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--structural);
+      background: var(--bg-tertiary);
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 13px;
+      border: 1px solid var(--border-light);
+      border-radius: 0;
+      background: var(--chat-input-bg);
+      color: var(--text-primary);
+      outline: none;
+      resize: none;
+      min-height: 40px;
+      max-height: 100px;
+    }
+
+    .chat-input:focus {
+      border-color: var(--accent-secondary);
+    }
+
+    .chat-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .chat-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-submit {
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 0;
+      background: var(--accent-primary);
+      color: white;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .chat-submit:hover {
+      background: var(--accent-secondary);
+      color: var(--bg-primary);
+    }
+
+    .chat-options {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-option-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+      border: 1px solid var(--border-light);
+      border-radius: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .chat-option-btn:hover {
+      background: var(--structural);
+    }
+
+    /* Footer */
+    .footer {
+      height: var(--footer-height);
+      background: var(--bg-tertiary);
+      border-top: 2px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .footer-left, .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 0;
+    }
+
+    .status-dot.success { background: var(--accent-success); }
+    .status-dot.info { background: var(--accent-secondary); }
+    .status-dot.warning { background: var(--accent-warning); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">Hybrid Workspace</span>
+        <div class="mode-badges">
+          <span class="mode-badge ide">IDE</span>
+          <span class="mode-badge notes">Notes</span>
+          <span class="mode-badge ai">AI Assistant</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <span style="color: var(--text-muted); font-size: 12px;">src/infrastructure/project-service.ts</span>
+        <div class="user-avatar">JD</div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Activity Bar -->
+      <nav class="activity-bar">
+        <div class="activity-icon" title="Explorer">📁</div>
+        <div class="activity-icon active" title="Search">🔍</div>
+        <div class="activity-icon" title="Git">⎇</div>
+        <div class="activity-icon" title="Debug">▶</div>
+        <div class="activity-icon" title="AI Assistant">🤖</div>
+        <div class="activity-spacer"></div>
+        <div class="activity-icon" title="Settings">⚙</div>
+      </nav>
+
+      <!-- Hybrid Content -->
+      <div class="hybrid-content">
+        <!-- IDE Editor Section -->
+        <section class="ide-section">
+          <div class="ide-editor">
+            <div class="tab-bar">
+              <div class="tab active">
+                <span class="tab-icon">📄</span>
+                <span>project-service.ts</span>
+                <span class="tab-close">✕</span>
+              </div>
+              <div class="tab">
+                <span class="tab-icon">📄</span>
+                <span>project.interface.ts</span>
+                <span class="tab-close">✕</span>
+              </div>
+              <div class="tab">
+                <span class="tab-icon">📄</span>
+                <span>project-store.ts</span>
+                <span class="tab-close">✕</span>
+              </div>
+            </div>
+            <div class="breadcrumb">
+              <span class="breadcrumb-item">src</span>
+              <span class="breadcrumb-separator">›</span>
+              <span class="breadcrumb-item">infrastructure</span>
+              <span class="breadcrumb-separator">›</span>
+              <span class="breadcrumb-current">project-service.ts</span>
+            </div>
+            <div class="code-area">
+              <div class="code-line">
+                <span class="line-number">1</span>
+                <span class="line-content"><span class="code-keyword">import</span> <span class="code-bracket">{</span> <span class="code-variable">Injectable</span> <span class="code-bracket">}</span> <span class="code-keyword">from</span> <span class="code-string">'@nestjs/common'</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">2</span>
+                <span class="line-content"><span class="code-keyword">import</span> <span class="code-bracket">{</span> <span class="code-variable">ProjectRepository</span> <span class="code-bracket">}</span> <span class="code-keyword">from</span> <span class="code-string">'../domain/repositories/project.repository'</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">3</span>
+                <span class="line-content"><span class="code-keyword">import</span> <span class="code-bracket">{</span> <span class="code-variable">CreateProjectDto</span>, <span class="code-variable">UpdateProjectDto</span> <span class="code-bracket">}</span> <span class="code-keyword">from</span> <span class="code-string">'./dto'</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">4</span>
+                <span class="line-content"><span class="code-keyword">import</span> <span class="code-bracket">{</span> <span class="code-variable">Project</span> <span class="code-bracket">}</span> <span class="code-keyword">from</span> <span class="code-string">'../domain/entities/project.entity'</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">5</span>
+                <span class="line-content"><span class="code-keyword">import</span> <span class="code-bracket">{</span> <span class="code-variable">Result</span>, <span class="code-variable">ResultOk</span>, <span class="code-variable">ResultErr</span> <span class="code-bracket">}</span> <span class="code-keyword">from</span> <span class="code-string">'../../lib/result'</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">6</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">7</span>
+                <span class="line-content"><span class="code-keyword">export interface</span> <span class="code-type">ProjectServiceInterface</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">8</span>
+                <span class="line-content">  <span class="code-function">createProject</span><span class="code-bracket">(</span><span class="code-param">dto</span>: <span class="code-type">CreateProjectDto</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">9</span>
+                <span class="line-content">  <span class="code-function">getProjectById</span><span class="code-bracket">(</span><span class="code-param">id</span>: <span class="code-type">string</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">10</span>
+                <span class="line-content">  <span class="code-function">getAllProjects</span><span class="code-bracket">(</span><span class="code-param">userId</span>: <span class="code-type">string</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span><span class="code-bracket">[]</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">11</span>
+                <span class="line-content">  <span class="code-function">updateProject</span><span class="code-bracket">(</span><span class="code-param">id</span>: <span class="code-type">string</span>, <span class="code-param">dto</span>: <span class="code-type">UpdateProjectDto</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">12</span>
+                <span class="line-content">  <span class="code-function">deleteProject</span><span class="code-bracket">(</span><span class="code-param">id</span>: <span class="code-type">string</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">void</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">13</span>
+                <span class="line-content"><span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">14</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">15</span>
+                <span class="code-keyword">@</span><span class="code-function">Injectable</span><span class="code-bracket">()</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">16</span>
+                <span class="code-keyword">export class</span> <span class="code-type">ProjectService</span> <span class="code-keyword">implements</span> <span class="code-type">ProjectServiceInterface</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">17</span>
+                <span class="line-content">  <span class="code-keyword">constructor</span><span class="code-bracket">(</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">18</span>
+                <span class="line-content">    <span class="code-keyword">private readonly</span> <span class="code-variable">projectRepository</span>: <span class="code-type">ProjectRepository</span>,</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">19</span>
+                <span class="line-content">  <span class="code-bracket">)</span> <span class="code-bracket">{}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">20</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">21</span>
+                <span class="line-content">  <span class="code-keyword">async</span> <span class="code-function">createProject</span><span class="code-bracket">(</span><span class="code-param">dto</span>: <span class="code-type">CreateProjectDto</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">22</span>
+                <span class="line-content">    <span class="code-keyword">try</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">23</span>
+                <span class="line-content">      <span class="code-keyword">const</span> <span class="code-variable">project</span> = <span class="code-keyword">new</span> <span class="code-type">Project</span><span class="code-bracket">(</span><span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">24</span>
+                <span class="line-content">        <span class="code-property">name</span>: <span class="code-variable">dto</span>.<span class="code-property">name</span>,</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">25</span>
+                <span class="line-content">        <span class="code-property">description</span>: <span class="code-variable">dto</span>.<span class="code-property">description</span> ?? <span class="code-keyword">null</span>,</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">26</span>
+                <span class="line-content">        <span class="code-property">ownerId</span>: <span class="code-variable">dto</span>.<span class="code-property">ownerId</span>,</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">27</span>
+                <span class="line-content">        <span class="code-property">settings</span>: <span class="code-variable">dto</span>.<span class="code-property">settings</span> ?? <span class="code-bracket">{}</span>,</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">28</span>
+                <span class="line-content">      <span class="code-bracket">}</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">29</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">30</span>
+                <span class="line-content">      <span class="code-keyword">await</span> <span class="code-variable">this</span>.<span class="code-property">projectRepository</span>.<span class="code-function">save</span><span class="code-bracket">(</span><span class="code-variable">project</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">31</span>
+                <span class="line-content">      <span class="code-keyword">return</span> <span class="code-function">ResultOk</span><span class="code-bracket">(</span><span class="code-variable">project</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">32</span>
+                <span class="line-content">    <span class="code-bracket">}</span> <span class="code-keyword">catch</span> <span class="code-bracket">(</span><span class="code-variable">error</span><span class="code-bracket">)</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">33</span>
+                <span class="line-content">      <span class="code-keyword">return</span> <span class="code-function">ResultErr</span><span class="code-bracket">(</span><span class="code-keyword">new</span> <span class="code-type">Error</span><span class="code-bracket">(</span><span class="code-string">`Failed to create project: ${</span><span class="code-variable">error</span>.<span class="code-property">message</span><span class="code-string">}`</span><span class="code-bracket">))</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">34</span>
+                <span class="line-content">    <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">35</span>
+                <span class="line-content">  <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">36</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">37</span>
+                <span class="line-content">  <span class="code-keyword">async</span> <span class="code-function">getProjectById</span><span class="code-bracket">(</span><span class="code-param">id</span>: <span class="code-type">string</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">38</span>
+                <span class="line-content">    <span class="code-keyword">const</span> <span class="code-variable">project</span> = <span class="code-keyword">await</span> <span class="code-variable">this</span>.<span class="code-property">projectRepository</span>.<span class="code-function">findById</span><span class="code-bracket">(</span><span class="code-variable">id</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">39</span>
+                <span class="line-content">    <span class="code-keyword">if</span> <span class="code-bracket">(</span>!<span class="code-variable">project</span><span class="code-bracket">)</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">40</span>
+                <span class="line-content">      <span class="code-keyword">return</span> <span class="code-function">ResultErr</span><span class="code-bracket">(</span><span class="code-keyword">new</span> <span class="code-type">Error</span><span class="code-bracket">(</span><span class="code-string">'Project not found'</span><span class="code-bracket">))</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">41</span>
+                <span class="line-content">    <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">42</span>
+                <span class="line-content">    <span class="code-keyword">return</span> <span class="code-function">ResultOk</span><span class="code-bracket">(</span><span class="code-variable">project</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">43</span>
+                <span class="line-content">  <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">44</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">45</span>
+                <span class="line-content">  <span class="code-keyword">async</span> <span class="code-function">getAllProjects</span><span class="code-bracket">(</span><span class="code-param">userId</span>: <span class="code-type">string</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span><span class="code-bracket">[]</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">46</span>
+                <span class="line-content">    <span class="code-keyword">return</span> <span class="code-function">ResultOk</span><span class="code-bracket">(</span><span class="code-keyword">await</span> <span class="code-variable">this</span>.<span class="code-property">projectRepository</span>.<span class="code-function">findByOwner</span><span class="code-bracket">(</span><span class="code-variable">userId</span><span class="code-bracket">))</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">47</span>
+                <span class="line-content">  <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">48</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">49</span>
+                <span class="line-content">  <span class="code-keyword">async</span> <span class="code-function">updateProject</span><span class="code-bracket">(</span><span class="code-param">id</span>: <span class="code-type">string</span>, <span class="code-param">dto</span>: <span class="code-type">UpdateProjectDto</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">Project</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">50</span>
+                <span class="line-content">    <span class="code-keyword">const</span> <span class="code-variable">existing</span> = <span class="code-keyword">await</span> <span class="code-variable">this</span>.<span class="code-function">getProjectById</span><span class="code-bracket">(</span><span class="code-variable">id</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">51</span>
+                <span class="line-content">    <span class="code-keyword">if</span> <span class="code-bracket">(</span><span class="code-variable">existing</span>.<span class="code-property">isErr</span><span class="code-bracket">)</span> <span class="code-keyword">return</span> <span class="code-variable">existing</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">52</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">53</span>
+                <span class="line-content">    <span class="code-keyword">const</span> <span class="code-variable">updated</span> = <span class="code-bracket">{</span> ...<span class="code-variable">existing</span>.<span class="code-property">value</span>, ...<span class="code-variable">dto</span> <span class="code-bracket">}</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">54</span>
+                <span class="line-content">    <span class="code-keyword">await</span> <span class="code-variable">this</span>.<span class="code-property">projectRepository</span>.<span class="code-function">update</span><span class="code-bracket">(</span><span class="code-variable">id</span>, <span class="code-variable">updated</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">55</span>
+                <span class="line-content">    <span class="code-keyword">return</span> <span class="code-function">ResultOk</span><span class="code-bracket">(</span><span class="code-variable">updated</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">56</span>
+                <span class="line-content">  <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">57</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">58</span>
+                <span class="line-content">  <span class="code-keyword">async</span> <span class="code-function">deleteProject</span><span class="code-bracket">(</span><span class="code-param">id</span>: <span class="code-type">string</span><span class="code-bracket">)</span>: <span class="code-type">Promise</span><span class="code-bracket">&lt;</span><span class="code-type">Result</span><span class="code-bracket">&lt;</span><span class="code-type">void</span>, <span class="code-type">Error</span><span class="code-bracket">&gt;&gt;</span> <span class="code-bracket">{</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">59</span>
+                <span class="line-content">    <span class="code-keyword">await</span> <span class="code-variable">this</span>.<span class="code-property">projectRepository</span>.<span class="code-function">delete</span><span class="code-bracket">(</span><span class="code-variable">id</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">60</span>
+                <span class="line-content">    <span class="code-keyword">return</span> <span class="code-function">ResultOk</span><span class="code-bracket">(</span><span class="code-keyword">undefined</span><span class="code-bracket">)</span>;</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">61</span>
+                <span class="line-content">  <span class="code-bracket">}</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">62</span>
+                <span class="line-content"><span class="code-bracket">}</span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section class="notes-section">
+          <div class="notes-toolbar">
+            <button class="notes-toolbar-btn">B</button>
+            <button class="notes-toolbar-btn"><i>I</i></button>
+            <button class="notes-toolbar-btn"><u>U</u></button>
+            <div class="notes-toolbar-divider"></div>
+            <button class="notes-toolbar-btn">H1</button>
+            <button class="notes-toolbar-btn">H2</button>
+            <div class="notes-toolbar-divider"></div>
+            <button class="notes-toolbar-btn">•</button>
+            <button class="notes-toolbar-btn">1.</button>
+            <div class="notes-toolbar-divider"></div>
+            <button class="notes-toolbar-btn"><>code</></button>
+          </div>
+          <input type="text" class="notes-title-input" value="ProjectService Implementation Notes" placeholder="Note title...">
+          <div class="notes-editor">
+            <div class="notes-content" contenteditable="true">
+              <h1>ProjectService Implementation Notes</h1>
+              
+              <p>Documentation for the <code>ProjectService</code> class implementation. This service handles all project-related business logic in the application.</p>
+              
+              <h2>Architecture Overview</h2>
+              <p>The service follows the <span class="highlight">Repository Pattern</span> for data access abstraction, allowing for easy testing and future database migrations.</p>
+              
+              <h2>Key Implementation Details</h2>
+              
+              <h3>1. Constructor Injection</h3>
+              <p>The service uses constructor injection for the <code>ProjectRepository</code> dependency:</p>
+              <pre><code>constructor(
+  private readonly projectRepository: ProjectRepository,
+) {}</code></pre>
+              
+              <h3>2. Result Pattern</h3>
+              <p>All methods return <code>Result&lt;T, Error&gt;</code> to handle both success and error cases explicitly:</p>
+              <ul>
+                <li><code>ResultOk(value)</code> - successful operation</li>
+                <li><code>ResultErr(error)</code> - operation failed with error</li>
+              </ul>
+              
+              <h3>3. Error Handling</h3>
+              <p>Each method wraps operations in try-catch blocks to ensure consistent error handling across the service layer.</p>
+              
+              <h2>Methods</h2>
+              <ul>
+                <li><code>createProject()</code> - Creates a new project entity and persists it</li>
+                <li><code>getProjectById()</code> - Retrieves a single project by ID</li>
+                <li><code>getAllProjects()</code> - Returns all projects owned by a user</li>
+                <li><code>updateProject()</code> - Updates existing project with partial data</li>
+                <li><code>deleteProject()</code> - Removes a project from persistence</li>
+              </ul>
+              
+              <h2>TODO</h2>
+              <ul>
+                <li>Add validation in <code>createProject()</code> for duplicate names</li>
+                <li>Implement soft delete instead of hard delete</li>
+                <li>Add transaction support for atomic updates</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- AI Chat Section -->
+        <section class="chat-section">
+          <div class="chat-header">
+            <span class="chat-title">
+              <span>🤖</span>
+              AI Assistant
+              <span class="ai-badge">v2.1</span>
+            </span>
+          </div>
+          <div class="chat-messages">
+            <div class="message ai">
+              <div class="message-content">
+                Hello! I'm here to help with your project. I can assist with code review, debugging, explaining concepts, or suggesting improvements. What would you like to work on?
+              </div>
+              <div class="message-meta">AI · 2:34 PM</div>
+            </div>
+            <div class="message user">
+              <div class="message-content">
+                Can you review the ProjectService implementation? Specifically the error handling pattern.
+              </div>
+              <div class="message-meta">You · 2:35 PM</div>
+            </div>
+            <div class="message ai">
+              <div class="message-content">
+                Great question! I reviewed your <code>ProjectService</code> implementation. Here are my observations:
+
+                <strong>✅ Good patterns:</strong>
+                <ul>
+                  <li>Consistent use of <code>Result&lt;T, Error&gt;</code> pattern</li>
+                  <li>Proper try-catch wrapping in createProject</li>
+                  <li>Reusing <code>getProjectById</code> in updateProject for validation</li>
+                </ul>
+
+                <strong>⚠️ Potential improvements:</strong>
+                <ul>
+                  <li>The catch block in line 33 could lose error context</li>
+                  <li>Consider logging errors before returning</li>
+                  <li>Add specific error types for better client handling</li>
+                </ul>
+
+                Would you like me to suggest a specific refactor?
+              </div>
+              <div class="message-meta">AI · 2:36 PM</div>
+            </div>
+            <div class="message user">
+              <div class="message-content">
+                Yes, please show me how to improve the error handling with logging.
+              </div>
+              <div class="message-meta">You · 2:37 PM</div>
+            </div>
+            <div class="message ai">
+              <div class="message-content">
+                Here's an improved version with structured logging:
+
+                <pre><code>async createProject(dto: CreateProjectDto): Promise&lt;Result&lt;Project, Error&gt;&gt; {
+  try {
+    const project = new Project({...});
+    await this.projectRepository.save(project);
+    this.logger.log(`Project created: ${project.id}`);
+    return ResultOk(project);
+  } catch (error) {
+    this.logger.error(`Failed to create project: ${dto.name}`, { error });
+    return ResultErr(new Error(`Failed to create project: ${error}`));
+  }
+}</code></pre>
+
+                <strong>Benefits:</strong>
+                <ul>
+                  <li>Structured error logging with context</li>
+                  <li>Original error preserved in log</li>
+                  <li>User-friendly message in response</li>
+                </ul>
+              </div>
+              <div class="message-meta">AI · 2:38 PM</div>
+            </div>
+            <div class="message user">
+              <div class="message-content">
+                How should I handle duplicate project names?
+              </div>
+              <div class="message-meta">You · 2:39 PM</div>
+            </div>
+            <div class="message ai">
+              <div class="message-content">
+                Good catch - that's a TODO item in your notes! Here's a strategy:
+
+                <strong>1. Add validation check in createProject:</strong>
+                <pre><code>const existing = await this.projectRepository.findByName(dto.name, dto.ownerId);
+if (existing) {
+  return ResultErr(new Error('A project with this name already exists'));
+}</code></pre>
+
+                <strong>2. Create a custom error type:</strong>
+                <pre><code>export class DuplicateProjectError extends Error {
+  constructor(public readonly projectName: string) {
+    super(`Project "${projectName}" already exists`);
+    this.name = 'DuplicateProjectError';
+  }
+}</code></pre>
+
+                This allows clients to handle duplicates specifically in their UI.
+              </div>
+              <div class="message-meta">AI · 2:41 PM</div>
+            </div>
+            <div class="message user">
+              <div class="message-content">
+                That makes sense. Should I add indexes to the database for the name lookup?
+              </div>
+              <div class="message-meta">You · 2:42 PM</div>
+            </div>
+            <div class="message ai">
+              <div class="message-content">
+                Absolutely! For the duplicate check query to be efficient:
+
+                <strong>Recommended indexes:</strong>
+                <ul>
+                  <li><code>(name, ownerId)</code> - unique composite index for fast lookups</li>
+                  <li><code>(ownerId)</code> - for <code>findByOwner()</code> queries</li>
+                </ul>
+
+                In your repository schema:
+                <pre><code>db.projects.createIndex({ name: 1, ownerId: 1 }, { unique: true });</code></pre>
+
+                The unique constraint also prevents duplicates at the database level as a safety net.
+              </div>
+              <div class="message-meta">AI · 2:43 PM</div>
+            </div>
+            <div class="message user">
+              <div class="message-content">
+                Thanks! One more question - how do you feel about the Result pattern vs throwing exceptions?
+              </div>
+              <div class="message-meta">You · 2:45 PM</div>
+            </div>
+            <div class="message ai">
+              <div class="message-content">
+                Excellent question! Both patterns have their place:
+
+                <strong>Result Pattern (Your current approach):</strong>
+                <ul>
+                  <li>✅ Explicit error handling required</li>
+                  <li>✅ Easier to test and reason about</li>
+                  <li>✅ No try-catch needed at call sites</li>
+                  <li>❌ More verbose for simple cases</li>
+                </ul>
+
+                <strong>Exception Pattern:</strong>
+                <ul>
+                  <li>✅ Cleaner happy path code</li>
+                  <li>✅ Errors bubble up automatically</li>
+                  <li>❌ Errors can be forgotten</li>
+                  <li>❌ Harder to track all error types</li>
+                </ul>
+
+                <strong>My recommendation:</strong> Stick with Result for domain/business logic where you want explicit control. Use exceptions for truly exceptional cases (network failures, bugs).
+              </div>
+              <div class="message-meta">AI · 2:47 PM</div>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+              <textarea class="chat-input" placeholder="Ask a question or describe what you need..." rows="2">How do I implement the findByName method in the repository?</textarea>
+              <div class="chat-actions">
+                <div class="chat-options">
+                  <button class="chat-option-btn">Explain</button>
+                  <button class="chat-option-btn">Fix</button>
+                  <button class="chat-option-btn">Test</button>
+                </div>
+                <button class="chat-submit">Send</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="footer-item">
+          <span class="status-dot success"></span>
+          <span>IDE Ready</span>
+        </div>
+        <div class="footer-item">
+          <span class="status-dot success"></span>
+          <span>Notes Synced</span>
+        </div>
+        <div class="footer-item">
+          <span class="status-dot info"></span>
+          <span>AI Active</span>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-item">
+          <span>Ln 62, Col 5</span>
+        </div>
+        <div class="footer-item">
+          <span>UTF-8</span>
+        </div>
+        <div class="footer-item">
+          <span>TypeScript 5.9</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

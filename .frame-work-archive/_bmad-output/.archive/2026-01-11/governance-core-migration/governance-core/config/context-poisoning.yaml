@@ -1,0 +1,275 @@
+# Context Poisoning Prevention Configuration
+# Strategies to prevent hallucinations from stale context in auto-compact scenarios
+# Created: 2026-01-10
+
+problem_statement:
+  description: "Auto-compact causes models to lose track of initial prompts and recent messages"
+  consequence: "Models hallucinate from irrelevant context, ignoring initial instructions"
+  severity: "P0"
+
+prevention_strategies:
+  anchoring_markers:
+    enabled: true
+    description: "Prominent context anchors in front matter"
+
+    front_matter_fields:
+      context_anchor:
+        type: string
+        description: "One-line summary of artifact's core purpose"
+        max_length: 100
+        required: true
+        example: "This artifact governs domain scanners for governance-core module"
+
+      last_updated:
+        type: datetime
+        format: "YYYY-MM-DDTHH:mm+TZ:TZ"
+        required: true
+        example: "2026-01-10T20:50+07:00"
+
+      scope:
+        type: string
+        description: "What this artifact covers"
+        required: false
+        example: "13 domain scanners for governance validation"
+
+      excludes:
+        type: array
+        items: string
+        description: "What this artifact explicitly does NOT cover"
+        required: false
+        example: ["agent implementation details", "scanner algorithms"]
+
+  freshness_headers:
+    enabled: true
+    description: "48-hour rule for artifact staleness"
+
+    rules:
+      max_age_hours: 48
+      validation_required: true
+      auto_warn: true
+      stale_action: "revalidate_required"
+
+    thresholds:
+      warning_age_hours: 24
+      critical_age_hours: 48
+      obsolete_age_hours: 72
+
+    actions:
+      on_warning:
+        - "Log warning about aging artifact"
+        - "Suggest refresh if content changed"
+      on_critical:
+        - "Block use until re-validated"
+        - "Require explicit acknowledgment"
+      on_obsolete:
+        - "Mark as deprecated"
+        - "Suggest archival"
+
+  artifact_summaries:
+    enabled: true
+    description: "Auto-generated summaries at top of files"
+
+    template: |
+      ## Artifact Summary
+      - **Purpose**: {{purpose}}
+      - **Status**: {{status}} (last validated: {{last_validated}})
+      - **Key Domains**: {{key_domains}}
+      - **Dependencies**: {{dependencies}}
+      - **Version**: {{version}}
+
+    placement: "top"
+    max_lines: 10
+    auto_update: true
+
+  version_tags:
+    enabled: true
+    description: "Date-based versioning in filenames"
+
+    pattern: "{name}-{date}.{ext}"
+    date_format: "YYYY-MM-DD"
+    required: true
+
+    valid_examples:
+      - "governance-plan-2026-01-10.md"
+      - "progress-report-2026-01-10.md"
+      - "module-status-2026-01-10.yaml"
+
+    invalid_examples:
+      - "governance-plan.md"
+      - "progress-report.md"
+      - "README.md"
+
+    enforcement: "warning"
+
+priority_system:
+  context_priority:
+    levels:
+      0:
+        name: "Nothing"
+        description: "Session idle, no context loaded"
+      1:
+        name: "Frontmatter Only"
+        description: "Read artifact front matter and summary only"
+        max_tokens: 500
+      2:
+        name: "Structure"
+        description: "Artifact structure, headers, section titles"
+        max_tokens: 2000
+      3:
+        name: "Key Sections"
+        description: "Full content of key sections identified in summary"
+        max_tokens: 5000
+      4:
+        name: "Full Content"
+        description: "Complete artifact content"
+        max_tokens: 10000
+      5:
+        name: "Cross-Artifact"
+        description: "Multiple related artifacts"
+        max_tokens: 20000
+
+    auto_compact_behavior:
+      description: "How to handle context when auto-compact triggers"
+      strategy: "progressive_discard"
+      discard_order:
+        1: "Full content of non-critical artifacts"
+        2: "Detailed content, keep summaries"
+        3: "All content except frontmatter"
+        4: "Frontmatter + summary only"
+        5: "Keep context_anchor only"
+
+artifact_loading_rules:
+  loading_sequence:
+    1: "Read front matter for context_anchor and last_updated"
+    2: "Check freshness (last_updated vs current time)"
+    3: "Read artifact summary if available"
+    4: "Load key sections based on context_priority level"
+    5: "Validate no context conflicts with other loaded artifacts"
+
+  freshness_check:
+    enabled: true
+    cache_ttl_hours: 4
+    stale_threshold_hours: 48
+
+    on_stale:
+      action: "warn"
+      message: "Artifact is {{age_hours}}h old. Re-validation recommended."
+      require_acknowledgment: false
+
+    on_obsolete:
+      action: "block"
+      message: "Artifact is obsolete ({{age_hours}}h). Do not use without re-validation."
+      require_acknowledgment: true
+
+conflict_detection:
+  enabled: true
+  description: "Detect conflicting information across loaded artifacts"
+
+  conflict_types:
+    version_conflict:
+      description: "Same artifact, different versions"
+      severity: "warn"
+      resolution: "use_latest"
+
+    domain_conflict:
+      description: "Conflicting domain definitions"
+      severity: "critical"
+      resolution: "human_review_required"
+
+    status_conflict:
+      description: "Conflicting status information"
+      severity: "warn"
+      resolution: "use_most_recent"
+
+    dependency_conflict:
+      description: "Circular or missing dependencies"
+      severity: "critical"
+      resolution: "block_until_resolved"
+
+  detection_strategies:
+    - "compare_front_matter_versions"
+    - "check_context_anchor_consistency"
+    - "validate_dependency_graph"
+    - "detect_circular_references"
+
+auto_compact_mitigation:
+  session_start:
+    actions:
+      - "Load fresh frontmatter from all relevant artifacts"
+      - "Build context anchor map"
+      - "Check freshness warnings"
+      - "Display stale artifact warnings"
+
+  during_compact:
+    actions:
+      - "Preserve frontmatter and summaries"
+      - "Record what was discarded"
+      - "Maintain artifact timestamp log"
+      - "Keep context_anchor accessible"
+
+  post_compact:
+    actions:
+      - "Verify essential context anchors present"
+      - "Re-load summaries if discarded"
+      - "Check for context drift"
+      - "Log compact event for debugging"
+
+best_practices:
+  artifact_creation:
+    - "Always include front matter with context_anchor"
+    - "Use date-stamped filenames"
+    - "Write clear, concise artifact summary"
+    - "Define scope and excludes explicitly"
+
+  artifact_maintenance:
+    - "Update last_updated when content changes"
+    - "Re-validate artifacts older than 48 hours before use"
+    - "Archive obsolete artifacts, don't delete"
+    - "Keep summaries current with content"
+
+  context_management:
+    - "Load artifacts progressively, not all at once"
+    - "Prioritize frontmatter and summaries over full content"
+    - "Discard verbose content before summaries"
+    - "Keep context_anchor until last"
+
+example_artifact_front_matter:
+  complete: |
+    ---
+    artifact_type: planning
+    module_id: governance-core
+    created_date: 2026-01-10
+    updated_date: 2026-01-10T20:50+07:00
+    author: human
+    status: active
+    tags: [governance, domains, scanners, p0]
+    context_anchor: "Defines 13 domain scanners for governance validation with three enforcement checks"
+    scope: "Scanner definitions, thresholds, and relationships"
+    excludes: ["Scanner implementation details", "Agent configurations"]
+    freshness_threshold: 48
+    last_validated: 2026-01-10T20:50+07:00
+    version: "2026-01-10"
+    ---
+
+monitoring:
+  metrics:
+    - "context_poisoning_incidents"
+    - "stale_artifact_warnings"
+    - "auto_compact_events"
+    - "artifact_validation_failures"
+
+  alerts:
+    - name: "context_poisoning_detected"
+      condition: "artifact_age_hours > 48 AND used_in_compact = true"
+      severity: "warning"
+      message: "Potential context poisoning from stale artifact"
+
+    - name: "missing_context_anchor"
+      condition: "artifact_loaded AND context_anchor IS NULL"
+      severity: "critical"
+      message: "Artifact loaded without context_anchor - high poisoning risk"
+
+    - name: "freshness_validation_failed"
+      condition: "artifact_used AND last_updated_age_hours > freshness_threshold"
+      severity: "warning"
+      message: "Artifact used without freshness validation"

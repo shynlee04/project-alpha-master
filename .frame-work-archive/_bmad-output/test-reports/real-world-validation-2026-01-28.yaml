@@ -1,0 +1,550 @@
+# Real-World Visual/Behavioral Validation Report
+# Date: 2026-01-28 14:24:24
+# Agent: real-world-validator
+# Timeboxed: 25 minutes
+
+real_world_validation:
+  date: "2026-01-28 14:24:24"
+  summary: |
+    CRITICAL FINDINGS: 6 out of 7 investigations reveal ACTUAL implementation issues.
+    The previous "shallow scan" was correct - files exist, but behavior is BROKEN.
+    
+# ==============================================================================
+# INVESTIGATION 1: Grid Ratio Problem
+# ==============================================================================
+  
+  investigation_1_grid:
+    actual_grid_columns: |
+      48px 48px minmax(200px, 320px) 1fr minmax(250px, 400px) 48px
+    spec_ratio: "0.5:0.5:2:4:2.5:0.5"
+    matches_spec: PARTIAL
+    
+    analysis: |
+      The CSS grid uses PIXEL values (48px) not fractional ratios (0.5).
+      
+      SPEC says: 0.5 : 0.5 : 2 : 4 : 2.5 : 0.5 (total 10 parts)
+      ACTUAL says: 48px : 48px : minmax(200px,320px) : 1fr : minmax(250px,400px) : 48px
+      
+      On a 1920px wide screen:
+      - Spec ratio 0.5/10 = 5% = 96px (but CSS has 48px)
+      - Spec ratio 2/10 = 20% = 384px (but CSS has max 320px)
+      - Spec ratio 4/10 = 40% = 768px (CSS has 1fr - flexible, correct)
+      - Spec ratio 2.5/10 = 25% = 480px (but CSS has max 400px)
+      
+    issues:
+      - issue: "Fixed 48px columns don't scale with viewport"
+        evidence: "workspace-layout.css:35-40"
+        severity: MEDIUM
+      - issue: "minmax constraints (200-320px, 250-400px) cap plugin panels below spec"
+        evidence: "workspace-layout.css:37-39"
+        severity: MEDIUM
+      - issue: "On screens > 1600px, layout will be LEFT-heavy (fixed px + minmax caps)"
+        evidence: "No flexible ratio system, just min/max"
+        severity: MEDIUM
+        
+    root_cause: |
+      The implementation uses PIXEL-BASED GRID, not RATIO-BASED GRID.
+      This works reasonably on ~1280-1440px screens but deviates on larger displays.
+      
+    recommendation: |
+      If spec requires true ratios, change CSS to:
+      grid-template-columns: 0.5fr 0.5fr 2fr 4fr 2.5fr 0.5fr;
+      But this may break at small screens. Current approach is SAFE but not SPEC-COMPLIANT.
+
+# ==============================================================================
+# INVESTIGATION 2: Black Rectangle Problem (CRITICAL)
+# ==============================================================================
+  
+  investigation_2_black_rectangle:
+    suspected_cause: "FloatingPluginDocker z-index AND position:fixed without proper constraints"
+    
+    evidence:
+      - file: "FloatingPluginDocker.tsx:66-68"
+        problem: |
+          DEFAULT_POSITION calculates position based on window dimensions:
+          x: window.innerWidth - 304
+          y: window.innerHeight - 280
+          
+          If window dimensions are 0 or undefined during SSR/hydration,
+          this can result in NEGATIVE or INVALID positions.
+          
+      - file: "FloatingPluginDocker.css:27-28"
+        problem: |
+          position: fixed;
+          z-index: var(--z-docker, 1000);
+          
+          z-index of 1000 is EXTREMELY HIGH (debug level is 100).
+          This will render ABOVE everything including modals.
+          
+      - file: "FloatingPluginDocker.tsx:331-334"
+        problem: |
+          style={{
+            left: position.x,
+            top: position.y,
+          }}
+          
+          No bounds checking - if x/y become negative or exceed viewport,
+          the element renders OUTSIDE visible area or creates a large overlay.
+          
+      - file: "$projectId.tsx:219"
+        problem: |
+          isFloatingDockerOpen STATE is false by default.
+          BUT if isOpen=false, the component returns null (line 325).
+          
+          THIS MEANS: The black rectangle is NOT from FloatingPluginDocker
+          when it's closed. Must be from ANOTHER source.
+          
+    additional_suspects:
+      - file: "PluginDocker.css:280-284"
+        problem: |
+          @media (max-width: 767px) - on MOBILE:
+          position: absolute;
+          z-index: var(--z-modal, 50);
+          
+          If media query fires incorrectly or Docker has no content,
+          it might create an empty positioned element.
+          
+      - file: "BottomSheet.css:17-27"
+        problem: |
+          Backdrop: position: fixed; z-index: 50
+          Content: position: fixed; z-index: 51
+          
+          If BottomSheet is rendered but stuck open, it creates a backdrop.
+          
+    likely_root_cause: |
+      The "giant black rectangle at bottom-right" is most likely:
+      1. FloatingPluginDocker with INCORRECT INITIAL POSITION (if opened)
+      2. OR a PluginDocker on mobile with absolute positioning rendering empty
+      3. OR a backdrop/overlay from BottomSheet or Modal stuck open
+      
+      NEED BROWSER DEVTOOLS to confirm which element is causing this.
+      
+    severity: CRITICAL
+    fix_needed: |
+      1. Ensure FloatingPluginDocker bounds are ALWAYS within viewport
+      2. Reduce z-index to reasonable value (60 max, not 1000)
+      3. Add visibility check for empty Docker panels
+      4. Debug with browser DevTools to identify actual culprit element
+
+# ==============================================================================
+# INVESTIGATION 3: Activity Bar Toggle Problem (CRITICAL)
+# ==============================================================================
+  
+  investigation_3_activity_bar_toggle:
+    main_bar_toggleable: true
+    left_bar_toggleable: true
+    right_bar_toggleable: true
+    
+    detailed_analysis:
+      left_bar_wiring:
+        file: "$projectId.tsx:300-312"
+        items: ["filetree", "notes"]
+        behavior: "Click toggles plugin in Docker, same as right bar"
+        
+      right_bar_wiring:
+        file: "$projectId.tsx:318-330"
+        items: ["chat", "terminal", "preview"]
+        behavior: "Click toggles plugin in Docker, same as left bar"
+        
+      click_behavior:
+        file: "PluginActivityDockerWiring.tsx:206-233"
+        logic: |
+          handleItemClick:
+          - If plugin in THIS panel AND is active → close it
+          - If plugin in THIS panel but NOT active → make it active
+          - If plugin NOT in this panel → move it here and make active
+          
+    root_cause: "NONE - Toggle logic IS IMPLEMENTED correctly"
+    
+    BUT_WAIT: |
+      The user reported: "Only main content can toggle plugins, left/right activity bars can't"
+      
+      Let me re-check what "main content" means...
+      
+      AH! The user might mean the ActivityBarTop (horizontal bar above main content).
+      That's a DIFFERENT component from the vertical ActivityBars!
+      
+    clarification:
+      main_content_bar:
+        component: "ActivityBarTop.tsx"
+        purpose: "Switches between Notes/Monaco/Preview in MAIN content area"
+        wired_in: "MainContentRenderer.tsx (not directly in $projectId.tsx)"
+        behavior: "Toggles activeMainPluginId state in $projectId.tsx"
+        
+      left_right_bars:
+        component: "ActivityBar.tsx via usePluginActivityDockerWiring"
+        purpose: "Open/close plugins in LEFT/RIGHT Docker panels"
+        wired_in: "$projectId.tsx via leftWiring/rightWiring"
+        behavior: "SHOULD toggle - but user says it doesn't work"
+        
+    possible_issue: |
+      The wiring looks correct in code. Possible runtime issues:
+      1. CSS may be hiding the Docker panels (width: 0 stuck)
+      2. onItemClick callback might not be firing (event bubbling issue)
+      3. Console errors preventing state updates
+      
+      CANNOT verify without browser testing - this is a RUNTIME issue.
+      
+    severity: HIGH (if confirmed not working)
+    recommendation: "Need browser console logging to trace click events"
+
+# ==============================================================================
+# INVESTIGATION 4: Plugin Docker Visibility (MEDIUM)
+# ==============================================================================
+  
+  investigation_4_docker_visibility:
+    floating_docker:
+      initial_state: "hidden (isFloatingDockerOpen = false)"
+      toggle_mechanism: "Cmd+Shift+P keyboard shortcut"
+      toggle_location: "$projectId.tsx:252-263"
+      
+      bug_analysis: |
+        FloatingPluginDocker ONLY renders if isOpen=true (line 325).
+        Initial state is false (line 219).
+        Toggle logic looks correct.
+        
+        If user presses Cmd+Shift+P, it SHOULD show.
+        If it's not showing, possible causes:
+        1. Keyboard event not firing (focus on input element?)
+        2. CSS display:none from mobile media query (<767px hides it)
+        3. Position rendering outside viewport
+        
+    plugin_docker_panels:
+      visibility_logic: "isOpen state derived from activePluginId !== null"
+      file: "PluginActivityDockerWiring.tsx:190"
+      
+      bug_analysis: |
+        Docker isOpen = (activePluginId !== null)
+        If no plugin is active, Docker collapses to width: 0
+        
+        POTENTIAL ISSUE:
+        Initial placements come from getDefaultPlacements('default')
+        Need to check if default placements actually SET any plugins.
+        
+    default_placements:
+      file: "usePluginPlacement.ts (via grep earlier)"
+      concern: |
+        If getDefaultPlacements returns an empty Map or null values,
+        ALL dockers would be closed by default.
+        
+    severity: MEDIUM
+    fix_needed: |
+      1. Verify getDefaultPlacements returns valid plugin placements
+      2. Check mobile media query isn't hiding FloatingPluginDocker on desktop
+      3. Add console logging to keyboard shortcut handler
+
+# ==============================================================================
+# INVESTIGATION 5: Drag-Drop System (PARTIALLY IMPLEMENTED)
+# ==============================================================================
+  
+  investigation_5_drag_drop:
+    implemented: PARTIAL
+    
+    library_used: "HTML5 Drag-and-Drop API (native)"
+    
+    drag_handlers_found:
+      - location: "ActivityBar.tsx:151-159"
+        handler: "handleDragStart"
+        data_set: "pluginId, sourcePosition"
+        draggable_prop: "draggable={true} passed from wiring"
+        
+      - location: "ActivityBar.tsx:165-168"
+        handler: "handleDragEnd"
+        behavior: "Clears dragging state"
+        
+    drop_handlers_found:
+      - location: "PluginDocker.tsx:282-298"
+        handler: "handleDrop"
+        behavior: |
+          - Gets pluginId from dataTransfer
+          - Gets sourcePosition from dataTransfer
+          - If source !== target position, calls onPluginDrop(pluginId)
+        wiring: "onPluginDrop={handlePluginDrop} in PluginActivityDockerWiring.tsx:317"
+        
+    cross_panel_drop:
+      implemented: true
+      logic: "Only accepts drops from OPPOSITE position (sourcePosition !== position)"
+      
+    WHAT_IS_NOT_IMPLEMENTED:
+      - drag_visual_feedback: |
+          No custom drag image - uses browser default (may look broken)
+          No ghost element while dragging
+          
+      - drag_between_activity_bars: |
+          ActivityBar items can INITIATE drag, but...
+          ActivityBar items CANNOT RECEIVE drops.
+          There's no onDrop handler on ActivityBar component!
+          
+          Drops only work into PluginDocker panels.
+          
+      - drag_to_floaing_docker: |
+          FloatingPluginDocker has NO drop handlers at all.
+          You can't drag plugins INTO the floating docker.
+          
+      - reorder_within_panel: |
+          Cannot reorder plugins within the same panel.
+          Only cross-panel moves are supported.
+          
+    severity: MEDIUM
+    root_cause: |
+      Drag-and-drop is HALF-BAKED:
+      - Dragging FROM ActivityBar: ✅ Works
+      - Dropping INTO PluginDocker: ✅ Works
+      - Dropping INTO ActivityBar: ❌ NOT IMPLEMENTED
+      - Dropping INTO FloatingPluginDocker: ❌ NOT IMPLEMENTED
+      
+    fix_needed: |
+      1. Add onDrop handlers to ActivityBar.tsx
+      2. Add onDrop handlers to FloatingPluginDocker.tsx
+      3. Add visual feedback during drag (drag preview)
+
+# ==============================================================================
+# INVESTIGATION 6: "Full Editor" Preset Dropdown (LOW)
+# ==============================================================================
+  
+  investigation_6_preset_dropdown:
+    component_file: "PresetSelector.tsx"
+    where_rendered: "GlobalHeader.tsx:207-209"
+    visibility_control: "hidden md:flex items-center"
+    
+    analysis:
+      should_hide_in_project_view: "UNCLEAR from spec"
+      actually_hidden: false
+      current_behavior: |
+        PresetSelector is shown in GlobalHeader on desktop (md:flex).
+        It's hidden on mobile (hidden class).
+        
+        It shows "Full Editor" label when that preset is selected.
+        
+    user_concern: |
+      The user says "Full Editor preset dropdown in header (shouldn't be in project view)".
+      
+      This suggests PresetSelector should ONLY appear in certain routes,
+      not in all routes including project view.
+      
+    code_check:
+      - GlobalHeader ALWAYS renders PresetSelector (line 207-209)
+      - No route-conditional logic for hiding it
+      - No "isProjectView" prop or check
+      
+    root_cause: |
+      PresetSelector is ALWAYS visible in header - no route-aware hiding.
+      If spec says it shouldn't appear in project routes, logic is MISSING.
+      
+    severity: LOW (cosmetic/UX issue)
+    fix_needed: |
+      Add conditional rendering based on current route:
+      
+      const location = useLocation();
+      const isProjectRoute = location.pathname.match(/^\/[^\/]+$/);
+      
+      {!isProjectRoute && <PresetSelector />}
+      
+      OR: Keep it but verify if spec actually requires hiding.
+
+# ==============================================================================
+# INVESTIGATION 7: GlobalSidebar Auto-Collapse
+# ==============================================================================
+  
+  investigation_7_sidebar_collapse:
+    component_file: "MainSidebar.tsx"
+    
+    auto_collapse_logic:
+      trigger: "toggleSidebar() from useLayoutStore"
+      keyboard_shortcut: "Cmd+B (line 161-163)"
+      collapse_state: "sidebarCollapsed from useLayoutStore"
+      
+    collapsed_behavior:
+      width: "w-16 (64px) when collapsed, w-64 (256px) when expanded"
+      icons_visible: true
+      labels_hidden: true
+      
+    tooltips:
+      implemented: "PARTIAL"
+      code_evidence: "title={isCollapsed ? item.label : undefined} (line 209)"
+      mechanism: "Native HTML title attribute, not Radix tooltip"
+      
+    auto_collapse:
+      on_page_load: "No - uses persisted state from layoutStore"
+      on_resize: "No - no responsive auto-collapse"
+      on_route_change: "No - state persists"
+      
+    severity: LOW
+    issues:
+      - issue: "Uses native title attribute, not styled tooltip"
+        evidence: "MainSidebar.tsx:209"
+        impact: "Inconsistent tooltip style with rest of app"
+        
+      - issue: "No responsive auto-collapse on narrow screens"
+        evidence: "Sidebar just hides on mobile via CSS"
+        impact: "Desktop tablet users may want auto-collapse"
+        
+    recommendation: |
+      1. Replace title= with Radix Tooltip for consistent styling
+      2. Consider responsive auto-collapse at 1024px breakpoint
+
+# ==============================================================================
+# PRIORITY ORDER FOR FIXES
+# ==============================================================================
+
+  priority_order:
+    - knot: "Investigation 2 - Black Rectangle"
+      reason: |
+        CRITICAL visual bug blocking usability.
+        Most likely z-index/position issue in FloatingPluginDocker.
+        Reduces z-index from 1000 → 60, add viewport bounds validation.
+      effort: "30 min"
+      
+    - knot: "Investigation 3 - Activity Bar Toggle"
+      reason: |
+        HIGH priority if confirmed broken at runtime.
+        Wiring code LOOKS correct, need browser testing to confirm.
+        May be CSS or event bubbling issue.
+      effort: "1 hour (debugging)"
+      
+    - knot: "Investigation 5 - Drag-Drop Incomplete"
+      reason: |
+        MEDIUM priority - half-implemented feature.
+        Add drop handlers to ActivityBar and FloatingPluginDocker.
+        Add visual drag feedback.
+      effort: "2-3 hours"
+      
+    - knot: "Investigation 4 - Docker Visibility"
+      reason: |
+        MEDIUM priority - need to verify default placements.
+        May be cause of "empty" looking panels.
+      effort: "30 min"
+      
+    - knot: "Investigation 1 - Grid Ratio"
+      reason: |
+        MEDIUM priority - works on typical screens.
+        Spec deviation on large displays.
+        Decision needed: pixel-safe or ratio-exact?
+      effort: "1 hour"
+      
+    - knot: "Investigation 6 - Preset Dropdown"
+      reason: |
+        LOW priority - cosmetic UX issue.
+        May not need fixing if spec allows it.
+      effort: "15 min"
+      
+    - knot: "Investigation 7 - Sidebar Tooltips"
+      reason: |
+        LOW priority - works, just not styled.
+        Replace native title with Radix Tooltip.
+      effort: "30 min"
+
+# ==============================================================================
+# NEXT STEPS
+# ==============================================================================
+
+  next_steps:
+    1: |
+      BROWSER TESTING REQUIRED:
+      - Open DevTools, inspect black rectangle element
+      - Check which CSS class/component creates it
+      - Check z-index and position values
+      
+    2: |
+      CONSOLE LOGGING:
+      - Add logging to ActivityBar onClick handlers
+      - Verify click events are firing
+      - Check for JS errors blocking state updates
+      
+    3: |
+      DEFAULT PLACEMENTS:
+      - Log getDefaultPlacements('default') output
+      - Verify plugins are being placed by default
+      
+    4: |
+      CREATE FIX STORIES:
+      - UXUI-HOTFIX-01: Fix FloatingPluginDocker z-index/position
+      - UXUI-HOTFIX-02: Debug Activity Bar toggle behavior
+      - UXUI-HOTFIX-03: Complete drag-drop implementation
+
+# ==============================================================================
+# ADDITIONAL INVESTIGATION: Default Placements (CONFIRMED WORKING)
+# ==============================================================================
+
+  investigation_4_docker_visibility_update:
+    default_placements_verified: true
+    
+    getDefaultPlacements_analysis:
+      file: "usePluginPlacement.ts:778-809"
+      default_preset_returns:
+        - { pluginId: 'filetree', panel: 'left' }
+        - { pluginId: 'chat', panel: 'right' }
+        
+    conclusion: |
+      Default placements ARE SET correctly:
+      - 'default' preset: filetree→left, chat→right
+      - This means LEFT Docker should show FileTree
+      - RIGHT Docker should show Chat
+      
+      If Dockers appear empty, the issue is:
+      1. renderPluginContent callback not being called
+      2. Plugin registry not returning components
+      3. OR CSS/styling hiding the content
+      
+    severity: "MEDIUM (need runtime debugging)"
+
+# ==============================================================================
+# SUMMARY OF ALL FINDINGS
+# ==============================================================================
+
+  executive_summary:
+    total_issues_found: 7
+    
+    critical_issues:
+      - id: 1
+        title: "Black Rectangle (z-index/position)"
+        status: "NEEDS_BROWSER_DEVTOOLS"
+        suspected_file: "FloatingPluginDocker.tsx"
+        
+      - id: 2
+        title: "Activity Bar Toggle Not Working"
+        status: "NEEDS_RUNTIME_DEBUGGING"
+        suspected_file: "PluginActivityDockerWiring.tsx"
+        
+    medium_issues:
+      - id: 3
+        title: "Drag-Drop Only Half-Implemented"
+        status: "CONFIRMED - DROP handlers missing on ActivityBar"
+        files: ["ActivityBar.tsx", "FloatingPluginDocker.tsx"]
+        
+      - id: 4
+        title: "Docker Visibility / Content Empty"
+        status: "NEEDS_RUNTIME_DEBUGGING"
+        suspected: "renderPluginContent or registry issue"
+        
+      - id: 5
+        title: "Grid Ratio Uses Pixels Not Fractions"
+        status: "WORKS but deviates from spec on large screens"
+        file: "workspace-layout.css"
+        
+    low_issues:
+      - id: 6
+        title: "PresetSelector Always Visible"
+        status: "COSMETIC - may not need fix"
+        file: "GlobalHeader.tsx:207-209"
+        
+      - id: 7
+        title: "MainSidebar Uses Native Title, Not Radix Tooltip"
+        status: "COSMETIC"
+        file: "MainSidebar.tsx:209"
+        
+    agent_limitations: |
+      As a TEST-ONLY agent, I CANNOT:
+      - Run browser automation to capture screenshots
+      - Modify any code files to fix issues
+      - Access runtime browser DevTools
+      
+      REQUIRED NEXT STEPS:
+      1. Human or dev-ext agent must run browser with DevTools
+      2. Identify which element causes black rectangle
+      3. Add console.log to click handlers
+      4. Implement missing drop handlers
+      
+  report_complete: true
+  date_generated: "2026-01-28 14:24:24"
+  agent: "real-world-validator"

@@ -1,0 +1,72 @@
+# Sync Dev to Main (Excluding Agent Directories)
+# This workflow automatically syncs changes from dev to main branch
+# while excluding AI agent configuration directories
+
+name: Sync Dev to Main
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+# Required for pushing to main branch
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync to Main (Exclude Agent Files)
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout dev branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create filtered branch
+        run: |
+          # Create a new orphan branch for filtered content
+          git checkout --orphan temp-main
+          
+          # Remove agent-related directories
+          git rm -rf --cached _bmad || true
+          git rm -rf --cached _bmad-output || true
+          git rm -rf --cached .agent || true
+          git rm -rf --cached .augment || true
+          git rm -rf --cached .claude || true
+          git rm -rf --cached .clinerules || true
+          git rm -rf --cached .codex || true
+          git rm -rf --cached .crush || true
+          git rm -rf --cached .cursor || true
+          git rm -rf --cached .gemini || true
+          git rm -rf --cached .iflow || true
+          git rm -rf --cached .kilocode || true
+          git rm -rf --cached .kiro || true
+          git rm -rf --cached .opencode || true
+          git rm -rf --cached .qwen || true
+          git rm -rf --cached .roo || true
+          git rm -rf --cached .rovodev || true
+          git rm -rf --cached .windsurf || true
+          git rm -rf --cached CLAUDE.md || true
+          git rm -rf --cached AGENTS.md || true
+          
+          # Delete the directories from working tree
+          rm -rf _bmad _bmad-output .agent .augment .claude .clinerules .codex .crush .cursor .gemini .iflow .kilocode .kiro .opencode .qwen .roo .rovodev .windsurf
+          rm -f CLAUDE.md AGENTS.md
+          
+          # Commit filtered content
+          git add -A
+          git commit -m "Sync from dev (filtered) - $(date '+%Y-%m-%d %H:%M:%S')"
+
+      - name: Push to main
+        run: |
+          git push origin temp-main:main --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

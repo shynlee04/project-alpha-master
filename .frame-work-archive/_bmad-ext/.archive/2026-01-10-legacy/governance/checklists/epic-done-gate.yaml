@@ -1,0 +1,45 @@
+id: "EPIC-DONE-GATE"
+version: "1.0.0"
+triggers:
+  - event: "epic_completion_claim"
+
+checks:
+  - id: "EDG-001"
+    name: "100% story completion"
+    severity: "CRITICAL"
+    validation: "all_stories_in_epic({epic_id}).status == DONE"
+    action_on_fail: "Not all stories complete - check STORY-INDEX.md"
+    bypass: false
+    
+  - id: "EDG-002"
+    name: "E2E test suite exists"
+    severity: "CRITICAL"
+    validation: "file_exists(tests/e2e/{epic_id}/*.spec.ts)"
+    action_on_fail: "Create Playwright E2E tests for epic"
+    bypass: false
+    
+  - id: "EDG-003"
+    name: "E2E tests pass 100%"
+    severity: "CRITICAL"
+    validation: "pnpm test:e2e --grep {epic_id} passes"
+    action_on_fail: "E2E tests failing - fix all before epic completion"
+    bypass: false
+    
+  - id: "EDG-004"
+    name: "Human approval received"
+    severity: "CRITICAL"
+    validation: "user_confirmed(APPROVED: {epic_id})"
+    action_on_fail: "Await human approval with 'APPROVED: {epic_id}'"
+    bypass: false  # NEVER BYPASS
+    
+  - id: "EDG-005"
+    name: "Retrospective completed"
+    severity: "HIGH"
+    validation: "file_exists(_bmad-output/sprint-artifacts/retrospectives/{epic_id}-retrospective.md)"
+    action_on_fail: "Run retrospective workflow before closing epic"
+    bypass: true
+
+human_approval:
+  format: "APPROVED: {epic_id}"
+  must_contain: ["APPROVED", "EPIC-"]
+  documented_in: "sprint-status.yaml"

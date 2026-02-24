@@ -1,0 +1,685 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONSOLIDATED SPRINT: ADR-033 + ADR-034 FOUNDATION REMEDIATION
+# ═══════════════════════════════════════════════════════════════════════════════
+# 
+# ZERO TOLERANCE MODE - All work requires GATEKEEPER validation before complete
+# Gatekeeper: BMAD Master Orchestrator (Claude)
+# 
+# Created: 2026-01-17T11:00:00+07:00
+# Status: ACTIVE - IMMEDIATE EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: "ADR-033-034-FOUNDATION-REMEDIATION"
+  name: "Foundation Stability Sprint (Zero Tolerance)"
+  start_date: "2026-01-17T11:00:00+07:00"
+  end_date: "2026-01-19T23:59:00+07:00"
+  status: "ACTIVE"
+  gatekeeper: "BMAD Master Orchestrator"
+  
+governance:
+  mode: "ZERO_TOLERANCE"
+  validation_required: true
+  gatekeeper_approval: "MANDATORY"
+  
+  rules:
+    - "NO story marked complete without gatekeeper validation"
+    - "ALL fixes must be tested against original user symptoms"
+    - "Evidence required: console logs, screenshots, test output"
+    - "TypeScript must be 0 errors after EACH phase"
+    - "Integration test must pass after EACH work unit"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT (Why We're Here)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+problem:
+  summary: |
+    28 stories marked "complete" in ADR-033, but 31 infections still active.
+    User cannot access workspaces despite "95% health score" claim.
+    
+  user_symptoms:
+    - id: "SYM-01"
+      description: "Desktop shows temp project option (should NOT exist)"
+      severity: "P0"
+      root_causes: ["PLAT-001", "ROUTE-001"]
+      
+    - id: "SYM-02"
+      description: "Select folder → bounces to Notes (wrong navigation)"
+      severity: "P0"
+      root_causes: ["FSA-002", "ROUTE-003", "STATE-002"]
+      
+    - id: "SYM-03"
+      description: "Notes can't create new project (only browser-mode)"
+      severity: "P0"
+      root_causes: ["PLAT-002"]
+      
+    - id: "SYM-04"
+      description: "Desktop still shows browser DB choice"
+      severity: "P0"
+      root_causes: ["PLAT-001", "PLAT-004"]
+      
+    - id: "SYM-05"
+      description: "IDE files not loading, Monaco blank"
+      severity: "P0"
+      root_causes: ["FSA-001", "FSA-003", "FSA-007", "STATE-002"]
+      
+    - id: "SYM-06"
+      description: "Terminal loading forever"
+      severity: "P1"
+      root_causes: ["WebContainer boot issue - separate epic"]
+      
+    - id: "SYM-07"
+      description: "Getting kicked out randomly"
+      severity: "P0"
+      root_causes: ["ROUTE-003", "STATE-002", "STATE-003"]
+      
+    - id: "SYM-08"
+      description: "Editing bounces to browser DB"
+      severity: "P1"
+      root_causes: ["PLAT-002", "STATE-003"]
+      
+    - id: "SYM-09"
+      description: "No code syntax highlighting in Notes"
+      severity: "P2"
+      root_causes: ["BlockNote config - separate issue"]
+
+  infection_count:
+    total: 31
+    by_domain:
+      fsa_handle: 10
+      state_management: 12
+      routing: 13
+      platform_contract: 6
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TEAM ASSIGNMENTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+teams:
+  team_a:
+    name: "Platform & Routing Squad"
+    focus: "Routes, Platform Contract, UI Guards"
+    platform: "Claude Code"
+    current_phase: "WAITING_FOR_ASSIGNMENT"
+    
+  team_b:
+    name: "Storage & State Squad"  
+    focus: "FSA Handles, State Scoping, Hydration"
+    platform: "OpenCode"
+    current_phase: "WAITING_FOR_ASSIGNMENT"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WORK UNITS (Not Stories - Unified Remediation)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+work_units:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PHASE 1: FSA HANDLE UNIFICATION (Team B)
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  WU-FSA-01:
+    title: "Delete duplicate FSA handle managers"
+    team: "B"
+    priority: "P0"
+    estimated_hours: 1
+    status: "PENDING"
+    
+    infections_targeted:
+      - FSA-009  # 3 different handle managers
+      
+    files_to_modify:
+      delete:
+        - path: "src/lib/filesystem/fsa-handle-manager.ts"
+          archive_to: "_bmad-ext/.archive/fsa-handle-manager-2026-01-17.ts"
+          
+    acceptance_criteria:
+      - "Only `HandlePersistenceService` exists for FSA handle storage"
+      - "All imports updated to use HandlePersistenceService"
+      - "TypeScript: 0 errors"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "grep -r 'fsa-handle-manager' src/ returns 0 results"
+        - "pnpm tsc --noEmit passes"
+
+  WU-FSA-02:
+    title: "Implement Chrome 129 handle storage"
+    team: "B"
+    priority: "P0"
+    estimated_hours: 3
+    status: "PENDING"
+    depends_on: ["WU-FSA-01"]
+    
+    infections_targeted:
+      - FSA-001  # handle as any throws DataCloneError
+      - FSA-003  # stores handleData: null
+      - FSA-004  # trySilentRestore prompts user
+      
+    files_to_modify:
+      modify:
+        - path: "src/infrastructure/filesystem/handle-persistence.ts"
+          changes:
+            - "Add canStoreHandleInIndexedDB() feature detection"
+            - "Store actual handle when Chrome 129+ detected"
+            - "Implement true silent restore (no showDirectoryPicker on restore)"
+            
+    acceptance_criteria:
+      - "Feature detection for structured clone support"
+      - "Handle stored in IndexedDB (not null)"
+      - "Silent restore from stored handle works"
+      - "Fallback: only prompt if handle truly unavailable"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Create project, refresh page, navigate to IDE"
+        - "Files load WITHOUT folder picker prompt"
+        - "Console shows: '[HandlePersistenceService] Silent restore successful'"
+        
+    test_script: |
+      1. Clear IndexedDB
+      2. Go to /ide
+      3. Select folder
+      4. Verify files load
+      5. Refresh page (Cmd+R)
+      6. EXPECTED: Files load without prompt
+      7. ACTUAL: [Team B fills this]
+
+  WU-FSA-03:
+    title: "Add FSA handle to ProjectContext"
+    team: "B"
+    priority: "P0"
+    estimated_hours: 2
+    status: "PENDING"
+    depends_on: ["WU-FSA-02"]
+    
+    infections_targeted:
+      - FSA-006  # Factory requires handle not available
+      - FSA-007  # No handle in ProjectContext
+      
+    files_to_modify:
+      modify:
+        - path: "src/lib/workspace/ProjectContext.tsx"
+          changes:
+            - "Add `directoryHandle: FileSystemDirectoryHandle | null` to context"
+            - "Restore handle on mount for FSA projects"
+            - "Pass handle to StorageGatewayFactory"
+            
+    acceptance_criteria:
+      - "ProjectContext provides handle to children"
+      - "StorageGatewayFactory receives handle from context"
+      - "No duplicate handle restoration calls"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "React DevTools shows handle in ProjectContext value"
+        - "IDELayout receives handle via context"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PHASE 2: STATE SCOPING (Team B)
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  WU-STATE-01:
+    title: "Fix IDE store hydration to use current projectId"
+    team: "B"
+    priority: "P0"
+    estimated_hours: 2
+    status: "PENDING"
+    depends_on: ["WU-FSA-03"]
+    
+    infections_targeted:
+      - STATE-002  # Hydrates "most recent" not "current"
+      
+    files_to_modify:
+      modify:
+        - path: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
+          changes:
+            - "Hydrate state for projectId from URL, not 'last used'"
+            - "Add projectId to persist key: `ide-state-{projectId}`"
+            
+    acceptance_criteria:
+      - "Open Project A: shows A's file tabs"
+      - "Open Project B in new tab: shows B's file tabs (not A's)"
+      - "No cross-contamination between projects"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Open /ide/project-a, open files"
+        - "Open /ide/project-b in new tab"
+        - "Verify project-b shows its own files, not project-a's"
+
+  WU-STATE-02:
+    title: "Move workspace store from localStorage to Dexie"
+    team: "B"
+    priority: "P0"
+    estimated_hours: 2
+    status: "PENDING"
+    depends_on: ["WU-STATE-01"]
+    
+    infections_targeted:
+      - STATE-003  # localStorage leak, no project scope
+      
+    files_to_modify:
+      modify:
+        - path: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+          changes:
+            - "Replace localStorage with Dexie storage"
+            - "Add projectId to composite key"
+            
+    acceptance_criteria:
+      - "Workspace state persists per-project in Dexie"
+      - "localStorage key 'workspace-state' no longer used"
+      - "Project switch loads correct workspace state"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Application > Local Storage: 'workspace-state' NOT present"
+        - "Application > IndexedDB: workspace state visible per project"
+
+  WU-STATE-03:
+    title: "Fix project-crud-slice to persist actual handle"
+    team: "B"
+    priority: "P0"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-FSA-02"]
+    
+    infections_targeted:
+      - STATE-011  # Calls persistHandle(null)
+      
+    files_to_modify:
+      modify:
+        - path: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+          changes:
+            - "Pass actual handle to persistHandle(), not null"
+            - "Ensure handle is passed from FolderPickerDialog through creation flow"
+            
+    acceptance_criteria:
+      - "After project creation, handle is in db.fsaHandles"
+      - "Handle restoration works on next visit"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Create new project via folder picker"
+        - "Check IndexedDB: fsaHandles table has entry with handle data"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PHASE 3: ROUTE STANDARDIZATION (Team A)
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  WU-ROUTE-01:
+    title: "Add platform guard to ide.tsx base route"
+    team: "A"
+    priority: "P0"
+    estimated_hours: 1
+    status: "PENDING"
+    
+    infections_targeted:
+      - ROUTE-001  # No beforeLoad platform guard
+      
+    files_to_modify:
+      modify:
+        - path: "src/routes/ide.tsx"
+          changes:
+            - "Add beforeLoad with getPlatformContract() check"
+            - "Redirect mobile to /notes with reason parameter"
+            
+    acceptance_criteria:
+      - "Mobile user visiting /ide gets redirected to /notes"
+      - "Desktop user sees project selector"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Chrome DevTools mobile emulation: /ide redirects to /notes"
+        - "Desktop: /ide shows project selector"
+
+  WU-ROUTE-02:
+    title: "Remove double-fetch from ide.$projectId.tsx"
+    team: "A"
+    priority: "P0"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-ROUTE-01"]
+    
+    infections_targeted:
+      - ROUTE-003  # Double fetch (beforeLoad + loader)
+      
+    files_to_modify:
+      modify:
+        - path: "src/routes/ide.$projectId.tsx"
+          changes:
+            - "Remove project fetch from beforeLoad (keep platform check only)"
+            - "Use loader for project data only"
+            
+    acceptance_criteria:
+      - "Project fetched once in loader"
+      - "beforeLoad only checks platform (no data fetch)"
+      - "No race conditions on navigation"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Console shows single '[IDERoute.loader]' message, not double"
+        - "Navigation to project is instant (no retry loops)"
+
+  WU-ROUTE-03:
+    title: "Remove temp project from desktop IDE flow"
+    team: "A"
+    priority: "P0"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-ROUTE-01"]
+    
+    infections_targeted:
+      - PLAT-001  # Temp project shown on desktop
+      
+    files_to_modify:
+      modify:
+        - path: "src/routes/ide.tsx"
+          changes:
+            - "Remove 'Quick IDE (Temp Project)' button on desktop"
+            - "Desktop sees ONLY: 'Select Project Folder' and 'Browse Projects'"
+            
+    acceptance_criteria:
+      - "Desktop /ide shows 2 buttons only"
+      - "No temp project option on desktop"
+      - "Mobile still gets temp project (via redirect to notes)"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Desktop /ide: No 'Temp Project' button visible"
+        - "Only 'Select Project Folder' and 'Browse Projects' shown"
+
+  WU-ROUTE-04:
+    title: "Use TanStack Router Outlet pattern in ide.tsx"
+    team: "A"
+    priority: "P1"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-ROUTE-02"]
+    
+    infections_targeted:
+      - ROUTE-002  # Uses window.location not Outlet
+      
+    files_to_modify:
+      modify:
+        - path: "src/routes/ide.tsx"
+          changes:
+            - "Remove window.location.pathname check"
+            - "Use Outlet component for child route rendering"
+            
+    acceptance_criteria:
+      - "Child routes render via Outlet"
+      - "No direct window.location checks"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "grep 'window.location' src/routes/ide.tsx returns 0 results"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PHASE 4: PLATFORM CONTRACT ENFORCEMENT (Team A)
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  WU-PLAT-01:
+    title: "Add project picker to Notes for desktop"
+    team: "A"
+    priority: "P0"
+    estimated_hours: 2
+    status: "PENDING"
+    depends_on: ["WU-ROUTE-01"]
+    
+    infections_targeted:
+      - PLAT-002  # Notes hardcoded browser-mode only
+      
+    files_to_modify:
+      modify:
+        - path: "src/routes/notes.lazy.tsx"
+          changes:
+            - "Check getPlatformContract()"
+            - "Desktop: show project picker or recent projects"
+            - "Mobile: continue with browser-mode"
+            
+    acceptance_criteria:
+      - "Desktop /notes: can create/select FSA project"
+      - "Mobile /notes: uses browser-mode (IndexedDB)"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Desktop /notes: project picker or list shown"
+        - "Mobile /notes: browser-mode auto-created"
+
+  WU-PLAT-02:
+    title: "Add platform checks to WorkspaceSwitcher and sidebar"
+    team: "A"
+    priority: "P1"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-PLAT-01"]
+    
+    infections_targeted:
+      - ROUTE-007  # WorkspaceSwitcher no platform validation
+      - PLAT-003   # Sidebar bypasses platform checks
+      
+    files_to_modify:
+      modify:
+        - path: "src/presentation/components/common/WorkspaceSwitcher.tsx"
+          changes:
+            - "Filter out IDE option on mobile"
+        - path: "src/presentation/components/layout/MainSidebar.tsx"
+          changes:
+            - "Hide IDE nav item on mobile"
+            
+    acceptance_criteria:
+      - "Mobile: IDE not visible in switcher or sidebar"
+      - "Desktop: all workspaces visible"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Mobile emulation: IDE not in sidebar"
+        - "Mobile emulation: WorkspaceSwitcher has no IDE option"
+
+  WU-PLAT-03:
+    title: "Fix Hub navigation to use canAccessIDE only"
+    team: "A"
+    priority: "P1"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-PLAT-02"]
+    
+    infections_targeted:
+      - ROUTE-006  # Double-checks FSA + canAccessIDE
+      
+    files_to_modify:
+      modify:
+        - path: "src/presentation/components/hub/HubHomePage.tsx"
+          changes:
+            - "Remove storageType === 'fsa' check"
+            - "Use canAccessIDE only for IDE navigation"
+            
+    acceptance_criteria:
+      - "Desktop users navigate to IDE regardless of storage type"
+      - "Mobile users navigate to Notes"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Desktop with FSA project: clicks card → goes to /ide"
+        - "Desktop with IndexedDB project: clicks card → goes to /ide"
+        - "Mobile: clicks card → goes to /notes"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PHASE 5: VERIFICATION (Both Teams + Gatekeeper)
+  # ─────────────────────────────────────────────────────────────────────────────
+  
+  WU-VERIFY-01:
+    title: "TypeScript verification"
+    team: "BOTH"
+    priority: "P0"
+    estimated_hours: 0.5
+    status: "PENDING"
+    depends_on: ["ALL_PREVIOUS"]
+    
+    acceptance_criteria:
+      - "pnpm tsc --noEmit returns 0 errors"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Run pnpm tsc --noEmit"
+        - "Paste full output"
+
+  WU-VERIFY-02:
+    title: "Integration tests"
+    team: "BOTH"
+    priority: "P0"
+    estimated_hours: 0.5
+    status: "PENDING"
+    depends_on: ["WU-VERIFY-01"]
+    
+    acceptance_criteria:
+      - "pnpm vitest run passes"
+      
+    validation_by_gatekeeper:
+      required: true
+      checks:
+        - "Run pnpm vitest run"
+        - "Paste summary"
+
+  WU-VERIFY-03:
+    title: "User symptom verification"
+    team: "GATEKEEPER"
+    priority: "P0"
+    estimated_hours: 1
+    status: "PENDING"
+    depends_on: ["WU-VERIFY-02"]
+    
+    acceptance_criteria:
+      - "All 9 user symptoms resolved"
+      
+    test_checklist:
+      SYM-01:
+        test: "Desktop /ide shows NO temp project option"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-02:
+        test: "Select folder → stays in IDE, files load"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-03:
+        test: "Desktop /notes can create FSA project"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-04:
+        test: "Desktop has NO browser DB choice (auto FSA)"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-05:
+        test: "IDE files load, Monaco shows content"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-06:
+        test: "Terminal status (separate epic, note current state)"
+        status: "DEFERRED"
+        evidence: null
+        
+      SYM-07:
+        test: "Navigate between projects without kicks"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-08:
+        test: "Editing stays in FSA mode"
+        status: "PENDING"
+        evidence: null
+        
+      SYM-09:
+        test: "Code blocks in Notes (separate issue, note state)"
+        status: "DEFERRED"
+        evidence: null
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXECUTION TRACKING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+execution:
+  current_phase: "WAITING_FOR_TEAM_ASSIGNMENT"
+  
+  team_a_status:
+    current_unit: null
+    units_pending: ["WU-ROUTE-01", "WU-ROUTE-02", "WU-ROUTE-03", "WU-ROUTE-04", "WU-PLAT-01", "WU-PLAT-02", "WU-PLAT-03"]
+    units_complete: []
+    units_blocked: []
+    
+  team_b_status:
+    current_unit: null
+    units_pending: ["WU-FSA-01", "WU-FSA-02", "WU-FSA-03", "WU-STATE-01", "WU-STATE-02", "WU-STATE-03"]
+    units_complete: []
+    units_blocked: []
+    
+  gatekeeper_queue:
+    awaiting_validation: []
+    validated: []
+    rejected: []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA (Epic Complete When ALL True)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  - id: "SC-01"
+    description: "Desktop IDE: Create → navigate → refresh → files load WITHOUT prompt"
+    status: "PENDING"
+    
+  - id: "SC-02"
+    description: "Desktop Notes: Can create FSA project (not only browser-mode)"
+    status: "PENDING"
+    
+  - id: "SC-03"
+    description: "Mobile: Cannot access IDE via any path"
+    status: "PENDING"
+    
+  - id: "SC-04"
+    description: "Project switch: State fully isolated"
+    status: "PENDING"
+    
+  - id: "SC-05"
+    description: "Page refresh: Handle restored silently (Chrome 122+)"
+    status: "PENDING"
+    
+  - id: "SC-06"
+    description: "TypeScript: 0 errors"
+    status: "PENDING"
+    
+  - id: "SC-07"
+    description: "Tests: vitest passes"
+    status: "PENDING"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DOCUMENT METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metadata:
+  created_by: "BMAD Master Orchestrator"
+  created_at: "2026-01-17T11:00:00+07:00"
+  parent_adrs:
+    - "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+    - "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
+  governance_mode: "ZERO_TOLERANCE"
+  validation_required: "GATEKEEPER_APPROVAL"

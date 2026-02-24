@@ -1,0 +1,375 @@
+# Sprint 2 Status - Storage Gateway Foundation
+#
+# Epic: CC-STORAGE-GATEWAY (Storage Gateway Foundation)
+# Goal: Fix abstraction layer to enable Desktop FSA migration
+# Status: COMPLETE
+# Created: 2026-01-18
+# Updated: 2026-01-18T04:45:00+07:00
+
+sprint_id: CC-SPRINT-02
+start_date: 2026-01-18
+duration: 2-75 days
+status: COMPLETE
+
+# Sprint Summary
+total_stories: 3
+p0_stories: 2
+p1_stories: 1
+p2_stories: 0
+total_effort_hours: 10
+
+# Stories Status
+stories:
+  - story_id: CC-SG-01
+    title: Gateway Abstraction - Replace 6 Direct db.notes.* Calls
+    priority: P0
+    status: done
+    effort_hours: 5
+    actual_hours: 2.5
+    team: TEAM_A
+    description: Replace 6 direct db.notes.* calls with StorageGateway abstraction
+    epic: CC-STORAGE-GATEWAY
+    completed_at: "2026-01-18T02:45:00+07:00"
+    ac_1: "All 6 direct db.notes.* calls replaced with storageGateway.write()/read()/delete()"
+    ac_2: "Files modified: note-crud-slice.ts, note-metadata-slice.ts, note-indexing-slice.ts"
+    ac_3: "pnpm tsc --noEmit passes with 0 errors"
+    ac_4: "pnpm vitest run passes"
+
+  - story_id: CC-SG-02
+    title: Clear Platform Routing - Verify DesktopFSAGateway, MobileIDBGateway
+    priority: P0
+    status: done
+    effort_hours: 3
+    actual_hours: 1
+    team: TEAM_A
+    description: Verify platform detection and routing works correctly for both desktop and mobile
+    epic: CC-STORAGE-GATEWAY
+    completed_at: "2026-01-18T04:00:00+07:00"
+    ac_1: "Desktop platform uses FSAGateway for note storage"
+    ac_2: "Mobile platform uses IDBGateway for note storage"
+    ac_3: "StorageGatewayFactory correctly routes by platform"
+    ac_4: "PlatformContract correctly reports deviceType and storageType"
+    validation:
+      code_review: passed
+      architect_validation: approved
+      e2e_desktop: passed-infrastructure
+      typescript: 0-errors
+      tests: 34-34-passed
+
+  - story_id: CC-SG-03
+    title: Migration Path Documentation - Document FSA Migration Steps
+    priority: P1
+    status: done
+    effort_hours: 2
+    actual_hours: 0.75
+    team: TEAM_A
+    description: Document migration path from DexieDB to FSA for desktop users
+    epic: CC-STORAGE-GATEWAY
+    completed_at: "2026-01-18T04:15:00+07:00"
+    ac_1: "Migration document created in _bmad-output/planning-artifacts/migration/"
+    ac_2: "Steps include: data export, import, verification"
+    ac_3: "Rollback procedure documented"
+    ac_4: "User-facing migration guide created"
+
+# Execution Order
+execution_order:
+  phase_1:
+    name: P0 - Gateway Abstraction
+    day: 1
+    stories:
+      - CC-SG-01
+
+  phase_2:
+    name: P0 - Platform Routing Verification
+    day: 1-2
+    stories:
+      - CC-SG-02
+
+  phase_3:
+    name: P1 - Documentation
+    day: 2-3
+    stories:
+      - CC-SG-03
+
+# Dependencies
+inter_story_dependencies:
+  - from: CC-SG-01
+    to: CC-SG-02
+    type: technical
+    reason: CC-SG-02 verifies routing of gateway implemented in CC-SG-01
+
+  - from: CC-SG-01
+    to: CC-SG-03
+    type: informational
+    reason: CC-SG-03 documents migration path enabled by CC-SG-01
+
+  - from: CC-SG-02
+    to: CC-SG-03
+    type: informational
+    reason: CC-SG-03 documents migration path enabled by gateway routing
+
+epic_dependencies:
+  - from_epic: CC-STORAGE-GATEWAY
+    to_epic: CC-DESKTOP-FSA
+    type: blocks
+    reason: CC-DESKTOP-FSA depends on storage gateway being fixed
+
+# Validation Gates (9-Step Cycle)
+validation_gates:
+  - gate: Context Gate
+    description: Story context XML loaded
+    status: completed
+
+  - gate: Journey Gate
+    description: User flow validated (Step 1a User Journey)
+    status: completed
+
+  - gate: Validation Gate
+    description: Requirements checked against architecture
+    status: completed
+
+  - gate: Implementation Gate
+    description: Code implemented (Step 3 Implement)
+    status: completed
+
+  - gate: Tool Gate
+    description: Tool permissions defined (Step 3a Agent Tool Spec)
+    status: completed
+
+  - gate: Test Gate
+    description: Tests passing (Step 4 Test)
+    status: completed
+
+  - gate: Review Gate
+    description: Code reviewed (Step 5 Review)
+    status: completed
+
+  - gate: Done Gate
+    description: AC verified (Step 6 Done)
+    status: completed
+
+  - gate: Reality Gate
+    description: Real-world validated (Step 6a Reality Check)
+    status: completed
+
+  - gate: Retro Gate
+    description: Lessons learned (Step 7 Retrospective)
+    status: completed
+
+# Progress Tracking
+completed_artifacts:
+  - artifact: Consolidated Context
+    path: _bmad-ext/.correct-course/consolidated-context-2026-01-18.md
+    status: complete
+    description: Validated research context - Paper 1 confirmed, Paper 2 rejected
+
+  - artifact: Story CC-SG-01 Template
+    path: _bmad-ext/.correct-course/stories/CC-SG-01.md
+    status: complete
+    description: Enhanced story template with 9-step cycle
+
+  - artifact: Story CC-SG-01 Context
+    path: _bmad-ext/.correct-course/stories/CC-SG-01.xml
+    status: complete
+    description: Developer context XML for CC-SG-01
+
+  - artifact: Story CC-SG-01 Report
+    path: _bmad-output/sprint-artifacts/stories/CC-SG-01-report.md
+    status: complete
+    description: Implementation report with before/after comparison
+
+  - artifact: Story CC-SG-01 Reality Check
+    path: _bmad-output/sprint-artifacts/stories/CC-SG-01-reality-check.md
+    status: complete
+    description: Real-world validation report
+
+  - artifact: Story CC-SG-01 Retrospective
+    path: _bmad-output/sprint-artifacts/stories/CC-SG-01-retrospective.md
+    status: complete
+    description: Lessons learned from CC-SG-01 execution
+
+  - artifact: Story CC-SG-02 Template
+    path: _bmad-ext/.correct-course/stories/CC-SG-02.md
+    status: complete
+    description: Enhanced story template with 9-step cycle
+
+  - artifact: Story CC-SG-02 Context
+    path: _bmad-ext/.correct-course/stories/CC-SG-02.xml
+    status: complete
+    description: Developer context XML for CC-SG-02
+
+  - artifact: Story CC-SG-02 Completion Report
+    path: _bmad-output/sprint-artifacts/stories/CC-SG-02-completion-report.md
+    status: complete
+    description: Platform routing verification results and analysis
+
+  - artifact: Story CC-SG-03 Template
+    path: _bmad-ext/.correct-course/stories/CC-SG-03.md
+    status: complete
+    description: Enhanced story template with 9-step cycle
+
+  - artifact: Story CC-SG-03 Context
+    path: _bmad-ext/.correct-course/stories/CC-SG-03.xml
+    status: complete
+    description: Developer context XML for CC-SG-03
+
+  - artifact: Story CC-SG-03 Report
+    path: _bmad-output/sprint-artifacts/stories/CC-SG-03-report.md
+    status: complete
+    description: Documentation completion report
+
+  - artifact: Story CC-SG-03 Completion Report
+    path: _bmad-output/sprint-artifacts/stories/CC-SG-03-report.md
+    status: complete
+    description: Documentation completion report
+
+  - artifact: Sprint Completion Report
+    path: _bmad-output/sprint-artifacts/sprint-completion-report-CC-SPRINT-02.md
+    status: complete
+    description: Overall sprint summary and metrics
+
+  - artifact: Sprint Status
+    path: _bmad-ext/.correct-course/sprints/sprint-status.yaml
+    status: complete
+    description: This file - sprint status tracking updated
+
+  - artifact: Tree Register
+    path: _bmad-ext/.correct-course/sprints/sprint-02-tree-register.xml
+    status: complete
+    description: Tree register for new sprint
+
+  - artifact: Future Epic CC-DESKTOP-FSA
+    path: _bmad-ext/.correct-course/epics/CC-DESKTOP-FSA-2026-01-18.md
+    status: complete
+    description: Ready for TEAM_B after Epic 1 complete (6 stories, 22 hours)
+
+# Files to Touch Summary
+files_by_category:
+  - category: gateway_facade
+    files_count: 1
+    files:
+      - path: src/domain/services/note-gateway.ts
+        action: create
+        lines: 272
+
+  - category: note_slices
+    files_count: 3
+    files:
+      - path: src/lib/notes/slices/note-crud-slice.ts
+        action: modify
+        lines: "167, 229, 294"
+      - path: src/lib/notes/slices/note-metadata-slice.ts
+        action: modify
+        lines: "46, 88"
+      - path: src/lib/notes/slices/note-indexing-slice.ts
+        action: modify
+        lines: "61"
+
+  - category: tests
+    files_count: 3
+    files:
+      - path: src/infrastructure/filesystem/__tests__/platform-contract.test.ts
+        action: create
+        lines: 610
+      - path: src/infrastructure/filesystem/__tests__/storage-gateway-factory.test.ts
+        action: create
+        lines: 456
+      - path: src/infrastructure/filesystem/__tests__/platform-routing.integration.test.ts
+        action: create
+        lines: 455
+
+  - category: documentation
+    files_count: 1
+    files:
+      - path: _bmad-output/planning-artifacts/migration/fsa-migration-guide.md
+        action: create
+        lines: 540
+
+total_files_to_touch: 8
+
+# Success Criteria
+success_criteria:
+  - All 3 stories complete: verified
+  - 0 direct db.notes.* calls in note slices: verified
+  - Desktop to FSAGateway, Mobile to IDBGateway: verified
+  - TypeScript clean (pnpm tsc --noEmit): verified
+  - Tests passing (pnpm vitest run): verified
+  - Migration path document created: verified
+  - All 9-step cycles complete: verified
+
+# Risks
+risks:
+  - risk: Legacy code dependencies on direct Dexie calls
+    probability: Resolved
+    impact: Resolved
+    mitigation: All 6 violations replaced with gateway abstraction
+
+  - risk: Race condition between FSA and DexieDB
+    probability: Mitigated
+    impact: Mitigated
+    mitigation: Storage gateway eliminates direct Dexie access
+
+  - risk: Mobile regression
+    probability: Mitigated
+    impact: Mitigated
+    mitigation: Platform routing verified and tested
+
+# Team Assignments
+teams:
+  - team: TEAM_A
+    status: COMPLETE
+    can_start: false
+    stories:
+      - CC-SG-01
+      - CC-SG-02
+      - CC-SG-03
+    note: All stories successfully completed, TEAM_A ready for next epic
+
+  - team: TEAM_B
+    status: READY_FOR_NEXT_EPIC
+    can_start: true
+    blocked_by: CC-STORAGE-GATEWAY epic completion
+    stories: []
+    note: Team B will work on CC-DESKTOP-FSA after Epic 1 complete (6 stories, 22 hours)
+
+# Notes
+notes:
+  - Sprint created based on VALIDATED consolidated context (2026-01-18)
+  - Paper 1 confirmed, Paper 2 rejected - do not use Paper 2 findings
+  - 6 direct db.notes.* violations identified in note slices
+  - StorageGateway implementations (FSAGateway, IDBGateway) already exist and working correctly
+  - PlatformContract detection working correctly
+  - Ready for execution by dev-ext agents
+  - All stories completed with full 9-step cycles
+  - CC-DESKTOP-FSA epic ready for TEAM_B (6 stories, 22 hours)
+
+# Deferred Workspaces (Post-MVP)
+deferred_workspaces:
+  knowledge:
+    status: archived
+    archive_path: _bmad-ext/.archive/post-mvp-2026-01-18/knowledge/
+    files_archived: 56
+    features:
+      - RAG pipeline and vector indexing
+      - PDF/URL/GitHub source import
+      - Knowledge graph and organization
+      - AI synthesis and recommendations
+      - Flashcard generation
+    future_epic: CC-KNOWLEDGE-STUDY
+  study:
+    status: archived
+    archive_path: _bmad-ext/.archive/post-mvp-2026-01-18/study/
+    files_archived: 8
+    features:
+      - Spaced repetition (SRS)
+      - Quiz generation
+      - Progress tracking
+    future_epic: CC-KNOWLEDGE-STUDY
+
+# MVP Scope (Active)
+mvp_workspaces:
+  - notes
+  - ide
+
+last_updated: 2026-01-18T08:30:00+07:00
+next_review: 2026-01-18

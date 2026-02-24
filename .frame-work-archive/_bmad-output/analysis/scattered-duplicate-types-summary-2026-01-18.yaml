@@ -1,0 +1,124 @@
+---
+generated: 2026-01-18
+author: analyst-ext
+scope: Type definitions duplicated across multiple locations
+
+summary:
+  categories:
+    - name: "Genuine Duplicates"
+      count: 7
+      recommendation: "CAN ARCHIVE"
+    - name: "Extension Patterns"
+      count: 2
+      recommendation: "KEEP - Architecture correct"
+    - name: "Inconsistent Definitions"
+      count: 3
+      recommendation: "NEEDS STANDARDIZATION"
+
+findings:
+  - type_name: "Project"
+    verdict: "KEEP_BOTH"
+    description: "Infrastructure extends domain with storageMetadata - correct architecture"
+    canonical: "src/domain/entities/project.ts"
+    extensions:
+      - "src/infrastructure/persistence/stores/project/project-types.ts"
+
+  - type_name: "NoteRecord"
+    verdict: "CAN_ARCHIVE"
+    description: "Duplicate of infrastructure version - lib uses Block[] vs unknown[]"
+    canonical: "src/infrastructure/persistence/dexie-db-knowledge-types.ts"
+    duplicates:
+      - "src/lib/notes/types.ts"
+
+  - type_name: "Flashcard"
+    verdict: "ARCHITECTURALLY_CORRECT"
+    description: "Domain entity vs persistence record - intentionally different"
+    domain: "src/domain/entities/study.ts"
+    persistence:
+      - "src/infrastructure/persistence/dexie-db-study-types.ts"
+      - "src/infrastructure/persistence/stores/flashcard/flashcard-db.ts"
+    archive:
+      - "src/lib/knowledge/types.ts"
+
+  - type_name: "Quiz"
+    verdict: "CAN_ARCHIVE"
+    description: "Deprecated archive - different structure than domain"
+    canonical: "src/domain/entities/study.ts"
+    duplicates:
+      - "src/lib/study/quiz-types.ts"
+      - "src/lib/study/quiz-generator.ts"
+
+  - type_name: "QuizQuestion"
+    verdict: "NEEDS_STANDARDIZATION"
+    description: "Field name inconsistency - correctOptionIndex vs correctAnswer"
+    canonical_field: "correctOptionIndex"
+    inconsistent_fields:
+      - file: "src/lib/study/quiz-types.ts"
+        field: "correctAnswer"
+      - file: "src/lib/study/quiz-generator.ts"
+        field: "correctAnswer"
+
+  - type_name: "ToolResult"
+    verdict: "CAN_ARCHIVE"
+    description: "Identical definition in two locations"
+    canonical: "src/lib/agent/tools/types.ts"
+    duplicates:
+      - "src/domain/tools/provider/types.ts"
+
+  - type_name: "ToolCategory"
+    verdict: "NEEDS_STANDARDIZATION"
+    description: "Domain has 10 categories, lib has 6 - lib should import from domain"
+    canonical: "src/domain/tools/tool-permissions.ts"
+    inconsistent:
+      - "src/lib/agent/tool-permission/types.ts"
+      - "src/types/tool-call.ts"
+
+  - type_name: "ToolTrustLevel"
+    verdict: "CORRECT"
+    description: "All definitions identical - domain is source of truth"
+
+action_items:
+  high_priority_archive:
+    - file: "src/lib/notes/types.ts"
+      reason: "Duplicate NoteRecord"
+    - file: "src/lib/study/quiz-types.ts"
+      reason: "Deprecated archive"
+    - file: "src/lib/study/quiz-generator.ts"
+      reason: "Deprecated archive"
+    - file: "src/domain/tools/provider/types.ts"
+      reason: "Duplicate ToolResult"
+    - file: "src/lib/knowledge/types.ts"
+      reason: "Deprecated archive"
+
+  medium_priority_standardize:
+    - type: "ToolCategory"
+      action: "Update lib versions to import from domain"
+    - type: "QuizQuestion.correctAnswer"
+      action: "Rename to correctOptionIndex to match domain"
+
+files_to_archive:
+  - "src/lib/notes/types.ts"
+  - "src/lib/study/quiz-types.ts"
+  - "src/lib/study/quiz-generator.ts"
+  - "src/domain/tools/provider/types.ts"
+  - "src/lib/knowledge/types.ts"
+
+files_to_keep:
+  - "src/domain/entities/project.ts"
+  - "src/domain/entities/study.ts"
+  - "src/domain/tools/tool-permissions.ts"
+  - "src/infrastructure/persistence/stores/project/project-types.ts"
+
+statistics:
+  total_duplicate_type_definitions: 23
+  genuine_duplicates_can_archive: 7
+  extension_patterns_correct_architecture: 2
+  inconsistent_definitions_need_fix: 3
+  deprecated_archives: 5
+  unique_features_keep: 6
+
+recommendations:
+  - "Archive 5 files identified as deprecated/duplicate"
+  - "Standardize 2 type definitions (ToolCategory, QuizQuestion field names)"
+  - "Keep extension pattern for Project types (correct architecture)"
+  - "Consolidate ToolResult to single location (lib/agent/tools/types.ts)"

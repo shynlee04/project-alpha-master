@@ -1,0 +1,364 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-18T14:30:00+07:00",
+    "cycle": 3,
+    "phase": "Invariants Auditor - Evidence Synthesis",
+    "input_artifacts": [
+      "bounded-contexts-map.json",
+      "architecture-violations.json",
+      "state-analysis.json",
+      "workspace-switch-trace.json",
+      "sync-notes-trace.json",
+      "run-tool-trace.json"
+    ],
+    "analyzed_files": [
+      "src/lib/workspace/workspace-transition-manager.ts",
+      "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "src/lib/notes/slices/note-sync-slice.ts",
+      "src/lib/agent/facades/file-tools-impl.ts",
+      "src/lib/events/cross-workspace-event-bus.ts",
+      "src/infrastructure/sync/core/sync-engine-core.ts",
+      "src/lib/filesystem/sync-manager/sync-manager.ts"
+    ]
+  },
+  "invariants": [
+    {
+      "workflow": "workspace_switch",
+      "type": "pre-condition",
+      "description": "Project must be loaded before workspace switch",
+      "enforced_by": "ProjectProvider.switchWorkspace checks project?.id before navigation",
+      "currently_enforced": true,
+      "test_proposal": "Call switchWorkspace with null projectId - should block"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "pre-condition",
+      "description": "Target workspace must be enabled for project",
+      "enforced_by": "ProjectProvider.switchWorkspace validates enabledWorkspaces.includes(newWorkspace)",
+      "currently_enforced": true,
+      "test_proposal": "Switch to workspace not in project.workspaceBindings - should block"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "pre-condition",
+      "description": "At least one agent must be available in target workspace",
+      "enforced_by": "WorkspaceTransitionService.validateTransition checks available agents count",
+      "currently_enforced": true,
+      "test_proposal": "Switch to workspace with no available agents - should fail validation"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "pre-condition",
+      "description": "No concurrent transitions in progress",
+      "enforced_by": "WorkspaceTransitionManager.isTransitioning flag prevents overlapping transitions",
+      "currently_enforced": true,
+      "test_proposal": "Call transitionTo while isTransitioning=true - should return early"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "pre-condition",
+      "description": "Store hydration complete before route loader",
+      "enforced_by": "waitForHydration() in route loaders ensures Zustand stores are hydrated",
+      "currently_enforced": true,
+      "test_proposal": "Access route before hydration completes - should wait"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "pre-condition",
+      "description": "Dexie database is open before persistence",
+      "enforced_by": "createDexieStorage.ensureDatabaseOpen() waits for database.open()",
+      "currently_enforced": true,
+      "test_proposal": "Persist state before Dexie DB opens - should queue/retry"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "invariant",
+      "description": "isTransitioning flag must be false after transition completes",
+      "enforced_by": "workspace-store.ts endTransition() clears the flag",
+      "currently_enforced": true,
+      "test_proposal": "After transitionTo completes, isTransitioning should be false"
+    },
+    {
+      "workflow": "workspace_switch",
+      "type": "invariant",
+      "description": "currentWorkspace must match the target workspace after switch",
+      "enforced_by": "setCurrentWorkspace updates state synchronously",
+      "currently_enforced": true,
+      "test_proposal": "After transitionTo('notes'), currentWorkspace should be 'notes'"
+    },
+    {
+      "workflow": "sync_notes",
+      "type": "pre-condition",
+      "description": "Note ID remains constant throughout update lifecycle",
+      "enforced_by": "note-crud-slice.ts uses params.id for all operations",
+      "currently_enforced": true,
+      "test_proposal": "Update note with different ID than original - should fail"
+    },
+    {
+      "workflow": "sync_notes",
+      "type": "pre-condition",
+      "description": "Dexie operations are atomic per record",
+      "enforced_by": "Dexie.js library - implicit transaction per operation",
+      "currently_enforced": true,
+      "test_proposal": "Concurrent updates to same note - should serialize via Dexie"
+    },
+    {
+      "workflow": "sync_notes",
+      "type": "pre-condition",
+      "description": "FSA sync is optional and non-blocking for core persistence",
+      "enforced_by": "note-crud-slice.ts triggerAutoSave is fire-and-forget",
+      "currently_enforced": true,
+      "test_proposal": "FSA write fails - IndexedDB should still succeed"
+    },
+    {
+      "workflow": "sync_notes",
+      "type": "invariant",
+      "description": "Note data in IndexedDB is always the most recent",
+      "enforced_by": "updateNote writes to Dexie before triggering FSA sync",
+      "currently_enforced": true,
+      "test_proposal": "Read note immediately after write - should get latest data"
+    },
+    {
+      "workflow": "run_tool",
+      "type": "pre-condition",
+      "description": "ToolPermissionManager is singleton and initialized before use",
+      "enforced_by": "ToolPermissionManager.getInstance() pattern",
+      "currently_enforced": true,
+      "test_proposal": "Call checkPermission before manager initialization - should handle"
+    },
+    {
+      "workflow": "run_tool",
+      "type": "pre-condition",
+      "description": "WebContainer is booted before terminal tool execution",
+      "enforced_by": "TerminalToolsFacade.executeCommand checks isBooted()",
+      "currently_enforced": true,
+      "test_proposal": "Execute terminal command before WebContainer boots - should fail"
+    },
+    {
+      "workflow": "run_tool",
+      "type": "pre-condition",
+      "description": "File locks are released even on error",
+      "enforced_by": "FileToolsFacade uses try/finally pattern for lock release",
+      "currently_enforced": true,
+      "test_proposal": "Write file that throws during write - lock should be released"
+    },
+    {
+      "workflow": "run_tool",
+      "type": "invariant",
+      "description": "Permission checks happen before any tool execution",
+      "enforced_by": "FileToolsFacade.checkPermission called at start of each method",
+      "currently_enforced": true,
+      "test_proposal": "Tool should not execute without permission check"
+    },
+    {
+      "workflow": "run_tool",
+      "type": "invariant",
+      "description": "Tool execution is logged to IndexedDB for audit trail",
+      "enforced_by": "ToolExecutionLogger.logExecution called before execution",
+      "currently_enforced": true,
+      "test_proposal": "After tool execution, log entry should exist in IndexedDB"
+    }
+  ],
+  "race_conditions": [
+    {
+      "location": "src/lib/workspace/workspace-transition-manager.ts",
+      "description": "Concurrent workspace switches can corrupt state - isTransitioning flag is checked but not atomic",
+      "likelihood": "medium",
+      "impact": "high",
+      "fix": "Add mutex using a Promise-based lock queue to serialize transitions",
+      "code_reference": "lines 73-141"
+    },
+    {
+      "location": "src/lib/events/cross-workspace-event-bus.ts",
+      "description": "Event listener errors are not caught - one throwing listener can crash entire event bus",
+      "likelihood": "medium",
+      "impact": "high",
+      "fix": "Wrap each listener call in try-catch with error isolation per listener",
+      "code_reference": "lines 209-216, 255-262, 291-298, etc."
+    },
+    {
+      "location": "src/lib/filesystem/sync-manager/sync-manager.ts",
+      "description": "Dual write to Local FS and WebContainer is not atomic - partial failure leaves inconsistent state",
+      "likelihood": "medium",
+      "impact": "high",
+      "fix": "Implement two-phase write: prepare both, then commit; rollback on failure",
+      "code_reference": "lines 128-130"
+    },
+    {
+      "location": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "description": "setTimeout for transition end is not cancelable - rapid switches can leave stale timeouts",
+      "likelihood": "low",
+      "impact": "medium",
+      "fix": "Store timeout ID and clearTimeout in startTransition before setting new timeout",
+      "code_reference": "lines 116-121"
+    },
+    {
+      "location": "src/lib/notes/slices/note-sync-slice.ts",
+      "description": "Debounce timers are module-level Map - not cleaned up on page unload",
+      "likelihood": "low",
+      "impact": "low",
+      "fix": "Add cleanup in pagehide/unload event listener",
+      "code_reference": "lines 28-48"
+    },
+    {
+      "location": "src/lib/agent/facades/file-tools-impl.ts",
+      "description": "writeMultiple iterates sequentially but no global lock - concurrent batches can interleave",
+      "likelihood": "low",
+      "impact": "medium",
+      "fix": "Add global mutex for batch operations across all files",
+      "code_reference": "lines 304-390"
+    }
+  ],
+  "non_idempotent_writes": [
+    {
+      "location": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "function": "setCurrentWorkspace",
+      "description": "Calling setCurrentWorkspace multiple times with same value still emits events and triggers timeouts",
+      "fix": "Add early return if workspace value hasn't changed",
+      "code_reference": "lines 95-122"
+    },
+    {
+      "location": "src/lib/notes/slices/note-sync-slice.ts",
+      "function": "triggerAutoSave",
+      "description": "Each content change creates a new debounce timer - rapid keystrokes can cause multiple saves",
+      "fix": "Debounce is intentional but should track pending save state to avoid duplicate work",
+      "code_reference": "lines 103-144"
+    },
+    {
+      "location": "src/lib/events/cross-workspace-event-bus.ts",
+      "function": "emitWorkspaceChanged",
+      "description": "Emitting workspace change event multiple times for same transition - listeners may receive duplicate events",
+      "fix": "Track recent emissions and deduplicate within short time window",
+      "code_reference": "lines 359-362"
+    },
+    {
+      "location": "src/infrastructure/sync/core/sync-engine-core.ts",
+      "function": "sync",
+      "description": "Calling sync while already syncing throws error - should queue or debounce instead",
+      "fix": "Queue subsequent sync requests to execute after current sync completes",
+      "code_reference": "lines 78-80"
+    }
+  ],
+  "missing_rollback": [
+    {
+      "location": "src/lib/workspace/workspace-transition-manager.ts",
+      "function": "transitionTo",
+      "operation": "Partial transition failure - if agent re-selection fails after workspace update",
+      "compensation_action": "Revert workspaceStore.setCurrentWorkspace to previous workspace, re-emit workspace:changed with original value",
+      "code_reference": "lines 73-141"
+    },
+    {
+      "location": "src/lib/filesystem/sync-manager/sync-manager.ts",
+      "function": "writeFile",
+      "operation": "Dual write to Local FS succeeds but WebContainer write fails",
+      "compensation_action": "Delete the Local FS file to maintain consistency, or mark as needs-sync for retry",
+      "code_reference": "lines 128-130"
+    },
+    {
+      "location": "src/lib/filesystem/sync-manager/sync-manager.ts",
+      "function": "deleteFile",
+      "operation": "Local FS delete succeeds but WebContainer delete fails",
+      "compensation_action": "Re-create file in WebContainer from Local FS backup or mark for reconciliation",
+      "code_reference": "lines 138-140"
+    },
+    {
+      "location": "src/lib/agent/facades/file-tools-impl.ts",
+      "function": "writeMultiple",
+      "operation": "Rollback only deletes files - doesn't restore original content if files existed before",
+      "compensation_action": "Track pre-existing files and restore their original content, not just delete",
+      "code_reference": "lines 359-389"
+    },
+    {
+      "location": "src/lib/agent/facades/file-tools-impl.ts",
+      "function": "deleteMultiple",
+      "operation": "Rollback creates empty files - doesn't restore original content",
+      "compensation_action": "Backup file content before deletion, restore full content on rollback",
+      "code_reference": "lines 537-567"
+    },
+    {
+      "location": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "function": "setCurrentWorkspace",
+      "operation": "Cross-workspace event listeners may fail after workspace state is updated",
+      "compensation_action": "Wrap event emission in try-catch, log errors without failing the transition",
+      "code_reference": "lines 108-113"
+    }
+  ],
+  "proposed_tests": [
+    {
+      "name": "test_workspace_switch_concurrent",
+      "description": "Simultaneous workspace switches should be serialized",
+      "would_fail_today": true,
+      "expected_behavior": "Only one transition executes, others wait or return early",
+      "test_code": "await Promise.all([transitionTo('notes'), transitionTo('knowledge'), transitionTo('study')])"
+    },
+    {
+      "name": "test_workspace_switch_partial_failure",
+      "description": "If agent re-selection fails mid-transition, workspace should revert",
+      "would_fail_today": true,
+      "expected_behavior": "Workspace state restored to previous value, error propagated",
+      "test_code": "transitionTo('notes') with no agents available - should revert and throw"
+    },
+    {
+      "name": "test_event_listener_error_isolation",
+      "description": "One throwing event listener should not crash other listeners or the event bus",
+      "would_fail_today": true,
+      "expected_behavior": "Throwing listener error is caught, other listeners still execute",
+      "test_code": "Emit event with one good and one throwing listener - good listener should still fire"
+    },
+    {
+      "name": "test_dual_write_rollback",
+      "description": "If WebContainer write fails after Local FS write, Local FS should be rolled back",
+      "would_fail_today": true,
+      "expected_behavior": "Local FS file deleted or marked inconsistent after failed dual write",
+      "test_code": "writeFile when WebContainer is unavailable - Local FS should not have orphaned file"
+    },
+    {
+      "name": "test_batch_write_rollback_comprehensive",
+      "description": "writeMultiple rollback should restore pre-existing files, not just delete",
+      "would_fail_today": true,
+      "expected_behavior": "Files that existed before batch write are restored with original content",
+      "test_code": "writeMultiple to overwrite existing files, then fail mid-way - originals should be restored"
+    },
+    {
+      "name": "test_sync_idempotency",
+      "description": "Calling sync multiple times should not cause duplicate operations",
+      "would_fail_today": true,
+      "expected_behavior": "Subsequent sync calls should be queued or debounced, not throw",
+      "test_code": "await sync(); await sync(); await sync(); // Should not throw"
+    },
+    {
+      "name": "test_transition_timeout_cleanup",
+      "description": "Rapid workspace switches should not leave stale timeouts",
+      "would_fail_today": true,
+      "expected_behavior": "Each transition has its own timeout that is properly cleaned up",
+      "test_code": "Switch workspaces 10 times rapidly - isTransitioning should eventually be false"
+    },
+    {
+      "name": "test_note_idempotent_save",
+      "description": "Calling save on same note multiple times should not cause issues",
+      "would_fail_today": false,
+      "expected_behavior": "Each save completes, no duplicate work or errors",
+      "test_code": "await saveNoteToFile(id); await saveNoteToFile(id); // Both should succeed"
+    }
+  ],
+  "summary": {
+    "total_invariants": 17,
+    "total_race_conditions": 6,
+    "total_non_idempotent_writes": 4,
+    "total_missing_rollback": 6,
+    "total_proposed_tests": 8,
+    "critical_findings": [
+      "Event listener errors are not isolated - can crash entire event bus",
+      "Dual write to Local FS and WebContainer is not atomic",
+      "Workspace transition partial failure has no rollback path",
+      "Batch file operations rollback is incomplete (doesn't restore originals)"
+    ],
+    "recommendations": [
+      "Priority 1: Wrap event listener calls in try-catch for error isolation",
+      "Priority 2: Implement two-phase dual-write pattern with rollback",
+      "Priority 3: Add transaction-like semantics to workspace transitions",
+      "Priority 4: Enhance batch operation rollback to preserve pre-existing state",
+      "Priority 5: Add global mutex for concurrent batch operations"
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "settings": {
+    "title": "Chat Settings",
+    "description": "Configure chat behavior for this workspace",
+    "workspaceLabel": "Settings for {{workspace}}",
+    "model": {
+      "label": "Model",
+      "description": "AI model to use for responses"
+    },
+    "temperature": {
+      "label": "Temperature",
+      "description": "Higher values make responses more creative"
+    },
+    "autoScroll": {
+      "label": "Auto-scroll",
+      "description": "Automatically scroll to new messages"
+    },
+    "systemPrompt": {
+      "label": "System Prompt",
+      "description": "Custom instructions for the AI"
+    },
+    "reset": {
+      "label": "Reset to Defaults",
+      "description": "Reset all settings to default values"
+    },
+    "saved": "Settings saved for {{workspace}} workspace",
+    "resetConfirm": "Are you sure you want to reset all settings to defaults?"
+  },
+  "state": {
+    "loading": "Loading chat settings...",
+    "error": "Failed to load chat settings",
+    "saving": "Saving settings..."
+  },
+  "workspace": {
+    "ide": "IDE",
+    "notes": "Notes",
+    "knowledge": "Knowledge",
+    "study": "Study"
+  },
+  "attachment": {
+    "add": "Attach file",
+    "remove": "Remove attachment",
+    "tooLarge": "File too large (max 25MB)",
+    "unsupported": "Unsupported file type",
+    "image": "Image",
+    "audio": "Audio",
+    "pdf": "PDF document",
+    "file": "File"
+  },
+  "url": {
+    "add": "Add link",
+    "pasteUrl": "Paste URL...",
+    "invalid": "Invalid URL",
+    "fetching": "Fetching link info...",
+    "fetchError": "Could not fetch link info",
+    "timeout": "Request timed out",
+    "blocked": "Link access blocked by browser",
+    "openLink": "Open link",
+    "preview": "Preview"
+  },
+  "image": {
+    "preview": "Preview",
+    "processing": "Processing...",
+    "compressing": "Compressed by {{percent}}%",
+    "originalSize": "Original: {{size}}",
+    "compressedSize": "Compressed: {{size}}",
+    "altText": "Description (optional)",
+    "altTextPlaceholder": "Describe this image...",
+    "closePreview": "Close preview",
+    "unsupportedFormat": "Unsupported image format",
+    "gifPreserved": "Animated GIF preserved",
+    "processingError": "Failed to process image"
+  },
+  "multimodal": {
+    "processing": "Processing images...",
+    "converting": "Converting to base64...",
+    "sending": "Sending with {{count}} image(s)...",
+    "sendError": "Failed to send with images",
+    "noProvider": "Current provider doesn't support images"
+  },
+  "placeholder": "Type a message...",
+  "send": "Send message",
+  "attach": "Attach file (coming soon)",
+  "startConversation": "Start a conversation",
+  "toolsUsed": "tools used"
+}

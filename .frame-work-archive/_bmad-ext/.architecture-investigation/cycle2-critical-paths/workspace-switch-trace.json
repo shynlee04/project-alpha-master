@@ -1,0 +1,257 @@
+{
+  "workflow": "workspace_switch",
+  "description": "Complete trace of workspace switch workflow from UI event to persistence",
+  "generated": "2026-01-18T00:00:00+07:00",
+  "entry_point": {
+    "file": "src/presentation/components/common/WorkspaceSwitcher.tsx",
+    "function": "WorkspaceSwitcher.handleWorkspaceSwitch",
+    "line": 122
+  },
+  "sequence": [
+    {
+      "step": 1,
+      "file": "src/presentation/components/common/WorkspaceSwitcher.tsx",
+      "function": "handleWorkspaceSwitch",
+      "action": "User clicks workspace dropdown item, triggering handleWorkspaceSwitch with target workspace"
+    },
+    {
+      "step": 2,
+      "file": "src/presentation/components/common/WorkspaceSwitcher.tsx",
+      "function": "getPlatformContract",
+      "action": "Platform validation - check if IDE access is allowed on current device (mobile/tablet blocked)"
+    },
+    {
+      "step": 3,
+      "file": "src/lib/workspace/workspace-transition-manager.ts",
+      "function": "WorkspaceTransitionManager.transitionTo",
+      "action": "Coordinate state updates across all stores using singleton manager"
+    },
+    {
+      "step": 4,
+      "file": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "function": "useWorkspaceStore.setCurrentWorkspace",
+      "action": "Update workspace store state, set isTransitioning=true, emit cross-workspace event"
+    },
+    {
+      "step": 5,
+      "file": "src/lib/events/cross-workspace-event-bus.ts",
+      "function": "CrossWorkspaceEventBus.emitWorkspaceChanged",
+      "action": "Broadcast workspace change event to all subscribed listeners"
+    },
+    {
+      "step": 6,
+      "file": "src/infrastructure/persistence/stores/agents/agent-selection-store.ts",
+      "function": "useAgentSelectionStore.selectAgentForWorkspace",
+      "action": "Select appropriate agent for new workspace based on persisted lastSelectedAgentId"
+    },
+    {
+      "step": 7,
+      "file": "src/infrastructure/ui/AgentWorkspaceSync.tsx",
+      "function": "AgentWorkspaceSync.handleWorkspaceChange",
+      "action": "React effect listener that calls selectAgentForWorkspace when workspace changes"
+    },
+    {
+      "step": 8,
+      "file": "src/lib/workspace/ProjectContext.tsx",
+      "function": "ProjectProvider.switchWorkspace",
+      "action": "Navigate to new workspace route using TanStack Router"
+    },
+    {
+      "step": 9,
+      "file": "src/infrastructure/persistence/stores/workspace/useWorkspaceSwitching.ts",
+      "function": "useWorkspaceSwitching.switchWorkspace",
+      "action": "Persist last workspace to localStorage, emit cross-workspace event, navigate via useNavigate"
+    },
+    {
+      "step": 10,
+      "file": "src/routes/ide.$projectId.tsx",
+      "function": "IDERoute.loader",
+      "action": "Route loader waits for hydration, queries Dexie for project, sets up ProjectProvider"
+    },
+    {
+      "step": 11,
+      "file": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "function": "useWorkspaceStore (persist middleware)",
+      "action": "Persist currentWorkspace to Dexie via createDexieStorage('providerConfigs')"
+    },
+    {
+      "step": 12,
+      "file": "src/infrastructure/persistence/dexie-storage.ts",
+      "function": "createDexieStorage.setItem",
+      "action": "Write workspace state to IndexedDB providerConfigs table with quota management"
+    }
+  ],
+  "side_effects": [
+    {
+      "effect": "Agent re-selection",
+      "file": "src/infrastructure/persistence/stores/agents/agent-selection-store.ts",
+      "timing": "during",
+      "description": "When switching workspaces, current agent may not be available in new workspace. AgentSelectionStore selects appropriate agent based on workspace bindings and lastSelectedAgentId"
+    },
+    {
+      "effect": "Cross-workspace event broadcast",
+      "file": "src/lib/events/cross-workspace-event-bus.ts",
+      "timing": "during",
+      "description": "Event bus emits 'workspace:changed' event with from/to workspace and timestamp. All subscribed components react to this event"
+    },
+    {
+      "effect": "Last workspace persistence",
+      "file": "src/lib/workspace/ProjectContext.tsx",
+      "timing": "after",
+      "description": "Current workspace is persisted to localStorage key 'project_{projectId}_last_workspace' for auto-restore on next project open"
+    },
+    {
+      "effect": "Workspace store persistence",
+      "file": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "timing": "after",
+      "description": "Zustand persist middleware writes currentWorkspace to Dexie 'providerConfigs' table via createDexieStorage"
+    },
+    {
+      "effect": "Route navigation",
+      "file": "src/lib/workspace/ProjectContext.tsx",
+      "timing": "during",
+      "description": "TanStack Router navigates to new route pattern '/{workspace}/$projectId', triggering route loader and component mount"
+    },
+    {
+      "effect": "FSA handle cleanup",
+      "file": "src/lib/workspace/ProjectContext.tsx",
+      "timing": "before",
+      "description": "When project changes, FSA handle is cleared to prevent stale handle reuse"
+    },
+    {
+      "effect": "Platform validation",
+      "file": "src/infrastructure/filesystem/platform-contract.ts",
+      "timing": "before",
+      "description": "IDE workspace is blocked on mobile/tablet devices. Platform contract checks canAccessIDE before allowing switch"
+    },
+    {
+      "effect": "Transition state management",
+      "file": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "timing": "during",
+      "description": "isTransitioning flag set to true, transitionFrom set to previous workspace, 300ms timeout clears transition state"
+    }
+  ],
+  "invariant_assumptions": [
+    {
+      "assumption": "Project must be loaded before workspace switch",
+      "enforced_by": "ProjectProvider.switchWorkspace checks project?.id before navigation"
+    },
+    {
+      "assumption": "Target workspace must be enabled for project",
+      "enforced_by": "ProjectProvider.switchWorkspace validates enabledWorkspaces.includes(newWorkspace)"
+    },
+    {
+      "assumption": "At least one agent must be available in target workspace",
+      "enforced_by": "WorkspaceTransitionService.validateTransition checks available agents count"
+    },
+    {
+      "assumption": "No concurrent transitions in progress",
+      "enforced_by": "WorkspaceTransitionManager.isTransitioning flag prevents overlapping transitions"
+    },
+    {
+      "assumption": "Store hydration complete before route loader",
+      "enforced_by": "waitForHydration() in route loaders ensures Zustand stores are hydrated"
+    },
+    {
+      "assumption": "Dexie database is open before persistence",
+      "enforced_by": "createDexieStorage.ensureDatabaseOpen() waits for database.open()"
+    }
+  ],
+  "failure_points": [
+    {
+      "point": "Platform validation failure",
+      "condition": "User on mobile/tablet attempts to switch to IDE workspace",
+      "result": "Switch is blocked, console warning logged, user stays in current workspace"
+    },
+    {
+      "point": "Workspace not enabled",
+      "condition": "Target workspace not in project.workspaceBindings",
+      "result": "Switch blocked with warning, navigation does not occur"
+    },
+    {
+      "point": "No project loaded",
+      "condition": "project?.id is null when switchWorkspace called",
+      "result": "Switch blocked with warning, no navigation"
+    },
+    {
+      "point": "No agents available in target workspace",
+      "condition": "WorkspaceTransitionService.validateTransition finds 0 available agents",
+      "result": "Transition validation fails, error returned, switch does not proceed"
+    },
+    {
+      "point": "Concurrent transition in progress",
+      "condition": "WorkspaceTransitionManager.isTransitioning is true",
+      "result": "Switch blocked with warning, returns early without navigation"
+    },
+    {
+      "point": "Dexie storage quota exceeded",
+      "condition": "IndexedDB storage is full when persisting workspace state",
+      "result": "evictOldestEntries() runs to free space, retry once, throw if still fails"
+    },
+    {
+      "point": "Route navigation failure",
+      "condition": "TanStack Router navigate() throws error",
+      "result": "Error caught and logged, switch state may be inconsistent"
+    },
+    {
+      "point": "Cross-workspace event listener error",
+      "condition": "Any onWorkspaceChanged listener throws",
+      "result": "Error not caught, may crash event bus or leave state inconsistent"
+    }
+  ],
+  "data_flow": {
+    "inputs": [
+      "targetWorkspace (WorkspaceType: 'ide' | 'notes' | 'knowledge' | 'study')",
+      "projectId (from route params or store)",
+      "platform contract (deviceType, canAccessIDE)"
+    ],
+    "outputs": [
+      "Updated URL (TanStack Router navigation)",
+      "Persisted workspace state (Dexie IndexedDB)",
+      "Persisted last workspace (localStorage)",
+      "Selected agent for new workspace (AgentSelectionStore)"
+    ],
+    "state_changes": [
+      "useWorkspaceStore.currentWorkspace",
+      "useWorkspaceStore.isTransitioning",
+      "useWorkspaceStore.transitionFrom",
+      "useAgentSelectionStore.activeAgentId",
+      "localStorage 'project_{id}_last_workspace'"
+    ]
+  },
+  "related_files": {
+    "ui_components": [
+      "src/presentation/components/common/WorkspaceSwitcher.tsx",
+      "src/presentation/components/hub/ProjectPickerDialog.tsx",
+      "src/presentation/components/workspace/WorkspaceEnhancedSwitcher.tsx"
+    ],
+    "stores": [
+      "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "src/infrastructure/persistence/stores/agents/agent-selection-store.ts",
+      "src/infrastructure/persistence/stores/agents/useAgentsStore.ts"
+    ],
+    "contexts": [
+      "src/lib/workspace/ProjectContext.tsx",
+      "src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts"
+    ],
+    "services": [
+      "src/lib/workspace/workspace-transition-manager.ts",
+      "src/domain/services/workspace-transition-service.ts",
+      "src/domain/use-cases/switch-workspace-use-case.ts"
+    ],
+    "events": [
+      "src/lib/events/cross-workspace-event-bus.ts",
+      "src/infrastructure/ui/AgentWorkspaceSync.tsx"
+    ],
+    "persistence": [
+      "src/infrastructure/persistence/dexie-storage.ts",
+      "src/infrastructure/persistence/dexie-db.ts"
+    ],
+    "routes": [
+      "src/routes/ide.$projectId.tsx",
+      "src/routes/notes.$projectId.tsx",
+      "src/routes/knowledge.$projectId.tsx",
+      "src/routes/study.$projectId.tsx"
+    ]
+  }
+}

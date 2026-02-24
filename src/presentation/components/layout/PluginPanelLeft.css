@@ -1,0 +1,54 @@
+/**
+ * @fileoverview PluginPanelLeft Styles - 8-bit Design System
+ * @module presentation/components/layout/PluginPanelLeft.css
+ *
+ * EPIC-UXUI-04: Plugin Panel System
+ * Left panel specific styles (2 grid units)
+ *
+ * @story UXUI-04-05
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   PluginPanelLeft Specific Styles
+   ============================================================================ */
+
+.plugin-panel-left {
+  /* Left panel is part of the main grid layout */
+  /* Width is controlled by flex: 2 in parent */
+  min-width: 200px;
+  max-width: 400px;
+}
+
+/* Ensure left panel takes full height */
+.plugin-panel-left .plugin-panel__content {
+  height: 100%;
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .plugin-panel-left {
+    min-width: 180px;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .plugin-panel-left {
+    min-width: 160px;
+    max-width: 300px;
+  }
+}
+
+/* ============================================================================
+   Mobile/Tablet Portrait - Hide left panel
+   ============================================================================ */
+
+@media (max-width: 767px) {
+  .plugin-panel-left {
+    display: none;
+  }
+}

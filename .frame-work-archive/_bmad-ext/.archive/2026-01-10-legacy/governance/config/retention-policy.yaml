@@ -1,0 +1,62 @@
+# Artifact Retention Policy Configuration
+# BMAD Governance Module - Cycle 1: Governance Foundation
+
+version: "1.0"
+effective_date: "2026-01-06"
+last_updated: "2026-01-06T00:00:00+07:00"
+
+# Retention periods (in days)
+retention:
+  active: 5                    # User works daily - keep artifacts accessible for 5 days
+  archive: 90                  # Monthly archives kept for 90 days
+  permanent: -1                # Negative = never delete
+
+# Daily archive schedule
+archive_schedule:
+  enabled: true
+  time: "00:00"                # Midnight
+  timezone: "+07:00"           # User's timezone
+
+# Folder structure
+folders:
+  daily: "_bmad-output/artifacts/{date}"
+  monthly: "_bmad-output/archive/{year}-{month}/"
+  sprint: "_bmad-output/sprint-artifacts/{year}-{month}/"
+
+# Naming conventions
+naming:
+  daily_artifact: "{story-id}-{type}-{date}.md"
+  sprint_artifact: "{type}-{date}.yaml"
+  archive: "{type}-{date}-archived.{ext}"
+
+# Frontmatter requirements
+frontmatter:
+  required_fields:
+    - artifact_id
+    - parent_story
+    - created_at
+    - expires_at
+    - status
+
+  status_values:
+    - ACTIVE
+    - ARCHIVED
+    - DEPRECATED
+
+# Expiry calculation
+expiry:
+  daily_artifacts: "created_at + 5 days"
+  sprint_artifacts: "created_at + 90 days"
+  governance_docs: "never"
+
+# Auto-archive triggers
+triggers:
+  age_days: 5
+  parent_story_done: true
+  no_active_references: true
+
+# Cleanup policy
+cleanup:
+  delete_after_days: 90
+  confirm_before_delete: false
+  backup_before_delete: true

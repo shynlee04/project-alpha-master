@@ -1,0 +1,239 @@
+---
+step: 1
+story: EP01-ST-02
+status: completed
+completed_at: "2026-01-17T00:00:00+07:00"
+evidence:
+  permission_files_found:
+    - path: "src/lib/filesystem/permission-lifecycle.ts"
+      lines: 297
+      god_store: false
+      purpose: "Permission lifecycle helper - Chrome 122+ feature detection, handle permission queries"
+    - path: "src/infrastructure/filesystem/handle-persistence.ts"
+      lines: 574
+      god_store: false
+      purpose: "Handle persistence service - Chrome 122+ and Chrome 129+ structuredClone support, silent restore logic"
+    - path: "src/infrastructure/sync/adapters/fsa-permission-manager.ts"
+      lines: 113
+      god_store: false
+      purpose: "FSA permission manager - request directory access, check permission status"
+    - path: "src/lib/workspace/fsa-persistence.ts"
+      lines: 210
+      god_store: false
+      purpose: "FSA folder picker and persistence - pickFolder, createProjectFromFolder, restoreFolderHandle"
+    - path: "src/infrastructure/filesystem/handle-types.ts"
+      lines: 99
+      god_store: false
+      purpose: "Type definitions for handle persistence, StorageHandleMetadata, FSAHandleRecord"
+
+  grep_results:
+    - pattern: "navigator.permissions"
+      matches: 7
+      locations:
+        - "src/lib/filesystem/permission-lifecycle.test.ts:91"
+        - "src/lib/filesystem/permission-lifecycle.test.ts:92"
+        - "src/lib/filesystem/permission-lifecycle.test.ts:119"
+        - "src/lib/filesystem/permission-lifecycle.test.ts:267"
+        - "src/lib/filesystem/permission-lifecycle.ts:268"
+        - "src/lib/filesystem/permission-lifecycle.ts:267"
+        - "src/lib/filesystem/permission-lifecycle.ts:268"
+    - pattern: "FileSystemDirectoryHandle"
+      matches: 15
+      locations:
+        - "src/global-types.d.ts:17"
+        - "src/lib/workspace/project-types.ts:42"
+        - "src/lib/workspace/workspace-types.ts:19"
+        - "src/lib/workspace/project-store.test.ts:23"
+        - "src/lib/workspace/project-store.test.ts:26"
+        - "src/lib/workspace/hooks/useSyncOperations.ts:33"
+        - "src/lib/workspace/hooks/useSyncOperations.ts:109"
+        - "src/lib/workspace/WorkspaceContext.test.tsx:56"
+        - "src/lib/workspace/fsa-persistence.ts:41"
+        - "src/lib/workspace/fsa-persistence.ts:129"
+        - "src/lib/workspace/fsa-persistence.ts:199"
+        - "src/lib/workspace/ProjectContext.tsx:28"
+        - "src/lib/workspace/ProjectContext.tsx:30"
+        - "src/lib/workspace/ProjectContext.tsx:63"
+        - "src/lib/workspace/ProjectContext.tsx:244"
+        - "src/lib/events/workspace-events.ts:49"
+        - "src/lib/events/workspace-events.ts:50"
+        - "src/lib/events/workspace-events.ts:51"
+        - "src/lib/filesystem/fs-handle-utils.ts:5"
+        - "src/lib/filesystem/fs-handle-utils.ts:14"
+        - "src/lib/filesystem/fs-handle-utils.ts:27"
+        - "src/lib/filesystem/fs-handle-utils.ts:30"
+        - "src/lib/filesystem/unified-storage-adapter.ts:43"
+        - "src/lib/filesystem/unified-storage-adapter.ts:68"
+        - "src/lib/filesystem/unified-storage-adapter.ts:272"
+        - "src/lib/filesystem/handle-utils.ts:5"
+        - "src/lib/filesystem/handle-utils.ts:70"
+    - pattern: "showDirectoryPicker"
+      matches: 8
+      locations:
+        - "src/e2e/__tests__/epic-e1-cross-workspace-chat.e2e.test.tsx:625"
+        - "src/hooks/useNotifications.ts:118"
+        - "src/hooks/useNotifications.ts:149"
+        - "src/infrastructure/sync/adapters/adapter-factory.ts:129"
+        - "src/infrastructure/sync/adapters/adapter-factory.ts:140"
+        - "src/hooks/useCapabilityDetection.test.ts:14"
+        - "src/hooks/useCapabilityDetection.test.ts:29"
+        - "src/hooks/useCapabilityDetection.test.ts:66"
+        - "src/hooks/useCapabilityDetection.test.ts:72"
+        - "src/infrastructure/sync/adapters/fsa-permission-manager.ts:33"
+        - "src/infrastructure/sync/adapters/fsa-permission-manager.ts:38"
+        - "src/infrastructure/sync/adapters/fsa-permission-manager.ts:39"
+        - "src/infrastructure/sync/adapters/fsa-permission-manager.ts:40"
+        - "src/hooks/useCapabilityDetection.test.ts:14"
+        - "src/hooks/useCapabilityDetection.test.ts:29"
+        - "src/hooks/useCapabilityDetection.test.ts:66"
+        - "src/hooks/useCapabilityDetection.test.ts:72"
+        - "src/lib/workspace/fsa-persistence.ts:59"
+        - "src/lib/workspace/fsa-persistence.ts:87"
+        - "src/lib/workspace/hooks/useWorkspaceActions.ts:95"
+        - "src/lib/workspace/hooks/useWorkspaceActions.ts:152"
+        - "src/e2e/fixtures/mock-fsa.fixture.ts:105"
+        - "src/e2e/fixtures/mock-fsa.fixture.ts:106"
+        - "src/presentation/components/notifications/NotificationPermissionRequester.tsx:61"
+        - "src/presentation/components/notifications/NotificationPermissionRequester.tsx:66"
+    - pattern: "Chrome 122" or "122+"
+      matches: 14
+      locations:
+        - "src/lib/filesystem/permission-lifecycle.ts:250"
+        - "src/lib/filesystem/permission-lifecycle.ts:252"
+        - "src/lib/filesystem/permission-lifecycle.ts:263"
+        - "src/lib/filesystem/permission-lifecycle.ts:267"
+        - "src/infrastructure/filesystem/handle-persistence.ts:13"
+        - "src/infrastructure/filesystem/handle-persistence.ts:65"
+        - "src/infrastructure/filesystem/handle-persistence.ts:68"
+        - "src/infrastructure/filesystem/handle-persistence.ts:74"
+        - "src/infrastructure/filesystem/handle-persistence.ts:79"
+        - "src/infrastructure/filesystem/handle-persistence.ts:97"
+        - "src/infrastructure/filesystem/handle-persistence.ts:330"
+        - "src/infrastructure/filesystem/handle-persistence.ts:336"
+        - "src/infrastructure/filesystem/handle-persistence.ts:389"
+    - pattern: "structuredClone"
+      matches: 20
+      locations:
+        - "src/infrastructure/filesystem/handle-persistence.ts:44"
+        - "src/infrastructure/filesystem/handle-persistence.ts:48"
+        - "src/infrastructure/filesystem/handle-persistence.ts:51"
+        - "src/infrastructure/filesystem/handle-persistence.ts:56"
+        - "src/infrastructure/filesystem/handle-persistence.ts:60"
+        - "src/infrastructure/filesystem/handle-persistence.ts:191"
+        - "src/lib/filesystem/permission-lifecycle.ts:31"
+        - "src/lib/filesystem/permission-lifecycle.ts:33"
+        - "src/lib/filesystem/permission-lifecycle.ts:44"
+        - "src/lib/filesystem/permission-lifecycle.ts:49"
+        - "src/lib/filesystem/permission-lifecycle.ts:56"
+        - "src/lib/filesystem/permission-lifecycle.ts:63"
+        - "src/lib/filesystem/permission-lifecycle.ts:64"
+        - "src/lib/filesystem/permission-lifecycle.ts:65"
+        - "src/lib/filesystem/permission-lifecycle.ts:95"
+        - "src/lib/filesystem/permission-lifecycle.ts:96"
+
+  cross_impact:
+    - route: "ide"
+      triggers_permissions: true
+      via: "File picker via ProjectContext"
+      file: "src/lib/workspace/ProjectContext.tsx:244"
+      evidence: "useState<FileSystemDirectoryHandle | null>(null), setFsaHandle(handle)"
+    - route: "knowledge"
+      triggers_permissions: false
+      via: "Delegates to provider"
+      file: "src/routes/knowledge.$projectId.tsx"
+    - route: "study"
+      triggers_permissions: false
+      via: "Delegates to provider"
+      file: "src/routes/study.$projectId.tsx"
+    - route: "notes"
+      triggers_permissions: false
+      via: "Delegates to provider"
+      file: "src/routes/notes.$projectId.tsx"
+    - route: "projects"
+      triggers_permissions: false
+      via: "List view only"
+      file: "src/routes/projects.tsx"
+
+  conflicts:
+    - type: "Missing Implementation Gap"
+      description: "Chrome 122+ persistent permission support is partially implemented but navigator.permissions.request() is not actively used"
+      location: "src/lib/filesystem/permission-lifecycle.ts:262-268"
+      evidence: "isPersistentPermissionSupported() only checks for navigator.permissions.query availability, but does not implement explicit permission request using navigator.permissions.request()"
+      severity: "medium"
+    - type: "ADR-033 Violation Risk"
+      description: "Permission persistence implementation may not fully align with ADR-033 decision on Chrome 122+ persistent permissions"
+      location: "src/infrastructure/filesystem/handle-persistence.ts"
+      evidence: "Existing implementation uses Chrome 122+ silent restore with showDirectoryPicker({id: projectId}) but may need explicit navigator.permissions.request() calls for 'Allow on every visit' prompt"
+      severity: "low"
+    - type: "Potential ADR-034 Violation"
+      description: "Some permission code exists in src/lib/filesystem/ directory (legacy location)"
+      location: "src/lib/filesystem/permission-lifecycle.ts"
+      evidence: "permission-lifecycle.ts located in src/lib/filesystem/ instead of src/infrastructure/filesystem/ per ADR-034 clean architecture paths"
+      severity: "low"
+    - type: "Code Duplication Risk"
+      description: "Multiple permission management implementations exist across different layers"
+      location: "Multiple files"
+      evidence: "permission-lifecycle.ts (297 lines), handle-persistence.ts (574 lines), fsa-permission-manager.ts (113 lines) - potential overlap in responsibilities"
+      severity: "medium"
+
+  research_findings:
+    - source: "MCP server (brave-search + exa-web-search + fetch_fetch)"
+      url: "https://developer.chrome.com/blog/persistent-permissions-for-the-file-system-access-api"
+      timestamp: "2026-01-17T00:00:00+07:00"
+      findings:
+        - "Chrome 122+ introduced persistent permissions for File System Access API, allowing users to grant apps indefinite read and write access to files and folders without needing to re-grant permission on every visit"
+        - "New three-way permission prompt with options: Allow this time, Allow on every visit, Don't allow"
+        - "Users can manage persistent permissions in site settings under Privacy and security section"
+        - "NO developer-facing changes to File System Access API required - behavior is automatic when preconditions met"
+        - "Precondition 1: User must have granted permission before AND app must have stored FileSystemHandle in IndexedDB"
+        - "Precondition 2: Upon next visit, app must retrieve stored handle from IndexedDB and call FileSystemHandle.requestPermission() method"
+        - "Precondition 3: App must be installed (PWA) - persistent access for non-installed sites is NOT supported"
+        - "Non-installed sites will trigger permission picker on EVERY page load where API is invoked"
+        - "Permission prompt lists all FileSystemHandle objects app previously had access to, not just one for which requestPermission() is being called"
+        - "If user denies/dismisses prompt more than 3 times, regular permission prompt will show (no 3-way prompt)"
+      code_examples:
+        - "Retrieve stored handle from IndexedDB: const storedHandle = await getStoredHandle(projectId)"
+        - "Call requestPermission() to trigger 3-way prompt: const permission = await storedHandle.requestPermission({ mode: readwrite })"
+        - "Check permission state: const state = await storedHandle.queryPermission({ mode: readwrite })"
+        - "Three-way prompt appears when: 1) Handle was stored in IndexedDB, 2) User previously granted access, 3) App calls requestPermission() on handle"
+
+  dead_code:
+    - path: "_bmad-ext/.archive/fsa-handle-manager-2026-01-17.ts"
+      reason: "Superseded by unified handle-persistence service implementation"
+      archived_date: "2026-01-17"
+
+  implementation_gaps:
+    - "navigator.permissions.request() is NOT actively used in current codebase despite Chrome 122+ detection existing"
+    - "No explicit implementation of Allow on every visit permission prompt triggering logic"
+    - "Desktop workspace routes (ide, knowledge, study, notes) do not explicitly trigger Chrome 122+ persistent permission prompts on page load"
+    - "Existing implementation relies on showDirectoryPicker({id: projectId}) for silent restore, which may or may not trigger 3-way prompt depending on browser version and permission state"
+
+  recommendations:
+    - "Create dedicated permission service at src/infrastructure/filesystem/permission-persistence-service.ts"
+    - "Implement Chrome 122+ navigator.permissions.request() integration with explicit trigger on page load for desktop workspace routes"
+    - "Add Allow on every visit prompt detection and handling logic"
+    - "Update all desktop workspace routes (ide, knowledge, study, notes) to use permission service on mount"
+    - "Implement fallback for Chrome < 122 (non-persistent permissions)"
+    - "Implement fallback for non-installed sites (no persistent permissions available)"
+    - "Consolidate permission management into single service to reduce code duplication across permission-lifecycle.ts, handle-persistence.ts, and fsa-permission-manager.ts"
+    - "Add tests for Chrome 122+ permission behavior and 3-way prompt triggering"
+    - "Document permission persistence behavior in code comments and story acceptance criteria"
+    - "Consider migration path from src/lib/filesystem/ to src/infrastructure/filesystem/ for ADR-034 compliance"
+
+  architectural_summary:
+    current_state:
+      chrome_122_support: "PARTIAL - Feature detection exists in permission-lifecycle.ts but navigator.permissions.request() not actively used"
+      chrome_129_support: "FULL - structuredClone support implemented in handle-persistence.ts with silent restore"
+      persistence_layer: "Distributed across 3 files (permission-lifecycle.ts, handle-persistence.ts, fsa-permission-manager.ts)"
+      route_integration: "INCOMPLETE - Desktop routes do not explicitly trigger Chrome 122+ persistent permission prompts"
+      indexeddb_storage: "EXISTS - FSA handle records stored in Dexie via fsa-handle-helpers.ts"
+
+    priority_issues:
+      - "P0: No active implementation of Chrome 122+ Allow on every visit permission prompt triggering"
+      - "P0: Users must click Allow file access on every page refresh (acceptance criteria violation)"
+      - "P1: Permission management code scattered across multiple layers causing maintenance burden"
+
+    governance_compliance:
+      adr_033: "AT RISK - Current implementation may not fully align with Chrome 122+ persistent permission decision"
+      adr_034: "AT RISK - permission code located in src/lib/filesystem/ (legacy directory) instead of infrastructure layer"
+      clean_architecture: "PARTIAL - Handle persistence follows clean architecture, but permission-lifecycle.ts and fsa-permission-manager.ts may need migration"

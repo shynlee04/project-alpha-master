@@ -1,0 +1,253 @@
+# ═════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS - EPIC-LAYOUT-CONSOLIDATION
+# Created: 2026-01-29T10:30:00+07:00
+# ═════════════════════════════════════════════════════════════════════════
+
+schema_version: "1.0.0"
+sprint_id: "sprint-layout-consolidation-2026-01-29"
+created_at: "2026-01-29T10:30:00+07:00"
+last_updated: "2026-01-29T12:00:00+07:00"
+sprint_manager: "ext-master"
+status: "IN_PROGRESS"
+
+# ═════════════════════════════════════════════════════════════════════════
+# SPRINT SUMMARY
+# ═════════════════════════════════════════════════════════════════════════
+
+summary:
+  total_stories: 10
+  completed: 3
+  in_progress: 0
+  ready: 7
+  blocked: 0
+  progress_percent: 30
+  estimated_effort: "14-18 hours"
+  team: "Team B"
+  
+sprint_log:
+  - timestamp: "2026-01-29T12:00:00+07:00"
+    action: "HYBRID_SPRINT_COMPLETE"
+    details: |
+      4-Hour Hybrid Sprint executed in ~1 hour!
+      
+      COMPLETED:
+      - DEBUG-REMOVAL: 3 arrays removed (FloatingPluginDocker, MainContentRenderer)
+      - LC-03: 17 z-index migrations to CSS variables
+      - LC-04: Overflow governance verified, 100vh→100dvh fix
+      - LC-05: SystemRail verified archived (no action needed)
+      
+      TEAM A: 12 minutes (DEBUG + LC-05)
+      TEAM B: 45 minutes (LC-03 + LC-04)
+
+# ═════════════════════════════════════════════════════════════════════════
+# ARCHITECT APPROVAL
+# ═════════════════════════════════════════════════════════════════════════
+
+approval:
+  status: "APPROVED WITH AMENDMENTS"
+  approved_by: "architect-ext"
+  approved_at: "2026-01-29T10:00:00+07:00"
+  amendments:
+    - story: "LC-03"
+      change: "Z-index governance EXISTS - migrate 18 hardcoded values, don't create new scale"
+      effort_change: "2h -> 1.5h"
+    - story: "LC-04"
+      change: "Overflow governance PARTIALLY EXISTS in styles.css - audit and cleanup"
+      effort_change: "1.5h -> 1h"
+    - story: "LC-05"
+      change: "SystemRail already commented out - just delete and archive"
+      effort_change: "1h -> 0.5h"
+    - story: "LC-02"
+      change: "3 stores to merge (not 4) - layout-presets-store already archived"
+      effort_change: "no change"
+
+# ═════════════════════════════════════════════════════════════════════════
+# WAVE EXECUTION PLAN
+# ═════════════════════════════════════════════════════════════════════════
+
+execution_plan:
+  wave_1_foundation:
+    description: "Archive legacy + quick wins (can parallelize)"
+    estimated_duration: "2h"
+    status: READY
+    stories:
+      - id: LC-01
+        title: "Archive legacy layout components"
+        team: B
+        effort: "1.5h"
+        status: READY
+        dependencies: []
+        
+      - id: LC-05
+        title: "Remove SystemRail and legacy bottom panels"
+        team: B
+        effort: "0.5h"
+        status: READY
+        dependencies: []
+        notes: "SystemRail already commented out - just archive the file"
+
+  wave_2_consolidation:
+    description: "Store consolidation + overflow cleanup (sequential)"
+    estimated_duration: "3-4h"
+    status: READY
+    stories:
+      - id: LC-02
+        title: "Consolidate layout stores into PluginLayoutStore"
+        team: B
+        effort: "2-3h"
+        status: READY
+        dependencies: [LC-01]
+        notes: "Merge 3 stores: layout-store, PluginLayoutStore (target), ide-layout-slice"
+        
+      - id: LC-04
+        title: "Implement overflow governance"
+        team: B
+        effort: "1h"
+        status: READY
+        dependencies: []
+        notes: "Audit 55 overflow declarations, remove redundant ones"
+
+  wave_3_governance:
+    description: "Z-index + MainSidebar fixes (can parallelize)"
+    estimated_duration: "2.5h"
+    status: READY
+    stories:
+      - id: LC-03
+        title: "Implement z-index governance with single scale"
+        team: B
+        effort: "1.5h"
+        status: READY
+        dependencies: []
+        notes: "Z-index tokens EXIST in design-tokens.css - migrate 18 hardcoded values"
+        
+      - id: LC-06
+        title: "Fix MainSidebar single render"
+        team: B
+        effort: "1h"
+        status: READY
+        dependencies: [LC-01]
+
+  wave_4_quick_wins:
+    description: "Route-conditional + CSS cleanup (can parallelize)"
+    estimated_duration: "2.5h"
+    status: READY
+    stories:
+      - id: LC-07
+        title: "Make preset selector route-conditional"
+        team: B
+        effort: "1h"
+        status: READY
+        dependencies: []
+        
+      - id: LC-08
+        title: "Audit and remove unused CSS"
+        team: B
+        effort: "1.5h"
+        status: READY
+        dependencies: [LC-03, LC-04]
+        notes: "Target 30% reduction in layout CSS"
+
+  wave_5_migration:
+    description: "Final migration and documentation (sequential)"
+    estimated_duration: "4h"
+    status: READY
+    stories:
+      - id: LC-09
+        title: "Migrate all routes to use WorkspaceLayout directly"
+        team: B
+        effort: "3h"
+        status: READY
+        dependencies: [LC-01, LC-02, LC-03, LC-04, LC-05, LC-06, LC-07, LC-08]
+        
+      - id: LC-10
+        title: "Update AGENTS.md with new layout governance rules"
+        team: B
+        effort: "1h"
+        status: READY
+        dependencies: [LC-09]
+
+# ═════════════════════════════════════════════════════════════════════════
+# BUGS BEING ADDRESSED
+# ═════════════════════════════════════════════════════════════════════════
+
+bugs_addressed:
+  - id: BUG-01
+    description: "FloatingPluginDocker z-index: 1000 - No governance"
+    story: LC-03
+    severity: Medium
+    
+  - id: BUG-02
+    description: "PluginDocker always rendered when closed"
+    story: LC-09
+    severity: High
+    
+  - id: BUG-03
+    description: "Empty grid cells showing as black space"
+    story: LC-08
+    severity: High
+    
+  - id: BUG-04
+    description: "MainSidebar double-rendered"
+    story: LC-06
+    severity: High
+    
+  - id: BUG-05
+    description: "SystemRail 32px bottom space"
+    story: LC-05
+    severity: High
+    
+  - id: BUG-06
+    description: "Preset layout dropdown in wrong places"
+    story: LC-07
+    severity: Medium
+    
+  - id: BUG-07
+    description: "PluginDocker resize handles active when shouldn't be"
+    story: LC-09
+    severity: Low
+    
+  - id: BUG-08
+    description: "overflow:auto on plugin panels creates nested scrollbars"
+    story: LC-04
+    severity: High
+    
+  - id: BUG-09
+    description: "h-screen (100vh) mobile overflow issue"
+    story: LC-04
+    severity: Medium
+    
+  - id: BUG-10
+    description: "No document overflow control"
+    story: LC-04
+    severity: High
+    notes: "ALREADY FIXED - styles.css has overflow:hidden"
+
+# ═════════════════════════════════════════════════════════════════════════
+# VALIDATION FINDINGS (from CC-UX-05)
+# ═════════════════════════════════════════════════════════════════════════
+
+ux_validation_findings:
+  overall_compliance: "85%"
+  critical_gaps:
+    - gap: "ThemeProvider + ThemeToggle not implemented"
+      spec_section: "14.6-14.7"
+      effort: "2-3h"
+      story_needed: "UXUI-01-THEME"
+      
+    - gap: "Skip link not implemented"
+      spec_section: "11.3"
+      effort: "30min"
+      story_needed: "A11Y-01"
+      
+  minor_gaps:
+    - gap: "8-bit animation CSS tokens missing"
+      spec_section: "15.2.2"
+      effort: "1h"
+      
+    - gap: "Animation keyframes not defined"
+      spec_section: "15.3-15.8"
+      effort: "2-3h"
+
+# ═════════════════════════════════════════════════════════════════════════
+# END OF FILE
+# ═════════════════════════════════════════════════════════════════════════

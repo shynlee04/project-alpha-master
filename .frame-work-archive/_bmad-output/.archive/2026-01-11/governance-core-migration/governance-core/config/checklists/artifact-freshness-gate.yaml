@@ -1,0 +1,64 @@
+id: "ARTIFACT-FRESHNESS-GATE"
+version: "1.0.0"
+triggers:
+  - workflow: "*"  # All workflows
+
+tier_definitions:
+  tier_1:
+    name: "Constitution"
+    ttl: "permanent"
+    validation: "read_only_check"
+    examples:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+    
+  tier_2:
+    name: "Controlled"
+    ttl: "permanent"
+    validation: "full_consumption_required"
+    examples:
+      - "architecture.md"
+      - "prd.md"
+      - "epics.md"
+      - "ux-specification.md"
+    
+  tier_3:
+    name: "Archival"
+    ttl: "90d"
+    validation: "archive_if_stale"
+    examples:
+      - "sprint-artifacts/*"
+      - "diagnostics/*"
+      - "tech-specs/*"
+    
+  tier_4:
+    name: "Ephemeral"
+    ttl: "24h"
+    validation: "ignore_if_stale"
+    examples:
+      - "handoffs/*"
+      - "temp/*"
+      - "continuation-capsules/*"
+
+checks:
+  - id: "AFG-001"
+    name: "No stale Tier 3 consumption"
+    severity: "HIGH"
+    validation: |
+      for tier_3_artifact in consumed:
+        if age > 90d: FAIL
+    action_on_fail: "Archive stale artifact or validate before use"
+    
+  - id: "AFG-002"
+    name: "No stale Tier 4 consumption"
+    severity: "MEDIUM"
+    validation: |
+      for tier_4_artifact in consumed:
+        if age > 24h: WARN
+    action_on_fail: "Ephemeral artifact may be outdated - verify"
+
+  - id: "AFG-003"
+    name: "YAML file count under limit"
+    severity: "HIGH"
+    validation: "count_yaml(_bmad-output, exclude=.archive) <= 25"
+    action_on_fail: "Too many YAML files - run CYCLE 1 consolidation"

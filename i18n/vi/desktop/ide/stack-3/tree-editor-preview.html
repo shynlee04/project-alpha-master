@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent - IDE - Tree Editor Preview</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f0f1a;
+      --bg-preview: #ffffff;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --text-dark: #1a1a1a;
+      --accent: #00d9ff;
+      --accent-secondary: #ff6b6b;
+      --border: #2a2a4e;
+      --success: #4ecdc4;
+      --warning: #ffe66d;
+      --shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.5);
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    body {
+      font-family: var(--font-mono);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-primary);
+    }
+
+    /* Header */
+    .header {
+      height: 44px;
+      background: var(--bg-tertiary);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 15px;
+      letter-spacing: -0.5px;
+    }
+
+    .project-name {
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding-left: 16px;
+      border-left: 1px solid var(--border);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .header-btn:hover {
+      background: var(--border);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: var(--bg-secondary);
+      border-right: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-tab {
+      padding: 10px 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-tab.active {
+      color: var(--accent);
+      background: var(--bg-secondary);
+    }
+
+    .tree-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 8px 0;
+    }
+
+    .tree-item {
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .tree-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .tree-item.selected {
+      background: var(--border);
+      color: var(--accent);
+    }
+
+    .tree-folder { color: var(--warning); }
+    .tree-file { color: var(--text-primary); }
+    .tree-icon { width: 16px; text-align: center; }
+    .tree-indent { display: inline-block; width: 16px; }
+
+    /* Resize Handle */
+    .resize-handle-v {
+      width: 4px;
+      background: var(--border);
+      cursor: col-resize;
+      flex-shrink: 0;
+    }
+
+    .resize-handle-h {
+      height: 4px;
+      background: var(--border);
+      cursor: row-resize;
+      flex-shrink: 0;
+    }
+
+    /* Editor Panel */
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 200px;
+      min-height: 0;
+    }
+
+    .tab-bar {
+      height: 32px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    .tab {
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .tab-close {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+    }
+
+    .tab-close:hover {
+      background: var(--accent-secondary);
+      color: var(--bg-primary);
+    }
+
+    .code-area {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      background: var(--bg-primary);
+      padding: 16px;
+    }
+
+    .code-line {
+      display: flex;
+      min-height: 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .line-number {
+      width: 40px;
+      color: var(--text-secondary);
+      text-align: right;
+      padding-right: 16px;
+      user-select: none;
+      opacity: 0.5;
+    }
+
+    .line-content { flex: 1; }
+
+    .keyword { color: var(--accent); }
+    .string { color: var(--success); }
+    .function { color: var(--warning); }
+    .comment { color: var(--text-secondary); opacity: 0.7; }
+    .variable { color: #c792ea; }
+    .type { color: #82aaff; }
+    .operator { color: var(--text-primary); }
+    .tag { color: #ff6b6b; }
+    .attr { color: #82aaff; }
+    .value { color: #c3e88d; }
+
+    /* Preview Panel */
+    .preview-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      min-height: 0;
+      background: var(--bg-preview);
+    }
+
+    .preview-header {
+      height: 32px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-dot.red { background: #ff5f56; }
+    .browser-dot.yellow { background: #ffbd2e; }
+    .browser-dot.green { background: #27c93f; }
+
+    .browser-url {
+      flex: 1;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      border-radius: 0;
+    }
+
+    .preview-content {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      padding: 24px;
+      background: var(--bg-preview);
+      color: var(--text-dark);
+    }
+
+    .preview-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      padding: 24px;
+      max-width: 400px;
+    }
+
+    .preview-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+
+    .preview-text {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      color: #444;
+    }
+
+    .preview-btn {
+      padding: 12px 24px;
+      background: var(--accent);
+      color: var(--bg-primary);
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 0 var(--border);
+    }
+
+    .preview-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 0 var(--border);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 24px;
+      background: var(--bg-tertiary);
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .status-left, .status-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 0;
+    }
+
+    .status-dot.success { background: var(--success); }
+    .status-dot.warning { background: var(--warning); }
+    .status-dot.error { background: var(--accent-secondary); }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border: 2px solid var(--bg-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">Via-Gent</span>
+        <span class="project-name">ứng dụng-của-tôi</span>
+      </div>
+      <div class="header-right">
+        <button class="header-btn">
+          <span>🔄</span>
+          <span>Đồng bộ</span>
+        </button>
+        <button class="header-btn">
+          <span>⚙️</span>
+          <span>Cài đặt</span>
+        </button>
+        <button class="header-btn">
+          <span>👤</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-tabs">
+          <div class="sidebar-tab active">📁 Trình khám phá</div>
+          <div class="sidebar-tab">🔍 Tìm kiếm</div>
+        </div>
+        <div class="tree-content">
+          <div class="tree-item"><span class="tree-icon">📁</span><span class="tree-folder">src</span></div>
+          <div class="tree-item"><span class="tree-indent"></span><span class="tree-icon">📁</span><span class="tree-folder">components</span></div>
+          <div class="tree-item"><span class="tree-indent"></span><span class="tree-indent"></span><span class="tree-icon">📁</span><span class="tree-folder">Button</span></div>
+          <div class="tree-item selected"><span class="tree-indent"></span><span class="tree-indent"></span><span class="tree-indent"></span><span class="tree-icon">📄</span><span class="tree-file">Button.tsx</span></div>
+          <div class="tree-item"><span class="tree-indent"></span><span class="tree-indent"></span><span class="tree-icon">📄</span><span class="tree-file">index.ts</span></div>
+          <div class="tree-item"><span class="tree-indent"></span><span class="tree-icon">📁</span><span class="tree-folder">lib</span></div>
+          <div class="tree-item"><span class="tree-indent"></span><span class="tree-indent"></span><span class="tree-icon">📄</span><span class="tree-file">utils.ts</span></div>
+          <div class="tree-item"><span class="tree-icon">📄</span><span class="tree-file">package.json</span></div>
+          <div class="tree-item"><span class="tree-icon">📄</span><span class="tree-file">vite.config.ts</span></div>
+          <div class="tree-item"><span class="tree-icon">📄</span><span class="tree-file">index.html</span></div>
+        </div>
+      </aside>
+
+      <!-- Vertical Resize Handle -->
+      <div class="resize-handle-v"></div>
+
+      <!-- Editor Panel -->
+      <section class="editor-panel">
+        <div class="tab-bar">
+          <div class="tab active">
+            <span>📄</span>
+            <span>Button.tsx</span>
+            <span class="tab-close">×</span>
+          </div>
+          <div class="tab">
+            <span>📄</span>
+            <span>index.html</span>
+            <span class="tab-close">×</span>
+          </div>
+        </div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-number">1</span><span class="line-content"><span class="keyword">import</span> <span class="variable">React</span> <span class="keyword">from</span> <span class="string">'react'</span>;</div>
+          <div class="code-line"><span class="line-number">2</span><span class="line-content"></div>
+          <div class="code-line"><span class="line-number">3</span><span class="line-content"><span class="keyword">interface</span> <span class="type">ButtonProps</span> {</div>
+          <div class="code-line"><span class="line-number">4</span><span class="line-content">  <span class="variable">children</span>: <span class="type">React.ReactNode</span>;</div>
+          <div class="code-line"><span class="line-number">5</span><span class="line-content">  <span class="variable">onClick</span>: () => <span class="type">void</span>;</div>
+          <div class="code-line"><span class="line-number">6</span><span class="line-content">  <span class="variable">variant</span>?: <span class="string">'primary'</span> | <span class="string">'secondary'</span>;</div>
+          <div class="code-line"><span class="line-number">7</span><span class="line-content">}</div>
+          <div class="code-line"><span class="line-number">8</span><span class="line-content"></div>
+          <div class="code-line"><span class="line-number">9</span><span class="line-content"><span class="keyword">export</span> <span class="keyword">const</span> <span class="function">Button</span>: <span class="type">React.FC</span>&lt;<span class="type">ButtonProps</span>&gt; = ({</div>
+          <div class="code-line"><span class="line-number">10</span><span class="line-content">  <span class="variable">children</span>,</div>
+          <div class="code-line"><span class="line-number">11</span><span class="line-content">  <span class="variable">onClick</span>,</div>
+          <div class="code-line"><span class="line-number">12</span><span class="line-content">  <span class="variable">variant</span> = <span class="string">'primary'</span>,</div>
+          <div class="code-line"><span class="line-number">13</span><span class="line-content">}) => {</div>
+          <div class="code-line"><span class="line-number">14</span><span class="line-content">  <span class="keyword">return</span> (</div>
+          <div class="code-line"><span class="line-number">15</span><span class="line-content">    &lt;<span class="type">button</span> <span class="attr">className</span>={`<span class="variable">btn</span> <span class="variable">btn-${"$"}{variant}`}`} /&gt;</div>
+          <div class="code-line"><span class="line-number">16</span><span class="line-content">  );</div>
+          <div class="code-line"><span class="line-number">17</span><span class="line-content">};</div>
+        </div>
+      </section>
+
+      <!-- Vertical Resize Handle -->
+      <div class="resize-handle-v"></div>
+
+      <!-- Preview Panel -->
+      <section class="preview-panel">
+        <div class="preview-header">
+          <span class="browser-dot red"></span>
+          <span class="browser-dot yellow"></span>
+          <span class="browser-dot green"></span>
+          <span class="browser-url">http://localhost:5173/</span>
+        </div>
+        <div class="preview-content">
+          <div class="preview-card">
+            <h1 class="preview-title">Chào mừng đến với Ứng dụng</h1>
+            <p class="preview-text">
+              Đây là trang xem trước của ứng dụng React. Bạn có thể chỉnh sửa mã nguồn
+              và xem thay đổi ngay lập tức trong thời gian thực.
+            </p>
+            <button class="preview-btn">Nhấn vào đây</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>🟢 WebContainer</span>
+        </div>
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>🤖 AI: Rảnh</span>
+        </div>
+        <div class="status-item">
+          <span>🔄 Đã đồng bộ</span>
+        </div>
+      </div>
+      <div class="status-right">
+        <div class="status-item">
+          <span>🔑 Google</span>
+        </div>
+        <div class="status-item">
+          <span>Dòng 12, Cột 8</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
